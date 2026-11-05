@@ -33,8 +33,15 @@ setLocale("en");
 applyPrefs(usePrefs.getState());
 
 function Player({ children }: { children: React.ReactNode }) {
-  const { data, isLoading } = useProgress();
+  const { data, isLoading, isError, refetch } = useProgress();
   if (isLoading) return <Spinner />;
+  // only a confirmed signed-out answer sends the player to sign-in; a failed check offers a retry instead
+  if (isError && !data) return (
+    <div data-testid="session-check-failed" className="min-h-screen grid place-items-center p-6 text-center">
+      <div><p className="text-navy-700 font-semibold">Connection problem. You are still signed in.</p>
+        <button data-testid="session-retry" className="btn-primary mt-4" onClick={() => refetch()}>Try again</button></div>
+    </div>
+  );
   if (!data?.registered) return <Navigate to="/register" replace />;
   return <>{children}</>;
 }

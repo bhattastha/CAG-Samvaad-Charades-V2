@@ -11,7 +11,7 @@ const DEV_CODE = "123456";
 const OTP_PER_HOUR = 5;
 const MAX_TRIES = 5;
 
-export interface Session { email: string; pid?: string; role?: "manager" | "viewer"; sid?: string }
+export interface Session { email: string; pid?: string; role?: "manager" | "viewer"; sid?: string; exp?: number }
 
 declare module "fastify" {
   interface FastifyRequest { session: Session | null }
@@ -83,9 +83,16 @@ export async function verifyOtp(db: Db, email: string, code: string): Promise<bo
   return ok;
 }
 
+// session lifetime (≥ 3 h so the 2-hour round always fits); renewed while the player is active (sliding)
+const SESSION_HOURS = Math.max(3, Number(process.env.SESSION_HOURS ?? 12));
 export async function setSession(reply: FastifyReply, s: Session) {
-  const token = await new SignJWT({ ...s }).setProtectedHeader({ alg: "HS256" }).setIssuedAt().setExpirationTime("12h").sign(key);
-  reply.setCookie(COOKIE, token, { httpOnly: true, secure: env.COOKIE_SECURE, sameSite: "lax", path: "/", maxAge: 12 * 3600 });
+  const { exp: _e, ...claims } = s;
+  const token = await new SignJWT({ ...claims }).setProtectedHeader({ alg: "HS256" }).setIssuedAt().setExpirationTime(`${SESSION_HOURS}h`).sign(key);
+  reply.setCookie(COOKIE, token, { httpOnly: true, secure: env.COOKIE_SECURE, sameSite: "lax", path: "/", maxAge: SESSION_HOURS * 3600 });
+}
+/** Re-issues the cookie once less than half its lifetime is left, so only Logout or real inactivity ends a session. */
+export async function renewSession(reply: FastifyReply, s: Session) {
+  if (s.exp && s.exp * 1000 - Date.now() < (SESSION_HOURS * 3600_000) / 2) await setSession(reply, s);
 }
 export function clearSession(reply: FastifyReply) {
   reply.clearCookie(COOKIE, { path: "/" });
@@ -96,7 +103,7 @@ export async function readSession(req: FastifyRequest): Promise<Session | null> 
   if (!t) return null;
   try {
     const { payload } = await jwtVerify(t, key);
-    return { email: String(payload.email), pid: payload.pid ? String(payload.pid) : undefined, role: payload.role as Session["role"], sid: payload.sid ? String(payload.sid) : undefined };
+    return { email: String(payload.email), pid: payload.pid ? String(payload.pid) : undefined, role: payload.role as Session["role"], sid: payload.sid ? String(payload.sid) : undefined, exp: payload.exp };
   } catch {
     return null;
   }

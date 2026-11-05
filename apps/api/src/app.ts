@@ -4,7 +4,7 @@ import Fastify, { type FastifyInstance } from "fastify";
 import cookie from "@fastify/cookie";
 import multipart from "@fastify/multipart";
 import websocket from "@fastify/websocket";
-import { readSession } from "./auth.js";
+import { readSession, renewSession } from "./auth.js";
 import { loadLines, loadOverrides } from "./content.js";
 import type { Db } from "./db.js";
 import { env } from "./env.js";
@@ -39,6 +39,7 @@ export async function buildApp(db: Db, opts: { logger?: boolean; jobs?: boolean 
     req.session = await readSession(req);
     // a player deleted from the console (reset / danger zone) is signed out, not left half-registered
     if (req.session?.pid && !(await db.one("SELECT 1 FROM players WHERE id=$1", [req.session.pid]))) req.session = { ...req.session, pid: undefined };
+    if (req.session && req.url !== "/api/auth/logout") await renewSession(reply, req.session);
     reply.header("X-Content-Type-Options", "nosniff");
     reply.header("Referrer-Policy", "same-origin");
     reply.header("Permissions-Policy", "microphone=(self), camera=()");

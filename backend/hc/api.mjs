@@ -92324,8 +92324,7 @@ function wrap2(raw, txImpl, close) {
 async function openDb(url2 = env2.DATABASE_URL) {
   if (url2.startsWith("postgres")) {
     const { default: pg2 } = await Promise.resolve().then(() => (init_esm(), esm_exports));
-    const conn = /[?&]uselibpqcompat=/.test(url2) ? url2 : url2.replace(/([?&]sslmode=)(prefer|require|verify-ca)\b/, "$1verify-full");
-    const pool = new pg2.Pool({ connectionString: conn, max: 10 });
+    const pool = new pg2.Pool({ connectionString: url2, max: 10 });
     const tx2 = async (fn) => {
       const c = await pool.connect();
       try {
@@ -162889,9 +162888,14 @@ async function verifyOtp(db2, email, code) {
   else await db2.query("UPDATE otp_challenges SET tries = tries + 1 WHERE email=$1", [email]);
   return ok;
 }
+var SESSION_HOURS = Math.max(3, Number(process.env.SESSION_HOURS ?? 12));
 async function setSession(reply, s) {
-  const token = await new SignJWT({ ...s }).setProtectedHeader({ alg: "HS256" }).setIssuedAt().setExpirationTime("12h").sign(key);
-  reply.setCookie(COOKIE, token, { httpOnly: true, secure: env2.COOKIE_SECURE, sameSite: "lax", path: "/", maxAge: 12 * 3600 });
+  const { exp: _e, ...claims } = s;
+  const token = await new SignJWT({ ...claims }).setProtectedHeader({ alg: "HS256" }).setIssuedAt().setExpirationTime(`${SESSION_HOURS}h`).sign(key);
+  reply.setCookie(COOKIE, token, { httpOnly: true, secure: env2.COOKIE_SECURE, sameSite: "lax", path: "/", maxAge: SESSION_HOURS * 3600 });
+}
+async function renewSession(reply, s) {
+  if (s.exp && s.exp * 1e3 - Date.now() < SESSION_HOURS * 36e5 / 2) await setSession(reply, s);
 }
 function clearSession(reply) {
   reply.clearCookie(COOKIE, { path: "/" });
@@ -162901,7 +162905,7 @@ async function readSession(req) {
   if (!t) return null;
   try {
     const { payload } = await jwtVerify(t, key);
-    return { email: String(payload.email), pid: payload.pid ? String(payload.pid) : void 0, role: payload.role, sid: payload.sid ? String(payload.sid) : void 0 };
+    return { email: String(payload.email), pid: payload.pid ? String(payload.pid) : void 0, role: payload.role, sid: payload.sid ? String(payload.sid) : void 0, exp: payload.exp };
   } catch {
     return null;
   }
@@ -168720,6 +168724,7 @@ async function buildApp(db2, opts = {}) {
   app2.addHook("onRequest", async (req, reply) => {
     req.session = await readSession(req);
     if (req.session?.pid && !await db2.one("SELECT 1 FROM players WHERE id=$1", [req.session.pid])) req.session = { ...req.session, pid: void 0 };
+    if (req.session && req.url !== "/api/auth/logout") await renewSession(reply, req.session);
     reply.header("X-Content-Type-Options", "nosniff");
     reply.header("Referrer-Policy", "same-origin");
     reply.header("Permissions-Policy", "microphone=(self), camera=()");
