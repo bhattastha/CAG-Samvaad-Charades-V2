@@ -79,8 +79,6 @@ export const GameConfigSchema = z
       chrfFloor: z.number(),
       chrfCeil: z.number(),
       minWordsPerSentence: z.number().int(),
-      /** draft rounds: Timeliness & Completion counts only when the quality gain is at least this share */
-      draftGainGate: z.number().min(0).max(1).default(0.1),
     }),
     auth: z.object({ mode: z.string(), otpLength: z.number().int(), otpTtlMinutes: z.number() }),
     ui: z.object({

@@ -18,7 +18,7 @@ export interface ReportData {
   attemptId: string; roundKey: string; roundName: string; title: string; limitMinutes: number; chanceNo: number; maxChances: number;
   playerName: string; score: number; autoSubmitted: boolean;
   counts: {
-    qualityMarks?: number; glossaryMarks?: number; timelinessMarks?: number; gainPct?: number | null; timelinessGated?: boolean;
+    qualityMarks?: number; glossaryMarks?: number; timelinessMarks?: number; gainPct?: number | null; matchPct?: number; aiPct?: number | null;
     completionDone: number; completionTotal: number; completionUnit: "sentence" | "paragraph"; glossaryCorrect: number; glossaryTotal: number; usedMinutes: number; limitMinutes: number;
   };
   weakSpots?: WeakSpot[];
@@ -50,9 +50,9 @@ function bars(r: ReportData, w: { translationQuality: number; glossary: number; 
   const marks = (n: number | undefined, share: number, max: number) => t("reportCard.marksOf", { n: n ?? Math.round(share * max * 10) / 10, max });
   const done = c.completionUnit === "sentence" ? t("reportCard.sentencesOf", { n: c.completionDone, total: c.completionTotal }) : t("reportCard.paragraphsOf", { n: c.completionDone, total: c.completionTotal });
   return [
-    ["type", t("reportCard.measureQuality"), t("reportCard.measureQualitySub"), q, marks(c.qualityMarks, q, w.translationQuality), "bg-primary"],
+    ["type", t("reportCard.measureQuality"), c.matchPct == null ? t("reportCard.measureQualitySub") : c.aiPct == null ? t("reportCard.qualityMatch", { match: c.matchPct }) : t("reportCard.qualityDetail", { match: c.matchPct, ai: c.aiPct }), q, marks(c.qualityMarks, q, w.translationQuality), "bg-primary"],
     ["book", t("reportCard.measureGlossary"), `${t("reportCard.measureGlossarySub")} · ${t("reportCard.wordsOf", { n: c.glossaryCorrect, total: c.glossaryTotal })}`, m.glossary, marks(c.glossaryMarks, m.glossary, w.glossary), "bg-gold"],
-    ["clock", t("reportCard.measureTimeliness"), c.timelinessGated ? t("reportCard.timelinessGated") : `${done} · ${t("reportCard.timeMin", { used: c.usedMinutes, limit: c.limitMinutes })}`, tc, marks(c.timelinessMarks, tc, w.timelinessCompletion), "bg-sky-500"],
+    ["clock", t("reportCard.measureTimeliness"), `${done} · ${t("reportCard.timeMin", { used: c.usedMinutes, limit: c.limitMinutes })}`, tc, marks(c.timelinessMarks, tc, w.timelinessCompletion), "bg-sky-500"],
   ] as const;
 }
 

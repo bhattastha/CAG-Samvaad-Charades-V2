@@ -94,11 +94,13 @@ export interface GrammarIssue {
 /** Scoring model v2 (55 / 25 / 20). Shares are 0–1; marks = share × weight. */
 export interface Measures {
   model: 2;
-  /** Translation Quality share (Trial: similarity; draft rounds: gain over the BHASHINI draft) */
+  /** Translation Quality share: match with CAG's Hindi, blended 50/50 with the AI judge when it answered */
   quality: number;
   glossary: number;
-  /** Timeliness & Completion share = completion × time (0 when the draft gain gate is not met) */
+  /** Timeliness & Completion share = completion × time */
   timeliness: number;
+  match: number;
+  ai: number | null;
   similarity: number;
   draftSimilarity: number | null;
   fluency: number;
@@ -112,8 +114,8 @@ export interface Counts {
   similarityPct: number;
   draftSimilarityPct: number | null;
   gainPct: number | null;
-  /** draft rounds: Timeliness & Completion needs a quality gain ≥ the gate */
-  timelinessGated: boolean;
+  matchPct: number;
+  aiPct: number | null;
   completionDone: number;
   completionTotal: number;
   completionUnit: "sentence" | "paragraph";
@@ -218,7 +220,11 @@ export interface ScoreInput {
   page: PageData;
   answers: Answers;
   usedSeconds: number;
+  /** AI judge's 0–1 scores (overall and per part); null/undefined → match only */
+  ai?: AiJudgement | null;
+  autoSubmitted?: boolean;
 }
+export interface AiJudgement { overall: number; parts: Record<string, number>; model: string }
 
 const round1 = (x: number) => Math.round(x * 10) / 10;
 
@@ -247,27 +253,25 @@ const draftAnswers = (page: PageData): Answers =>
 const splitSentences = (s: string) => s.split(/(?<=[।?!])\s+/u).map((x) => x.trim()).filter(Boolean);
 
 /** Where the Translation Quality marks went: per sentence (Trial) or per part, marks lost = share of the text × (1 − similarity) × weight. */
-function weakSpotsOf(round: RoundConfig, page: PageData, answers: Answers, sc: GameConfig["scoring"], weight: number, n = 3): WeakSpot[] {
-  const units: { partId: string; sentence: number | null; en: string; ref: string; hyp: string; draft: string | null }[] = [];
+function weakSpotsOf(round: RoundConfig, page: PageData, answers: Answers, sc: GameConfig["scoring"], weight: number, ai: AiJudgement | null, n = 3): WeakSpot[] {
+  const units: { partId: string; sentence: number | null; en: string; ref: string; hyp: string }[] = [];
   for (const p of page.parts) {
     if (!p.editable) continue;
     const ref = partRefText(p), hyp = partPlayerText(answers, p);
     if (normalise(ref).length < 20) continue; // numbers-only cells and tiny labels are not useful tips
-    const draft = round.bhashiniDraft ? editableFields(p).map((f) => f.draft ?? "").join(" ") : null;
     const enS = p.enSentences ?? [], refS = splitSentences(ref);
     if (round.completionCountedBy === "sentence" && enS.length > 1 && enS.length === refS.length) {
       const hypS = splitSentences(hyp);
-      enS.forEach((en, i) => units.push({ partId: p.id, sentence: i, en, ref: refS[i]!, hyp: hypS[i] ?? "", draft: null }));
-    } else units.push({ partId: p.id, sentence: null, en: p.fields.map((f) => f.en).join(" "), ref, hyp, draft });
+      enS.forEach((en, i) => units.push({ partId: p.id, sentence: i, en, ref: refS[i]!, hyp: hypS[i] ?? "" }));
+    } else units.push({ partId: p.id, sentence: null, en: p.fields.map((f) => f.en).join(" "), ref, hyp });
   }
   const total = units.reduce((t, u) => t + normalise(u.ref).length, 0) || 1;
   return units
     .map((u) => {
       const cal = (h: string) => calibrateChrF(similarity(h, u.ref, sc.chrfOrder, sc.chrfBeta), sc.chrfFloor, sc.chrfCeil);
       const sim = cal(u.hyp);
-      // draft rounds score the gain over the draft, so the loss is the gain still missing in this part
-      const d = u.draft === null ? null : cal(u.draft);
-      const got = d === null ? sim : d >= 1 ? 1 : clamp01((sim - d) / (1 - d));
+      const aiPart = ai?.parts[u.partId];
+      const got = typeof aiPart === "number" ? 0.5 * sim + 0.5 * aiPart : sim;
       return { partId: u.partId, sentence: u.sentence, en: u.en.length > 160 ? u.en.slice(0, 157) + "…" : u.en, similarityPct: Math.round(sim * 100), lostMarks: Math.round((normalise(u.ref).length / total) * (1 - got) * weight * 10) / 10 };
     })
     .filter((u) => u.lostMarks >= 0.5)
@@ -275,7 +279,7 @@ function weakSpotsOf(round: RoundConfig, page: PageData, answers: Answers, sc: G
     .slice(0, n);
 }
 
-export function scoreAttempt({ config, round, page, answers, usedSeconds }: ScoreInput): ScoreResult {
+export function scoreAttempt({ config, round, page, answers, usedSeconds, ai = null, autoSubmitted = false }: ScoreInput): ScoreResult {
   const sc = config.scoring;
   const w = config.scoringWeights;
   const limitSeconds = round.timeLimitMinutes * 60;
@@ -288,14 +292,15 @@ export function scoreAttempt({ config, round, page, answers, usedSeconds }: Scor
   const refKeys = new Set(grammarIssues(round, page, refAnswers, sc.minWordsPerSentence).map((g) => `${g.code}|${g.partId}|${g.text}`));
   const own = (gs: GrammarIssue[]) => gs.filter((g) => !refKeys.has(`${g.code}|${g.partId}|${g.text}`));
   const mine = docQuality(page, answers, own(grammar), sc);
-  // Primary / Secondary / Professional: marks for the improvement over the BHASHINI draft
+  // Translation Quality = how close the final Hindi is to CAG's published Hindi (half), and the AI judge (half)
+  const quality = ai ? 0.5 * mine.quality + 0.5 * clamp01(ai.overall) : mine.quality;
+  // the BHASHINI draft's own match is shown for information only
   const hasDraft = round.bhashiniDraft && page.parts.some((p) => p.fields.some((f) => f.draft));
-  let quality = mine.quality, draftSim: number | null = null, gain: number | null = null;
+  let draftSim: number | null = null, gain: number | null = null;
   if (hasDraft) {
     const da = draftAnswers(page);
     draftSim = docQuality(page, da, own(grammarIssues(round, page, da, sc.minWordsPerSentence)), sc).quality;
     gain = draftSim >= 1 ? 0 : clamp01((mine.quality - draftSim) / (1 - draftSim));
-    quality = gain;
   }
 
   const comp = completion(round, page, answers, sc.minWordsPerSentence);
@@ -303,13 +308,13 @@ export function scoreAttempt({ config, round, page, answers, usedSeconds }: Scor
   const glossaryCorrect = termChecks.filter((t) => t.correct).length;
   const glossary = page.terms.length ? glossaryCorrect / page.terms.length : 1;
   const tm = config.timeMarks;
-  const time = timeMeasure(usedSeconds, limitSeconds, tm.fullMarksIfFinishedWithinShareOfLimit, tm.marksAtTimeLimit);
+  // submitted by the player in time → per the time-marks rule; time ran out (auto-submit) → marks at the time limit
+  const time = autoSubmitted ? tm.marksAtTimeLimit : timeMeasure(usedSeconds, limitSeconds, tm.fullMarksIfFinishedWithinShareOfLimit, tm.marksAtTimeLimit);
   const completionShare = comp.done / (comp.total || 1);
-  const gated = gain !== null && gain < sc.draftGainGate;
-  const timeliness = empty || gated ? 0 : completionShare * time;
+  const timeliness = empty ? 0 : completionShare * time;
 
   const measures: Measures = {
-    model: 2, quality: empty ? 0 : quality, glossary: empty ? 0 : glossary, timeliness, similarity: mine.sim, draftSimilarity: draftSim,
+    model: 2, quality: empty ? 0 : quality, glossary: empty ? 0 : glossary, timeliness, match: mine.quality, ai: ai ? clamp01(ai.overall) : null, similarity: mine.sim, draftSimilarity: draftSim,
     fluency: mine.fluency, completion: completionShare, time,
   };
   const qualityMarks = round1(measures.quality * w.translationQuality);
@@ -326,7 +331,7 @@ export function scoreAttempt({ config, round, page, answers, usedSeconds }: Scor
       : { kind: "praise" };
 
   return {
-    weakSpots: empty ? [] : weakSpotsOf(round, page, answers, sc, w.translationQuality),
+    weakSpots: empty ? [] : weakSpotsOf(round, page, answers, sc, w.translationQuality, ai),
     score: Math.max(0, Math.min(config.scoreOutOf, score)),
     measures,
     counts: {
@@ -334,7 +339,8 @@ export function scoreAttempt({ config, round, page, answers, usedSeconds }: Scor
       similarityPct: Math.round(mine.sim * 100),
       draftSimilarityPct: draftSim === null ? null : Math.round(draftSim * 100),
       gainPct: gain === null ? null : Math.round(gain * 100),
-      timelinessGated: gated,
+      matchPct: Math.round(mine.quality * 100),
+      aiPct: ai ? Math.round(clamp01(ai.overall) * 100) : null,
       completionDone: comp.done,
       completionTotal: comp.total,
       completionUnit: round.completionCountedBy,

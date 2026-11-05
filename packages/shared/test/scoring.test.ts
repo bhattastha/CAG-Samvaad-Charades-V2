@@ -35,12 +35,20 @@ describe("§11 scorer on the seed trial passage", () => {
     expect(r.counts.glossaryCorrect).toBe(6);
     expect(r.tip).toMatchObject({ kind: "term", en: "marketing", hi: "विपणन", wrong: "मार्केटिंग" });
   });
-  it("time factor 1.0 within 50% of the time, falling linearly to 0 at 100%", () => {
+  it("time measure helper: 1.0 within the share, falling linearly to the value at the limit", () => {
     expect(timeMeasure(0.4 * 1200, 1200)).toBeCloseTo(1.0);
     expect(timeMeasure(0.75 * 1200, 1200)).toBeCloseTo(0.5);
     expect(timeMeasure(1.0 * 1200, 1200)).toBeCloseTo(0);
-    expect(run(ref, 20 * 60).counts.timelinessMarks).toBe(0);
-    expect(run(ref, 15 * 60).score).toBe(90);
+  });
+  it("submitted before the time limit → full time marks; auto-submitted when time ran out → half", () => {
+    expect(run(ref, 20 * 60).counts.timelinessMarks).toBe(20);
+    expect(run(ref, 15 * 60).score).toBe(100);
+    expect(scoreAttempt({ config, round: trial, page, answers: ans(ref), usedSeconds: 20 * 60, autoSubmitted: true }).counts.timelinessMarks).toBe(10);
+  });
+  it("AI judge is blended 50/50 with the match", () => {
+    const r = scoreAttempt({ config, round: trial, page, answers: ans(ref), usedSeconds: 60, ai: { overall: 0.6, parts: {}, model: "x" } });
+    expect(r.measures.quality).toBeCloseTo(0.8);
+    expect(r.counts).toMatchObject({ matchPct: 100, aiPct: 60, qualityMarks: 44 });
   });
   it("Latin words and missing danda lower fluency (light grammar check)", () => {
     const r = run("SAIL ek company hai");
@@ -187,26 +195,26 @@ describe("helpers", () => {
   });
 });
 
-describe("draft rounds score the gain over the BHASHINI draft", () => {
+describe("draft rounds score the final Hindi against CAG's Hindi (not the gain over the draft)", () => {
   const primary = roundOf(config, "primary");
   const words = ref.split(" ");
   const draft = words.map((w, i) => (i % 3 === 0 ? "शब्द" : w)).join(" ");
   const dpage = { ...page, parts: page.parts.map((p) => ({ ...p, tickGroup: "g1", fields: p.fields.map((f) => ({ ...f, draft })) })) };
   const runP = (t: string) => scoreAttempt({ config, round: primary, page: dpage, answers: { passage: { fields: { t }, done: true } }, usedSeconds: 10 * 60 });
-  it("submitting the draft unchanged gives 0 quality and no timeliness", () => {
+  it("a draft that partly matches CAG's Hindi earns partial quality and full timeliness", () => {
     const r = runP(draft);
-    expect(r.measures.quality).toBe(0);
-    expect(r.counts.timelinessGated).toBe(true);
-    expect(r.counts.timelinessMarks).toBe(0);
-    expect(r.weakSpots[0]?.lostMarks ?? 0).toBeGreaterThan(40); // the whole gain is still missing
+    expect(r.measures.quality).toBeGreaterThan(0.3);
+    expect(r.measures.quality).toBeLessThan(1);
+    expect(r.counts.timelinessMarks).toBe(20);
   });
-  it("fixing the draft to CAG's Hindi gives the full gain", () => {
+  it("fixing the draft to CAG's Hindi gives full marks", () => {
     const r = runP(ref);
     expect(r.measures.quality).toBe(1);
     expect(r.counts.qualityMarks).toBe(55);
     expect(r.counts.timelinessMarks).toBe(20);
   });
-  it("making the draft worse is clamped at 0", () => {
-    expect(runP(words.slice(0, 5).join(" ")).measures.quality).toBe(0);
+  it("improving the draft scores more than leaving it", () => {
+    expect(runP(ref).score).toBeGreaterThan(runP(draft).score);
+    expect(runP(words.slice(0, 5).join(" ")).measures.quality).toBeLessThan(runP(draft).measures.quality);
   });
 });

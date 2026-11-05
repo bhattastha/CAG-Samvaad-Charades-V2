@@ -6,6 +6,7 @@ import {
 import { config, strings } from "./content.js";
 import type { Db } from "./db.js";
 import { env } from "./env.js";
+import { judge } from "./judge.js";
 import { loadPage, playerPage } from "./pages.js";
 import { grammarTip, say, sayRound, type Said } from "./sahayika/engine.js";
 
@@ -208,8 +209,9 @@ export async function submit(db: Db, a: AttemptRow, auto = false): Promise<Attem
   const end = auto ? new Date(a.deadline_at) : new Date(Math.min(Date.now(), new Date(a.deadline_at).getTime()));
   const limit = round.timeLimitMinutes * 60;
   const usedSeconds = auto ? limit : Math.min(limit, (end.getTime() - new Date(a.started_at).getTime()) / 1000);
-  const res = scoreAttempt({ config: config(), round, page, answers: a.answers, usedSeconds });
-  const result = { counts: res.counts, weakSpots: res.weakSpots, flags: res.flags, grammar: res.grammar.map((g) => ({ code: g.code, partId: g.partId, fieldKey: g.fieldKey, text: g.text })), termChecks: res.termChecks.map((t) => ({ en: t.term.en, hi: t.term.hi, correct: t.correct, present: t.present, avoidFound: t.avoidFound })) };
+  const ai = await judge(page, a.answers);
+  const res = scoreAttempt({ config: config(), round, page, answers: a.answers, usedSeconds, ai, autoSubmitted: auto });
+  const result = { aiModel: ai?.model ?? null, counts: res.counts, weakSpots: res.weakSpots, flags: res.flags, grammar: res.grammar.map((g) => ({ code: g.code, partId: g.partId, fieldKey: g.fieldKey, text: g.text })), termChecks: res.termChecks.map((t) => ({ en: t.term.en, hi: t.term.hi, correct: t.correct, present: t.present, avoidFound: t.avoidFound })) };
   const row = await db.one<AttemptRow>(
     `UPDATE attempts SET status='submitted', submitted_at=$2, auto_submitted=$3, measures=$4, score=$5, tip=$6, result=$7
      WHERE id=$1 AND status='active' RETURNING *`,

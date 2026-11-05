@@ -100,8 +100,8 @@
   "titlePassMark": 33,
   "scoreOutOf": 100,
   "timeMarks": {
-    "fullMarksIfFinishedWithinShareOfLimit": 0.5,
-    "marksAtTimeLimit": 0
+    "fullMarksIfFinishedWithinShareOfLimit": 1,
+    "marksAtTimeLimit": 0.5
   },
   "creditFormula": "round credits = best score / 100 x round credit cap",
   "creditDecimals": 1,
@@ -141,8 +141,7 @@
     "chrfBeta": 2,
     "chrfFloor": 0.2,
     "chrfCeil": 0.85,
-    "minWordsPerSentence": 2,
-    "draftGainGate": 0.1
+    "minWordsPerSentence": 2
   },
   "auth": {
     "mode": "email-otp",

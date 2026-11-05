@@ -495,11 +495,12 @@
     "measureTimeliness": "Timeliness & Completion",
     "measureTimelinessSub": "How much, how quickly",
     "marksOf": "{n}/{max}",
-    "timelinessGated": "Needs a 10% quality gain",
+    "qualityMatch": "{match}% match with CAG's Hindi",
+    "qualityDetail": "{match}% match with CAG's Hindi · AI review {ai}%",
     "scoreExplain": [
       "Translation Quality (incl. sentence construction) – 55: How closely your Hindi matches CAG's published Hindi report, and whether your sentences are correct and read naturally.",
       "Glossary Usage – 25: Whether you used CAG's standard Hindi terms (for example Annexure → अनुलग्नक).",
-      "Timeliness & Completion – 20: How much of the text you finished, and how quickly. Finish everything within half the time for full marks."
+      "Timeliness & Completion – 20: How much of the text you finished, and how quickly. Submit before the time runs out for full time marks."
     ]
   },
   "total": {

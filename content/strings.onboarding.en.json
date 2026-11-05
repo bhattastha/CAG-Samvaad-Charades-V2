@@ -112,7 +112,7 @@
         "criteria": {
           "quality": "How closely your Hindi matches CAG's published Hindi report, and whether your sentences are correct and read naturally.",
           "glossary": "Whether you used CAG's standard Hindi terms (for example Annexure → अनुलग्नक).",
-          "timeliness": "How much of the text you finished, and how quickly. Finish everything within half the time for full marks."
+          "timeliness": "How much of the text you finished, and how quickly. Submit before the time runs out for full time marks."
         },
         "measures": {
           "quality": "Translation Quality (incl. sentence construction)",

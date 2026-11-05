@@ -31,6 +31,8 @@ export const env = {
   DHRUVA_LLM_KEY: e.DHRUVA_LLM_KEY || e.DHRUVA_API_KEY || "",
   DHRUVA_TTS_SERVICE_ID: e.DHRUVA_TTS_SERVICE_ID ?? "",
   ANUVAAD_XLIT_AUTH: e.ANUVAAD_XLIT_AUTH ?? "",
+  EMERGENT_LLM_KEY: e.EMERGENT_LLM_KEY ?? "",
+  INTEGRATION_PROXY_URL: e.INTEGRATION_PROXY_URL || "https://integrations.emergentagent.com",
   SEED_ALLOW_UNVERIFIED: e.SEED_ALLOW_UNVERIFIED === "1",
   CHROME_PATH: e.CHROME_PATH ?? "",
   WEB_DIST: e.WEB_DIST ?? resolve(ROOT, "apps/web/dist"),

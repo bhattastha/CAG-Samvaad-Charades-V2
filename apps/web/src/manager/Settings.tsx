@@ -5,7 +5,7 @@ import { Card, ConfirmDanger, Notice, PageHeader, Pill, ReadOnlyNote, btn, fmtDa
 import { PALETTE } from "./charts";
 
 const WEIGHTS = [
-  { key: "translationQuality", label: "Translation Quality (incl. sentence construction)", help: "Meaning-based similarity to CAG's Hindi + light grammar check; draft rounds score the gain over the draft" },
+  { key: "translationQuality", label: "Translation Quality (incl. sentence construction)", help: "Half: match of the final Hindi with CAG's published Hindi (+ light grammar check); half: AI review of meaning, grammar and fluency" },
   { key: "glossary", label: "Glossary Usage", help: "Approved Shabd Udyan terms used ÷ terms in the source" },
   { key: "timelinessCompletion", label: "Timeliness & Completion", help: "Completion × time factor (full within half the limit)" },
 ] as const;
