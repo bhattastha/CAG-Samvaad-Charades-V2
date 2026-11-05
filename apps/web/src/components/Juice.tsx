@@ -127,19 +127,20 @@ export function Stamp({ text, tone = "good" }: { text: string; tone?: "good" | "
 
 // ---------------- rank insignia (one per level title) ----------------
 
-/** Tier metals: bronze → silver → gold → sapphire → royal. Shape and numeral carry the meaning, not colour alone. */
-const TIER: Record<string, { a: string; b: string; edge: string; mark: string; glyph: string }> = {
-  trial: { a: "#E7B88C", b: "#9A5B2E", edge: "#6E3F1F", mark: "#FFF4E8", glyph: "T" },
-  primary: { a: "#E6EBF2", b: "#8C99AB", edge: "#5B6576", mark: "#0B2545", glyph: "I" },
-  secondary: { a: "#F3E2B0", b: "#B48A2C", edge: "#7A5A14", mark: "#0B2545", glyph: "II" },
-  pro: { a: "#7FB2E8", b: "#13315C", edge: "#071A33", mark: "#FFFFFF", glyph: "III" },
-  varchaspati: { a: "#C9B2F0", b: "#4C2A85", edge: "#2B1550", mark: "#FFFFFF", glyph: "V" },
+/** Tier metals: Bronze → Silver → Gold → Platinum → Purple. Shape and numeral carry the meaning, not colour alone. */
+const TIER: Record<string, { a: string; b: string; edge: string; mark: string; glyph: string; metal: string }> = {
+  // metal tiers: Bronze, Silver, Gold, Platinum, Purple
+  trial: { a: "#F0C29A", b: "#A0592A", edge: "#6B3A17", mark: "#FFF4E8", glyph: "T", metal: "Bronze" },
+  primary: { a: "#F1F3F6", b: "#8F98A6", edge: "#5B6474", mark: "#1F2937", glyph: "I", metal: "Silver" },
+  secondary: { a: "#FFE58A", b: "#C8961E", edge: "#7A5A0E", mark: "#4A3300", glyph: "II", metal: "Gold" },
+  pro: { a: "#FFFFFF", b: "#AEB9CB", edge: "#4E5D78", mark: "#22314D", glyph: "III", metal: "Platinum" },
+  varchaspati: { a: "#D8B4FE", b: "#6B21A8", edge: "#3B0764", mark: "#FFFFFF", glyph: "V", metal: "Purple" },
 };
 export function Medal({ k, size = 72, locked = false, shine = false }: { k: string; size?: number; locked?: boolean; shine?: boolean }) {
   const t = TIER[k] ?? TIER.trial;
   const id = `ins-${k}-${locked ? "l" : "u"}`;
   return (
-    <div className={`relative grid place-items-center ${locked ? "opacity-60" : ""}`} style={{ width: size, height: size }} aria-hidden>
+    <div className={`relative grid place-items-center ${locked ? "opacity-60" : ""}`} style={{ width: size, height: size }} aria-hidden data-metal={t.metal} data-testid={`medal-${k}`}>
       <svg viewBox="0 0 64 64" width={size} height={size}>
         <defs>
           <linearGradient id={id} x1="0" y1="0" x2="1" y2="1">
@@ -158,6 +159,7 @@ export function Medal({ k, size = 72, locked = false, shine = false }: { k: stri
         ) : (
           <text x="32" y={t.glyph.length > 2 ? 35 : 36} textAnchor="middle" fontSize={t.glyph.length > 2 ? 14 : 17} fontWeight="800" fill={t.mark} fontFamily="Noto Sans, sans-serif" letterSpacing="0.5">{t.glyph}</text>
         )}
+        {!locked && k === "pro" && <path d="M32 13l3 3.5-3 3.5-3-3.5z" fill="#E0F2FE" stroke={t.edge} strokeWidth=".8" />}
         {!locked && <path d="M24 44l8 4 8-4" stroke={t.mark} strokeOpacity=".7" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />}
       </svg>
       {shine && !locked && <span className="absolute inset-0 animate-shine" style={{ clipPath: "polygon(50% 6%, 81% 17%, 81% 41%, 50% 89%, 19% 41%, 19% 17%)", background: "linear-gradient(110deg,transparent 40%,rgba(255,255,255,.65) 50%,transparent 60%)", backgroundSize: "200% 100%" }} />}

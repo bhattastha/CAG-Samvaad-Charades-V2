@@ -4,7 +4,7 @@
     "gameName": "Samvaad Charades",
     "gameNameHi": "संवाद शराड्स",
     "brandLine": "CAG · BHASHINI",
-    "guide": "Sahayak",
+    "guide": "Sahayika",
     "guideRole": "Your game guide",
     "listen": "Listen",
     "pause": "Pause",
@@ -16,7 +16,7 @@
     "skip": "Skip",
     "continue": "Continue",
     "glossaryButton": "Glossary",
-    "sahayikaButton": "Ask Sahayak",
+    "sahayikaButton": "Ask Sahayika",
     "copyPasteOffBadge": "Copy-paste locked",
     "chanceOf": "Chance {n}/{max}",
     "creditsUpTo": "Up to {n} credits",
@@ -33,11 +33,11 @@
   },
   "settings": {
     "heading": "Game settings",
-    "voice": "Sahayak voice guide",
+    "voice": "Sahayika voice guide",
     "voiceOff": "Off",
     "voiceTap": "Only when I tap Listen",
     "voiceAuto": "Read lines aloud automatically",
-    "voiceHint": "Sahayak never talks over you. Pause or stop the voice anytime from the player bar.",
+    "voiceHint": "Sahayika never talks over you. Pause or stop the voice anytime from the player bar.",
     "sound": "Sound effects",
     "volume": "Volume",
     "haptics": "Vibration on phones",
@@ -61,15 +61,15 @@
     "artCaption": "English → हिंदी",
     "levelsLabel": "5 levels · 4 titles · 50 credits",
     "pressAnyKey": "Press Enter to start",
-    "voiceToggle": "Sahayak voice guide",
+    "voiceToggle": "Sahayika voice guide",
     "voiceOn": "On",
     "voiceOff": "Off",
-    "voiceHelp": "Hear Sahayak read each briefing aloud. Change it anytime in Settings.",
+    "voiceHelp": "Hear Sahayika read each briefing aloud. Change it anytime in Settings.",
     "tagline": "The translation challenge for audit professionals.",
     "signIn": "Sign in",
     "startBonus": "+2 credits the moment you join",
     "seasonCard": "Season ladder",
-    "trialLine": "300-word warm-up",
+    "trialLine": "200-word warm-up",
     "joinBonus": "Joining bonus",
     "statPlayers": "Officers playing",
     "statOffices": "Offices",
@@ -108,7 +108,7 @@
       },
       {
         "title": "Warm up",
-        "body": "Open with the 300-word Trial, then take on the levels. Each gives you three chances."
+        "body": "Open with the 200-word Trial, then take on the levels. Each gives you three chances."
       },
       {
         "title": "Climb",
@@ -146,7 +146,7 @@
     "errAddress": "Enter your office address.",
     "errOtp": "That code doesn't match. Check it and try again.",
     "errOtpRate": "Too many codes requested. Try again in a few minutes.",
-    "errDomain": "This challenge is open to CAG officers only. Use your official email ID.",
+    "errDomain": "Only official @cag.gov.in email IDs can sign in. Use your CAG email ID.",
     "resend": "Resend code",
     "devCode": "Development code: {code}",
     "welcomeBack": "Returning player? Enter the code to pick up where you left off.",
@@ -198,7 +198,7 @@
       },
       {
         "title": "Your coach",
-        "body": "Sahayak is on hand in every level for hints, glossary terms and time checks, but never gives away the answer."
+        "body": "Sahayika is on hand in every level for hints, glossary terms and time checks, but never gives away the answer."
       }
     ],
     "points": [
@@ -275,7 +275,7 @@
     "fullBoard": "Full leaderboard",
     "voiceOk": "Voice typing allowed",
     "typingOnly": "Typing only",
-    "openFirst": "Start with the Trial, a 300-word warm-up that sets your pace. Every level is open; play in any order.",
+    "openFirst": "Start with the Trial, a 200-word warm-up that sets your pace. Every level is open; play in any order.",
     "openPlayed": "Warm-up done. Primary, Secondary and Professional are all open; each keeps its own three chances and best score."
   },
   "preRound": {
@@ -336,6 +336,9 @@
     "micCheck": "Say a few words to test the mic",
     "micDenied": "Microphone access wasn't granted. Typing works just as well.",
     "tick": "Mark ✓",
+    "autoSaved": "Saved",
+    "scrollProgress": "{pct}% reviewed",
+    "scrollMode": "Continuous report",
     "untick": "Reopen",
     "glossaryHint": "Tap an underlined word for glossary help",
     "suggestFor": "Glossary suggestion",
@@ -407,7 +410,7 @@
     "avoid": "Avoid"
   },
   "chat": {
-    "title": "Ask Sahayak",
+    "title": "Ask Sahayika",
     "placeholder": "Ask about a term or a rule…",
     "send": "Send",
     "quick": {
@@ -430,7 +433,7 @@
   "reportCard": {
     "heading": "Report card · {roundName}",
     "headingEn": "Your mission debrief",
-    "sahayikaAnnounces": "Sahayak reports",
+    "sahayikaAnnounces": "Sahayika reports",
     "thisTime": "this attempt",
     "howYouDid": "Your five stats",
     "measureTranslation": "Translation",
@@ -732,11 +735,11 @@
     "cta": "Start Playing",
     "ctaContinue": "Continue Playing",
     "signIn": "Sign in",
-    "soundOn": "Sahayak voice on",
-    "soundOff": "Sahayak voice off",
-    "greeting": "Hi! I'm Sahayak.",
+    "soundOn": "Sahayika voice on",
+    "soundOff": "Sahayika voice off",
+    "greeting": "Hi! I'm Sahayika.",
     "speech": "Let's turn audit reports into a fun learning journey together!",
-    "listen": "Hear Sahayak",
+    "listen": "Hear Sahayika",
     "journeyLabel": "Your journey",
     "stageLabel": "Stage {n}",
     "states": {
@@ -787,7 +790,7 @@
       {
         "icon": "chat",
         "title": "Guided Experience",
-        "body": "Get assistance from Sahayak."
+        "body": "Get assistance from Sahayika."
       }
     ],
     "footer": "Comptroller and Auditor General of India · Digital India BHASHINI",

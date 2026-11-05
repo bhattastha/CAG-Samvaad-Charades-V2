@@ -26,6 +26,7 @@ export async function playerRoutes(app: FastifyInstance, db: Db) {
   app.post("/auth/otp/verify", async (req, reply) => {
     const { email, code } = parse(z.object({ email: Email, code: z.string().regex(/^\d{4,8}$/) }), req.body);
     const e = normEmail(email);
+    if (!emailAllowed(e)) return reply.code(403).send({ error: "email_domain" });
     if (!(await verifyOtp(db, e, code))) return reply.code(400).send({ error: "otp_invalid" });
     const p = await db.one<{ id: string }>("SELECT id FROM players WHERE email=$1", [e]);
     const role = await adminRole(db, e);
@@ -225,8 +226,9 @@ export async function playerRoutes(app: FastifyInstance, db: Db) {
     const chance = r.active ? r.chancesUsed : r.chancesUsed + 1;
     const vars = { name: firstName(player!.name), chance, best_score: r.best ?? 0 };
     const lines = [];
-    if (key === "primary") lines.push(say("primary.pre_round.typing_only_notice", vars));
-    lines.push(say(`${key}.pre_round.${r.best === null ? "first_chance" : "retry"}`, vars));
+    const moment = r.best === null || chance <= 1 ? "first_chance" : chance === 2 ? "retry" : r.titleEarned ? "retry_last_won" : "retry_last";
+    lines.push(say(`${key}.pre_round.${moment}`, vars) ?? say(`${key}.pre_round.retry`, vars));
+    if (moment === "first_chance") lines.push(say(`${key}.pre_round.encourage`, vars));
     const tips = allLines().filter((l) => l.id.startsWith(`${key}.pre_round.tip.`));
     if (tips.length) lines.push(say(tips[(chance - 1) % tips.length].id, vars));
     const round = roundOf(config(), key);

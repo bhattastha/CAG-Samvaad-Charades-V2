@@ -15,6 +15,8 @@ import { ObBackdrop, TranslitExplainer, ladderOf } from "../components/Onboardin
 import { TranslationEditor, type EditorHandle } from "../editor/TranslationEditor";
 import { VoiceTyping } from "../editor/voice";
 import { Icon } from "../components/Icon";
+import { Briefing } from "../components/Briefing";
+import { announce, type Line } from "../lib/voice";
 
 interface StepDef { title: string; short: string; sub: string }
 interface Spoken { id: string; en: string; hi: string }
@@ -421,14 +423,38 @@ export function HowToPlay() {
   const steps = tList<StepDef>("ob.train.steps");
   const [i, setI] = useState(0);
   const [tool, setTool] = useState<Tool>("roman");
-  const go = (n: number) => { setI(n); sfx("whoosh"); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  const { data: lines } = useLines("before_game");
+  const byId = (id: string) => lines?.find((l) => l.id === id) ?? null;
+  const briefing = (lines ?? []).filter((l) => l.id.startsWith("before_game.briefing.")).sort((a, b) => a.id.localeCompare(b.id));
+  const [briefOpen, setBriefOpen] = useState(false);
+  useEffect(() => {
+    if (!briefing.length) return;
+    try { if (localStorage.getItem("hc.briefing.v1") !== "1") { localStorage.setItem("hc.briefing.v1", "1"); setBriefOpen(true); } } catch { /* ignore */ }
+  }, [briefing.length]);
+  // Sahayika's training lines (script M, S, T): one on each step, one per toolkit tab, a nudge after 20 s idle
+  const STEP_LINE = ["m01", "s01", "t01", "t07"];
+  const TOOL_LINE: Record<string, string> = { roman: "t02", glossary: "t04", voice: "t05" };
+  const [coach, setCoach] = useState<Line | null>(null);
+  const sayT = (k: string) => { const l = byId(`before_game.training.${k}`); if (l) { setCoach(l); announce(l); } };
+  useEffect(() => {
+    if (briefOpen) return;
+    sayT(STEP_LINE[i]);
+    const idle = i === 0 ? "m04" : i === 2 ? "t06" : null;
+    const tm = idle ? window.setTimeout(() => sayT(idle), 20_000) : 0;
+    return () => window.clearTimeout(tm);
+  }, [i, lines, briefOpen]);
+  useEffect(() => { if (i === 2 && TOOL_LINE[tool]) sayT(TOOL_LINE[tool]); }, [tool]);
+  const go = (n: number) => { if (n > i) sayT(["m06", "s08", "t07"][i] ?? STEP_LINE[n]); setI(n); sfx("whoosh"); window.scrollTo({ top: 0, behavior: "smooth" }); };
   const last = i === steps.length - 1;
   return (
     <ObBackdrop>
       <Header />
       <Page>
         <PageTitle kicker={`${t("ob.train.kicker")} · ${t("ob.train.stepOf", { n: i + 1, total: steps.length })}`} hi={steps[i]?.title ?? ""} en={steps[i]?.sub}
-          right={<button className="inline-flex items-center gap-1 text-muted font-semibold hover:text-navy" onClick={() => nav("/rules")}>{t("ob.train.skip")} <Icon name="chevronRight" size={16} /></button>} />
+          right={<span className="inline-flex items-center gap-4">
+            {briefing.length > 0 && <button data-testid="hear-briefing-btn" className="inline-flex items-center gap-1 text-primary-strong font-semibold hover:underline" onClick={() => setBriefOpen(true)}><Icon name="volume" size={16} /> {t("ob.briefing.hear")}</button>}
+            <button className="inline-flex items-center gap-1 text-muted font-semibold hover:text-navy" onMouseEnter={() => sayT("m05")} onClick={() => nav("/rules")}>{t("ob.train.skip")} <Icon name="chevronRight" size={16} /></button>
+          </span>} />
         <div className="grid lg:grid-cols-[1.4fr_1fr] gap-6 items-start">
           <div className="card p-5 sm:p-7 overflow-hidden">
             <div className="flex gap-2 mb-5" role="tablist" aria-label={t("ob.train.kicker")}>
@@ -450,7 +476,8 @@ export function HowToPlay() {
                 : <GameButton onClick={() => go(i + 1)}>{t("common.next")} <Icon name="arrowRight" size={18} /></GameButton>}
             </div>
           </div>
-          <div className="lg:sticky lg:top-24">
+          <div className="lg:sticky lg:top-24 space-y-4">
+            {coach && <SahayakGuide lines={[coach]} figure={false} />}
             <AnimatePresence mode="wait">
               <motion.div key={i} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
                 <ContextPanel i={i} cfg={cfg} tool={tool} />
@@ -459,6 +486,7 @@ export function HowToPlay() {
           </div>
         </div>
       </Page>
+      <Briefing lines={briefing} open={briefOpen} onClose={() => setBriefOpen(false)} />
     </ObBackdrop>
   );
 }

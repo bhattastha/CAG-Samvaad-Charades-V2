@@ -19,11 +19,11 @@ const set = (s: Partial<VoiceState>) => useVoice.setState(s);
 
 function pickVoice(): SpeechSynthesisVoice | undefined {
   const vs = window.speechSynthesis?.getVoices() ?? [];
-  // Sahayak is a male guide: prefer a male English voice (Indian English first), then any English voice
-  const male = /\bmale\b|rishi|ravi|hemant|prabhat|aaron|daniel|alex|fred|oliver|arthur|google uk english male/i;
-  const notMale = /female/i;
-  return vs.find((v) => v.lang === "en-IN" && male.test(v.name) && !notMale.test(v.name))
-    ?? vs.find((v) => v.lang.startsWith("en") && male.test(v.name) && !notMale.test(v.name))
+  // Sahayika is a female guide: prefer a warm female English voice (Indian English first), then any English voice
+  const female = /\bfemale\b|heera|neerja|kalpana|veena|lekha|aditi|raveena|samantha|karen|moira|tessa|serena|victoria|zira|google uk english female|google us english/i;
+  const notFemale = /\bmale\b/i;
+  return vs.find((v) => v.lang === "en-IN" && female.test(v.name) && !notFemale.test(v.name))
+    ?? vs.find((v) => v.lang.startsWith("en") && female.test(v.name) && !notFemale.test(v.name))
     ?? vs.find((v) => v.lang === "en-IN")
     ?? vs.find((v) => v.lang.startsWith("en"));
 }
@@ -34,7 +34,7 @@ function speakSynth(line: Line) {
   s.cancel();
   const u = new SpeechSynthesisUtterance(line.en);
   u.lang = "en-IN";
-  u.pitch = 1.15;
+  u.pitch = 1.05;
   u.volume = Math.max(0.2, usePrefs.getState().volume);
   const v = pickVoice();
   if (v) u.voice = v;

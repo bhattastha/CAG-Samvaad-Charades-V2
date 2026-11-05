@@ -3,10 +3,11 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../lib/api";
-import { useConfig } from "../lib/queries";
+import { useConfig, useLines } from "../lib/queries";
+import { fill } from "@hc/shared";
 import { sfx } from "../lib/sfx";
 import { lineText, t } from "../lib/strings";
-import type { Line } from "../lib/voice";
+import { announce, type Line } from "../lib/voice";
 import { Coin, Header, Page, PageTitle, ProgressBar, Spinner, Stars } from "../components/Layout";
 import { SahayikaLine, SahayikaPanel } from "../components/Sahayika";
 import { Ambient, Burst, CountUp, GameButton, Medal, Stamp } from "../components/Juice";
@@ -93,6 +94,11 @@ export function Report() {
   const nav = useNavigate();
   const { data: cfg } = useConfig();
   const { data: r } = useQuery({ queryKey: ["report", id], queryFn: () => api<ReportData>(`/attempts/${id}/report`) });
+  const { data: roundLines } = useLines(r?.roundKey ?? "trial");
+  const sayBtn = (moment: string, vars: Record<string, string | number> = {}) => {
+    const l = roundLines?.find((x) => x.id === `${r?.roundKey}.report_card.${moment}`);
+    if (l) announce({ ...l, en: fill(l.en, vars), hi: fill(l.hi, vars) });
+  };
   // the mission-complete sequence plays once per attempt (not again on Back / refresh)
   const seenKey = `hc.fx.${id}`;
   const seen = (() => { try { return sessionStorage.getItem(seenKey) === "1"; } catch { return false; } })();
@@ -195,14 +201,14 @@ export function Report() {
               {r.after.map((l) => <div key={l.id} className="text-[0.95rem] text-muted flex items-start gap-2"><Icon name="info" size={16} className="mt-0.5 text-navy-600" /> {lineText(l)}</div>)}
             </div>
             <div className="mt-5 flex flex-wrap items-center gap-3">
-              <Link to={`/review/${r.attemptId}`} className="inline-flex items-center gap-1.5 text-navy-600 font-semibold hover:underline"><Icon name="search" size={16} /> {t("reportCard.reviewOwn")}</Link>
+              <Link to={`/review/${r.attemptId}`} onClick={() => sayBtn("btn_review")} data-testid="report-review-link" className="inline-flex items-center gap-1.5 text-navy-600 font-semibold hover:underline"><Icon name="search" size={16} /> {t("reportCard.reviewOwn")}</Link>
               <Link to="/journey" className="inline-flex items-center gap-1.5 text-muted font-semibold hover:underline"><Icon name="map" size={16} /> {t("reportCard.map")}</Link>
               <span className="flex-1" />
               {r.chancesLeft > 0 && (r.roundKey === "trial" && r.trialGated
-                ? <GameButton onClick={() => nav("/play/trial")}><Icon name="replay" size={18} /> {t("reportCard.retryTrial", { n: r.chancesLeft })}</GameButton>
-                : <GameButton variant="ghost" onClick={() => nav(`/play/${r.roundKey}`)}><Icon name="replay" size={18} /> {t("reportCard.replay", { n: r.chancesLeft })}</GameButton>)}
+                ? <GameButton onClick={() => { sayBtn("btn_retry", { next_chance: r.chanceNo + 1 }); nav("/play/trial"); }}><Icon name="replay" size={18} /> {t("reportCard.retryTrial", { n: r.chancesLeft })}</GameButton>
+                : <GameButton variant="ghost" onClick={() => { sayBtn("btn_retry", { next_chance: r.chanceNo + 1 }); nav(`/play/${r.roundKey}`); }}><Icon name="replay" size={18} /> {t("reportCard.replay", { n: r.chancesLeft })}</GameButton>)}
               {r.trialGated ? null
-                : next ? <GameButton sound="whoosh" onClick={() => nav(`/play/${next.key}`)}>{noArrow(t("reportCard.nextRound", { roundName: `${next.nameEn} Round` }))} <Icon name="arrowRight" size={18} /></GameButton>
+                : next ? <GameButton sound="whoosh" onClick={() => { sayBtn("btn_next", { next_level: next.nameEn }); nav(`/play/${next.key}`); }}>{noArrow(t("reportCard.nextRound", { roundName: `${next.nameEn} Round` }))} <Icon name="arrowRight" size={18} /></GameButton>
                   : <GameButton sound="fanfare" onClick={() => nav("/total")}><Icon name="trophy" size={18} /> {noArrow(t("reportCard.totalScore"))}</GameButton>}
             </div>
           </motion.section>

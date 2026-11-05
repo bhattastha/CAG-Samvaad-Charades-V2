@@ -5,7 +5,8 @@ import { scriptLine, useConfig, useLines, useProgress } from "../lib/queries";
 import { sfx } from "../lib/sfx";
 import { usePrefs } from "../lib/store";
 import { t, tList } from "../lib/strings";
-import { stop, toggle, useVoice, type Line } from "../lib/voice";
+import { announce, stop, toggle, useVoice, type Line } from "../lib/voice";
+import { fill } from "@hc/shared";
 import { Icon } from "../components/Icon";
 import { useSettingsOpen } from "../components/Settings";
 import { JourneyPath, stageStates, type StageState } from "./landing/JourneyPath";
@@ -45,19 +46,19 @@ function LandingHeader({ signedIn }: { signedIn: boolean }) {
   );
 }
 
-/** Sahayak's speech panel, with a play control and a live waveform while the voice plays. */
-function SahayakSpeech() {
+/** Sahayika's speech panel, with a play control and a live waveform while the voice plays. */
+function SahayakSpeech({ say }: { say: Line | null }) {
   const st = useVoice();
   const { data: lines } = useLines("landing");
-  const body = scriptLine(lines, "landing.screen.welcome", t("landing.speech")); // edited in the manager console
-  const line: Line = useMemo(() => ({ id: "landing.welcome", en: `${t("landing.greeting")} ${body.en}`, hi: "", spoken: true }), [body.en]);
+  const body = say ?? scriptLine(lines, "landing.screen.welcome", t("landing.speech")); // edited in the manager console
+  const line: Line = useMemo(() => (say ? say : { id: "landing.welcome", en: `${t("landing.greeting")} ${body.en}`, hi: "", spoken: true }), [body.en, say]);
   const playing = st.line?.id === line.id && st.status === "playing";
   return (
     <motion.div initial={{ opacity: 0, scale: 0.9, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ type: "spring", stiffness: 180, damping: 18, delay: 0.9 }}
       className="relative w-[158px] min-[400px]:w-[170px] sm:w-[260px] rounded-2xl bg-white/95 p-3 sm:p-4 shadow-2xl shadow-black/30 text-[#0F2D5B]" role="note">
             <span className="absolute -left-2 top-9 w-4 h-4 rotate-45 bg-white/95" aria-hidden />
       <p className="text-[18px] sm:text-[22px] font-extrabold leading-tight whitespace-pre-line">
-        {t("landing.greeting").split(/(Sahayak\.?)/).map((part, i) => part.startsWith("Sahayak") ? <span key={i} className="text-[#E8590C]">{part}</span> : <span key={i}>{part.replace("! ", "!\n")}</span>)}
+        {t("landing.greeting").split(/(Sahayika\.?)/).map((part, i) => part.startsWith("Sahayika") ? <span key={i} className="text-[#E8590C]">{part}</span> : <span key={i}>{part.replace("! ", "!\n")}</span>)}
       </p>
       <button onClick={() => { sfx("tap"); toggle(line); }} aria-pressed={playing} aria-label={t("landing.listen")}
         className="mt-2 inline-flex items-center gap-2 rounded-full bg-[#FFF3EB] pl-1 pr-3 py-1 text-[13px] font-semibold text-[#C2410C] hover:bg-orange-100 transition">
@@ -71,7 +72,7 @@ function SahayakSpeech() {
         </span>
         <span className="sr-only">{t("landing.listen")}</span>
       </button>
-      <p className="mt-2 text-[13px] sm:text-[15px] leading-snug text-[#1F3B66]">{body.en}</p>
+      <p className="mt-2 text-[13px] sm:text-[15px] leading-snug text-[#1F3B66]" data-testid="landing-sahayika-line">{body.en}</p>
     </motion.div>
   );
 }
@@ -124,8 +125,26 @@ export function Title() {
   const prefReduce = usePrefs((s) => s.reduceMotion);
   const [reduce] = useState(() => reducedMotion() || prefReduce);
   const signedIn = !!data?.registered;
+  // Sahayika's home-screen lines (script H-02 … H-09, J-01)
+  const { data: homeLines } = useLines("landing");
+  const { data: endLines } = useLines("end");
+  const [say, setSay] = useState<Line | null>(null);
+  const sayId = (id: string, vars: Record<string, string | number> = {}) => {
+    const l = [...(homeLines ?? []), ...(endLines ?? [])].find((x) => x.id === id);
+    if (!l) return;
+    const filled = { ...l, en: fill(l.en, vars), hi: fill(l.hi, vars) };
+    setSay(filled); announce(filled);
+  };
+  useEffect(() => {
+    if (!homeLines) return;
+    const nextKey = data?.summary?.nextRound;
+    if (signedIn && nextKey && endLines) sayId("end.journey.welcome_back", { next_level: cfg?.rounds.find((r) => r.key === nextKey)?.nameEn ?? "" });
+    const tm = window.setTimeout(() => sayId("landing.screen.idle"), 15_000);
+    return () => window.clearTimeout(tm);
+  }, [homeLines, endLines, signedIn]);
   const start = () => {
     unlock(); // first tap: sound may play from now on (§15.9)
+    if (!signedIn) sayId("landing.screen.start");
     setTimeout(() => sfx("go"), 30);
     nav(signedIn ? routeFor(data!) : "/register");
   };
@@ -187,16 +206,17 @@ export function Title() {
             <GlyphTiles />
             <motion.div className="relative z-[1] shrink-0 lg:-ml-[12%] xl:-ml-[8%]"
               initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.2, 0.8, 0.2, 1], delay: 0.3 }}>
-              <img src={`${A}/sahayak-half.webp`} alt="Sahayak, the game companion, welcoming you" width={820} height={877}
+              <img src={`${A}/sahayak-half.webp`} alt="Sahayika, the game companion, welcoming you" width={820} height={877}
                 className="h-[200px] min-[400px]:h-[220px] sm:h-[380px] lg:h-[min(62vh,570px)] w-auto drop-shadow-[0_24px_40px_rgba(0,0,0,.5)] lp-breathe" />
             </motion.div>
-            <div className="relative z-10 self-start mt-4 lg:mt-0 lg:absolute lg:left-[54%] xl:left-[52%] lg:top-[2%]"><SahayakSpeech /></div>
+            <div className="relative z-10 self-start mt-4 lg:mt-0 lg:absolute lg:left-[54%] xl:left-[52%] lg:top-[2%]"><SahayakSpeech say={say} /></div>
           </div>
         </div>
 
         {/* journey */}
         <div className="relative z-10 mx-auto w-full max-w-[1440px] px-4 sm:px-8 pb-6 lp-journey pointer-events-none [&_button]:pointer-events-auto">
-          {cfg && <JourneyPath cfg={cfg} states={states} next={signedIn ? data?.summary?.nextRound ?? null : "trial"} onStage={openStage} />}
+          {cfg && <JourneyPath cfg={cfg} states={states} next={signedIn ? data?.summary?.nextRound ?? null : "trial"} onStage={openStage}
+            onSay={(k) => sayId(k === "locked" ? "landing.screen.locked" : `landing.hover.${k}`)} />}
         </div>
       </section>
 

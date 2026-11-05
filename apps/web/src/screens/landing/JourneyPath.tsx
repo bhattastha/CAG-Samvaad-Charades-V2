@@ -142,9 +142,9 @@ const WAYPOINTS = [{ x: 200, y: 100 }, { x: 400, y: 100 }, { x: 600, y: 100 }, {
 const CARD_TOP = 44; // the wave crosses each card at its emblem // the anchor dot sits this far down the card (on the emblem's horizon)
 
 /** Desktop: five level cards seated on the flowing golden wave. Tablet/phone: the same cards on a vertical trail. */
-export function JourneyPath({ cfg, states, next, onStage }: { cfg: PublicConfig; states: Record<string, StageState>; next: string | null; onStage(key: string, state: StageState): void }) {
+export function JourneyPath({ cfg, states, next, onStage, onSay }: { cfg: PublicConfig; states: Record<string, StageState>; next: string | null; onStage(key: string, state: StageState): void; onSay?(key: string): void }) {
   const press = (k: string) => {
-    if (states[k] === "locked") { sfx("error"); return; }
+    if (states[k] === "locked") { sfx("error"); onSay?.("locked"); return; }
     sfx("whoosh");
     onStage(k, states[k]);
   };
@@ -169,7 +169,7 @@ export function JourneyPath({ cfg, states, next, onStage }: { cfg: PublicConfig;
           const p = NODES[i];
           return (
             // positioning on a plain element: a motion transform would replace the -50% centring
-            <div key={r.key} role="listitem" className="absolute w-[17%] max-w-[240px] -translate-x-1/2" style={{ left: `${p.x / 10}%`, top: p.y - CARD_TOP, zIndex: 2 }}>
+            <div key={r.key} role="listitem" onMouseEnter={() => onSay?.(r.key)} data-testid={`stage-${r.key}`} className="absolute w-[17%] max-w-[240px] -translate-x-1/2" style={{ left: `${p.x / 10}%`, top: p.y - CARD_TOP, zIndex: 2 }}>
               <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ type: "spring", stiffness: 140, damping: 16, delay: 0.8 + i * 0.14 }}>
                 <div className="lp-float" style={{ animationDelay: `${i * -0.8}s` }}>
                   <StageCard k={r.key} n={i + 1} title={r.titleEn ?? ""} state={states[r.key]} here={next === r.key} onPress={() => press(r.key)} />

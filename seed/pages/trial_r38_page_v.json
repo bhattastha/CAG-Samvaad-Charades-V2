@@ -1,299 +1,170 @@
 {
- "page_id": "seed-trial-r38-2025-p-v",
- "round": "trial",
- "status": "draft",
- "reference_status": "needs_verification",
- "source": {
-  "report": "Report No. 38 of 2025 (Performance Audit – Commercial), Performance of Blast Furnaces in SAIL",
-  "english_pdf_page": 11,
-  "hindi_pdf_pages": [
-   11,
-   12
+  "page_id": "seed-trial-r38-2025-p-v",
+  "round": "trial",
+  "status": "draft",
+  "reference_status": "needs_verification",
+  "source": {
+    "report": "Report No. 38 of 2025 (Performance Audit – Commercial), Performance of Blast Furnaces in SAIL",
+    "english_pdf_page": 11,
+    "hindi_pdf_pages": [
+      11,
+      12
+    ],
+    "printed_page": "v",
+    "sector_hidden_from_player": "commercial"
+  },
+  "notes": "Reference Hindi was OCR'd (Tesseract hin, 300 dpi) from the published Hindi PDF, numbers repaired against the English, and lightly cleaned by hand. A game manager must verify every segment against the printed Hindi before the page is published. Passage is 16 sentences (target in concept note: about 300 words / 20 sentences). Glossary terms were picked by hand from auto-suggested matches; each one's Hindi appears in the reference. Trimmed to ~200 words (CR v1.0, Phase 3).",
+  "segments": [
+    {
+      "segment_id": "s01",
+      "part": "body",
+      "paragraph": 1,
+      "en": "Steel Authority of India Limited (SAIL), a Maharatna Company under the Ministry of Steel, is one of the leading steel producing companies in India.",
+      "hi_reference": "इस्पात मंत्रालय के अंतर्गत महारत्न कंपनी स्टील अथॉरिटी ऑफ इंडिया लिमिटेड (सेल) भारत की अग्रणी इस्पात उत्पादक कंपनियों में से एक है।",
+      "bhashini_draft": null,
+      "locked_tokens": []
+    },
+    {
+      "segment_id": "s02",
+      "part": "body",
+      "paragraph": 1,
+      "en": "It has five integrated Steel Plants at Bhilai, Bokaro, Rourkela, Durgapur, and Burnpur; three special steel plants at Durgapur, Salem and Bhadravati, and a Ferro Alloy Plant at Chandrapur.",
+      "hi_reference": "इसके भिलाई, बोकारो, राउरकेला, दुर्गापुर और बर्नपुर में पांच एकीकृत इस्पात संयंत्र हैं; दुर्गापुर, सेलम और भद्रावती में तीन विशेष इस्पात संयंत्र और चंद्रपुर में एक फेरो अलॉय धातु संयंत्र है।",
+      "bhashini_draft": null,
+      "locked_tokens": []
+    },
+    {
+      "segment_id": "s03",
+      "part": "body",
+      "paragraph": 1,
+      "en": "The Company has captive mines for iron ore, limestone, dolomite and coal.",
+      "hi_reference": "कंपनी के पास लौह अयस्क, चूना पत्थर, डोलोमाइट और कोयले के लिए निजी खदानें हैं।",
+      "bhashini_draft": null,
+      "locked_tokens": []
+    },
+    {
+      "segment_id": "s04",
+      "part": "body",
+      "paragraph": 1,
+      "en": "The marketing of SAIL products is administered from the Company’s Central Marketing Organisation, Kolkata.",
+      "hi_reference": "सेल उत्पादों का विपणन कंपनी के केंद्रीय विपणन संगठन, कोलकाता से संचालित होता है।",
+      "bhashini_draft": null,
+      "locked_tokens": []
+    },
+    {
+      "segment_id": "s05",
+      "part": "body",
+      "paragraph": 1,
+      "en": "SAIL produced 18.73 million tonne, 19.41 million tonne and 20.50 million tonne of hot metal in 2021-22, 2022-23 and 2023-24 respectively.",
+      "hi_reference": "सेल ने 2021-22, 2022-23 और 2023-24 में क्रमशः 18.73 मिलियन टन, 19.41 मिलियन टन और 20.50 मिलियन टन तप्त धातु का उत्पादन किया।",
+      "bhashini_draft": null,
+      "locked_tokens": [
+        "18.73",
+        "19.41",
+        "20.50",
+        "2021-22",
+        "2022-23",
+        "2023-24"
+      ]
+    },
+    {
+      "segment_id": "s11",
+      "part": "body",
+      "paragraph": 3,
+      "en": "The Blast Furnace is the key unit of a steel plant, producing hot metal, the primary raw material for steel making.",
+      "hi_reference": "ब्लास्ट फर्नेस, इस्पात संयंत्र की प्रमुख इकाई है, जो तप्त धातु का उत्पादन करती है, जो इस्पात निर्माण के लिए प्राथमिक कच्चा माल है।",
+      "bhashini_draft": null,
+      "locked_tokens": []
+    },
+    {
+      "segment_id": "s12",
+      "part": "body",
+      "paragraph": 3,
+      "en": "It is a vertical shaft furnace, in which solid raw materials like Iron ore, Sinter, Pellet, Linz-Donawitz (LD) slag, Quartzite and fuel like Coke are charged from top of the furnace and hot blast and Coal Dust Injection are blown from the tuyeres.",
+      "hi_reference": "यह एक ऊर्ध्वाधर शाफ्ट भट्ठी है, जिसमें लौह अयस्क, सिंटर, पेलेट, लिंज़-डोनाविट्ज़ (एलडी) स्लैग, क्वार्टजाइट जैसे ठोस कच्चे माल और कोक जैसे ईंधन को भट्ठी के ऊपर से आवेशित किया जाता है और ट्यूयर्स से गर्म विस्फोट और कोयला डस्ट इंजेक्शन उड़ाया जाता है।",
+      "bhashini_draft": null,
+      "locked_tokens": []
+    },
+    {
+      "segment_id": "s14",
+      "part": "body",
+      "paragraph": 3,
+      "en": "The hot metal is sent to the Steel Melting Shop for crude steel production, which is cast into billets, blooms, or slabs.",
+      "hi_reference": "तप्त धातु को क्रुड स्टील के उत्पादन के लिए स्टील मेल्टिंग शॉप में भेजा जाता है, जहां से बिलेट, ब्लूम या स्लैब बनाये जाते हैं।",
+      "bhashini_draft": null,
+      "locked_tokens": []
+    },
+    {
+      "segment_id": "s16",
+      "part": "body",
+      "paragraph": 3,
+      "en": "Performance of the Blast Furnace is critical to the entire steelmaking process.",
+      "hi_reference": "ब्लास्ट फर्नेस का निष्पादन सम्पूर्ण इस्पात निर्माण प्रक्रिया के लिए महत्त्वपूर्ण है।",
+      "bhashini_draft": null,
+      "locked_tokens": []
+    }
   ],
-  "printed_page": "v",
-  "sector_hidden_from_player": "commercial"
- },
- "notes": "Reference Hindi was OCR'd (Tesseract hin, 300 dpi) from the published Hindi PDF, numbers repaired against the English, and lightly cleaned by hand. A game manager must verify every segment against the printed Hindi before the page is published. Passage is 16 sentences (target in concept note: about 300 words / 20 sentences). Glossary terms were picked by hand from auto-suggested matches; each one's Hindi appears in the reference.",
- "segments": [
-  {
-   "segment_id": "s01",
-   "part": "body",
-   "paragraph": 1,
-   "en": "Steel Authority of India Limited (SAIL), a Maharatna Company under the Ministry of Steel, is one of the leading steel producing companies in India.",
-   "hi_reference": "इस्पात मंत्रालय के अंतर्गत महारत्न कंपनी स्टील अथॉरिटी ऑफ इंडिया लिमिटेड (सेल) भारत की अग्रणी इस्पात उत्पादक कंपनियों में से एक है।",
-   "bhashini_draft": null,
-   "locked_tokens": []
-  },
-  {
-   "segment_id": "s02",
-   "part": "body",
-   "paragraph": 1,
-   "en": "It has five integrated Steel Plants at Bhilai, Bokaro, Rourkela, Durgapur, and Burnpur; three special steel plants at Durgapur, Salem and Bhadravati, and a Ferro Alloy Plant at Chandrapur.",
-   "hi_reference": "इसके भिलाई, बोकारो, राउरकेला, दुर्गापुर और बर्नपुर में पांच एकीकृत इस्पात संयंत्र हैं; दुर्गापुर, सेलम और भद्रावती में तीन विशेष इस्पात संयंत्र और चंद्रपुर में एक फेरो अलॉय धातु संयंत्र है।",
-   "bhashini_draft": null,
-   "locked_tokens": []
-  },
-  {
-   "segment_id": "s03",
-   "part": "body",
-   "paragraph": 1,
-   "en": "The Company has captive mines for iron ore, limestone, dolomite and coal.",
-   "hi_reference": "कंपनी के पास लौह अयस्क, चूना पत्थर, डोलोमाइट और कोयले के लिए निजी खदानें हैं।",
-   "bhashini_draft": null,
-   "locked_tokens": []
-  },
-  {
-   "segment_id": "s04",
-   "part": "body",
-   "paragraph": 1,
-   "en": "The marketing of SAIL products is administered from the Company’s Central Marketing Organisation, Kolkata.",
-   "hi_reference": "सेल उत्पादों का विपणन कंपनी के केंद्रीय विपणन संगठन, कोलकाता से संचालित होता है।",
-   "bhashini_draft": null,
-   "locked_tokens": []
-  },
-  {
-   "segment_id": "s05",
-   "part": "body",
-   "paragraph": 1,
-   "en": "SAIL produced 18.73 million tonne, 19.41 million tonne and 20.50 million tonne of hot metal in 2021-22, 2022-23 and 2023-24 respectively.",
-   "hi_reference": "सेल ने 2021-22, 2022-23 और 2023-24 में क्रमशः 18.73 मिलियन टन, 19.41 मिलियन टन और 20.50 मिलियन टन तप्त धातु का उत्पादन किया।",
-   "bhashini_draft": null,
-   "locked_tokens": [
-    "18.73",
-    "19.41",
-    "20.50",
-    "2021-22",
-    "2022-23",
-    "2023-24"
-   ]
-  },
-  {
-   "segment_id": "s06",
-   "part": "body",
-   "paragraph": 2,
-   "en": "The National Steel Policy, 2017 envisioned raising India’s crude steel production capacity to 300 million tonnes and increasing per capita consumption of finished steel from 61 kg to 158 kg by 2030-31.",
-   "hi_reference": "राष्ट्रीय इस्पात नीति, 2017 में भारत की क्रुड स्टील उत्पादन क्षमता को 300 मिलियन टन तक बढ़ाने और 2030-31 तक तैयार इस्पात की प्रति व्यक्ति खपत को 61 किलोग्राम से बढ़ाकर 158 किलोग्राम करने की परिकल्पना की गई है।",
-   "bhashini_draft": null,
-   "locked_tokens": [
-    "2017",
-    "300",
-    "61",
-    "158",
-    "2030-31"
-   ]
-  },
-  {
-   "segment_id": "s07",
-   "part": "body",
-   "paragraph": 2,
-   "en": "In line with this vision, SAIL aimed production of 35.80 million tonne of crude steel by 2025-26 (Phase I) and 49.6 million tonne by 2030-31 (Phase II) to secure at least 20 per cent of the emerging demand.",
-   "hi_reference": "इस परिकल्पना के अनुरूप, सेल ने 2025-26 तक (चरण I) 35.80 मिलियन टन क्रुड स्टील का उत्पादन करने और 2030-31 तक (चरण II) 49.6 मिलियन टन क्रुड स्टील का उत्पादन करने का लक्ष्य रखा है ताकि उभरती मांग का कम से कम 20 प्रतिशत सुनिश्चित किया जा सके।",
-   "bhashini_draft": null,
-   "locked_tokens": [
-    "35.80",
-    "2025-26",
-    "49.6",
-    "2030-31",
-    "20"
-   ]
-  },
-  {
-   "segment_id": "s08",
-   "part": "body",
-   "paragraph": 2,
-   "en": "The Phase I expansion target was revised to around 35.6 million tonne by 2030-31 on the advice of a consultant (December 2022).",
-   "hi_reference": "एक परामर्शदाता की सलाह पर (दिसंबर 2022) चरण-I विस्तार लक्ष्य को 2030-31 तक संशोधित कर लगभग 35.6 मिलियन टन कर दिया गया।",
-   "bhashini_draft": null,
-   "locked_tokens": [
-    "35.6",
-    "2030-31",
-    "2022"
-   ]
-  },
-  {
-   "segment_id": "s09",
-   "part": "body",
-   "paragraph": 2,
-   "en": "Earlier, under its 2008 Modernization and Expansion Plan (MEP), SAIL had aimed to raise hot metal capacity from 13.83 million tonne per annum to 23.46 million tonne per annum by 2010.",
-   "hi_reference": "इससे पहले, 2008 की आधुनिकीकरण एवं विस्तार योजना (एमईपी) के अंतर्गत, सेल ने 2010 तक तप्त धातु क्षमता को 13.83 मिलियन टन प्रति वर्ष से बढ़ाकर 23.46 मिलियन टन प्रति वर्ष करने का लक्ष्य रखा था।",
-   "bhashini_draft": null,
-   "locked_tokens": [
-    "2008",
-    "13.83",
-    "23.46",
-    "2010"
-   ]
-  },
-  {
-   "segment_id": "s10",
-   "part": "body",
-   "paragraph": 2,
-   "en": "The company fell short of this target and could achieve 23.07 million tonne (2024).",
-   "hi_reference": "कंपनी इस लक्ष्य से पीछे रह गई और 23.07 मिलियन टन (2024) ही हासिल कर सकी।",
-   "bhashini_draft": null,
-   "locked_tokens": [
-    "23.07",
-    "2024"
-   ]
-  },
-  {
-   "segment_id": "s11",
-   "part": "body",
-   "paragraph": 3,
-   "en": "The Blast Furnace is the key unit of a steel plant, producing hot metal, the primary raw material for steel making.",
-   "hi_reference": "ब्लास्ट फर्नेस, इस्पात संयंत्र की प्रमुख इकाई है, जो तप्त धातु का उत्पादन करती है, जो इस्पात निर्माण के लिए प्राथमिक कच्चा माल है।",
-   "bhashini_draft": null,
-   "locked_tokens": []
-  },
-  {
-   "segment_id": "s12",
-   "part": "body",
-   "paragraph": 3,
-   "en": "It is a vertical shaft furnace, in which solid raw materials like Iron ore, Sinter, Pellet, Linz-Donawitz (LD) slag, Quartzite and fuel like Coke are charged from top of the furnace and hot blast and Coal Dust Injection are blown from the tuyeres.",
-   "hi_reference": "यह एक ऊर्ध्वाधर शाफ्ट भट्ठी है, जिसमें लौह अयस्क, सिंटर, पेलेट, लिंज़-डोनाविट्ज़ (एलडी) स्लैग, क्वार्टजाइट जैसे ठोस कच्चे माल और कोक जैसे ईंधन को भट्ठी के ऊपर से आवेशित किया जाता है और ट्यूयर्स से गर्म विस्फोट और कोयला डस्ट इंजेक्शन उड़ाया जाता है।",
-   "bhashini_draft": null,
-   "locked_tokens": []
-  },
-  {
-   "segment_id": "s13",
-   "part": "body",
-   "paragraph": 3,
-   "en": "The process also requires oxygen, and water for efficient operation.",
-   "hi_reference": "इस प्रक्रिया के कुशल परिचालन के लिए ऑक्सीजन एवं जल की भी आवश्यकता होती है।",
-   "bhashini_draft": null,
-   "locked_tokens": []
-  },
-  {
-   "segment_id": "s14",
-   "part": "body",
-   "paragraph": 3,
-   "en": "The hot metal is sent to the Steel Melting Shop for crude steel production, which is cast into billets, blooms, or slabs.",
-   "hi_reference": "तप्त धातु को क्रुड स्टील के उत्पादन के लिए स्टील मेल्टिंग शॉप में भेजा जाता है, जहां से बिलेट, ब्लूम या स्लैब बनाये जाते हैं।",
-   "bhashini_draft": null,
-   "locked_tokens": []
-  },
-  {
-   "segment_id": "s15",
-   "part": "body",
-   "paragraph": 3,
-   "en": "These are either sold as semi-finished products or rolled into finished goods.",
-   "hi_reference": "इन्हें या तो अर्द्ध-तैयार उत्पाद के रूप में बेचा जाता है या तैयार माल के रूप में बेचा जाता है।",
-   "bhashini_draft": null,
-   "locked_tokens": []
-  },
-  {
-   "segment_id": "s16",
-   "part": "body",
-   "paragraph": 3,
-   "en": "Performance of the Blast Furnace is critical to the entire steelmaking process.",
-   "hi_reference": "ब्लास्ट फर्नेस का निष्पादन सम्पूर्ण इस्पात निर्माण प्रक्रिया के लिए महत्त्वपूर्ण है।",
-   "bhashini_draft": null,
-   "locked_tokens": []
-  }
- ],
- "glossary_terms": [
-  {
-   "english_term": "ministry",
-   "hindi_term": "मंत्रालय",
-   "accepted_variants": [],
-   "avoid_forms": [
-    "मिनिस्ट्री"
-   ]
-  },
-  {
-   "english_term": "Integrated",
-   "hindi_term": "एकीकृत",
-   "accepted_variants": [],
-   "avoid_forms": [
-    "इंटीग्रेटेड"
-   ]
-  },
-  {
-   "english_term": "Iron Ore",
-   "hindi_term": "लौह अयस्क",
-   "accepted_variants": [],
-   "avoid_forms": [
-    "आइरन ओर"
-   ]
-  },
-  {
-   "english_term": "marketing",
-   "hindi_term": "विपणन",
-   "accepted_variants": [],
-   "avoid_forms": [
-    "मार्केटिंग"
-   ]
-  },
-  {
-   "english_term": "respectively",
-   "hindi_term": "क्रमशः",
-   "accepted_variants": [
-    "कमशः"
-   ],
-   "avoid_forms": [
-    "रिस्पेक्टिवली"
-   ]
-  },
-  {
-   "english_term": "national",
-   "hindi_term": "राष्ट्रीय",
-   "accepted_variants": [
-    "राष्ट्रिक"
-   ],
-   "avoid_forms": [
-    "नेशनल"
-   ]
-  },
-  {
-   "english_term": "per annum",
-   "hindi_term": "प्रति वर्ष",
-   "accepted_variants": [],
-   "avoid_forms": [
-    "पर एनम"
-   ]
-  },
-  {
-   "english_term": "expansion",
-   "hindi_term": "विस्तार",
-   "accepted_variants": [],
-   "avoid_forms": [
-    "एक्सपेंशन"
-   ]
-  },
-  {
-   "english_term": "modernization",
-   "hindi_term": "आधुनिकीकरण",
-   "accepted_variants": [],
-   "avoid_forms": [
-    "मॉडर्नाइजेशन"
-   ]
-  },
-  {
-   "english_term": "raw material",
-   "hindi_term": "कच्चा माल",
-   "accepted_variants": [],
-   "avoid_forms": [
-    "राव मटीरियल"
-   ]
-  },
-  {
-   "english_term": "Finished goods",
-   "hindi_term": "तैयार माल",
-   "accepted_variants": [],
-   "avoid_forms": [
-    "फिनिश्ड गुड्स"
-   ]
-  },
-  {
-   "english_term": "performance",
-   "hindi_term": "निष्पादन",
-   "accepted_variants": [
-    "पालन",
-    "प्रदर्शन"
-   ],
-   "avoid_forms": [
-    "परफॉर्मेंस"
-   ]
-  }
- ]
+  "glossary_terms": [
+    {
+      "english_term": "ministry",
+      "hindi_term": "मंत्रालय",
+      "accepted_variants": [],
+      "avoid_forms": [
+        "मिनिस्ट्री"
+      ]
+    },
+    {
+      "english_term": "Integrated",
+      "hindi_term": "एकीकृत",
+      "accepted_variants": [],
+      "avoid_forms": [
+        "इंटीग्रेटेड"
+      ]
+    },
+    {
+      "english_term": "Iron Ore",
+      "hindi_term": "लौह अयस्क",
+      "accepted_variants": [],
+      "avoid_forms": [
+        "आइरन ओर"
+      ]
+    },
+    {
+      "english_term": "marketing",
+      "hindi_term": "विपणन",
+      "accepted_variants": [],
+      "avoid_forms": [
+        "मार्केटिंग"
+      ]
+    },
+    {
+      "english_term": "respectively",
+      "hindi_term": "क्रमशः",
+      "accepted_variants": [
+        "कमशः"
+      ],
+      "avoid_forms": [
+        "रिस्पेक्टिवली"
+      ]
+    },
+    {
+      "english_term": "raw material",
+      "hindi_term": "कच्चा माल",
+      "accepted_variants": [],
+      "avoid_forms": [
+        "राव मटीरियल"
+      ]
+    },
+    {
+      "english_term": "performance",
+      "hindi_term": "निष्पादन",
+      "accepted_variants": [
+        "पालन",
+        "प्रदर्शन"
+      ],
+      "avoid_forms": [
+        "परफॉर्मेंस"
+      ]
+    }
+  ]
 }

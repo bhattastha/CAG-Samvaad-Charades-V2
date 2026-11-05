@@ -1,5 +1,5 @@
 import {
-  checkTerm, containsHindi, fill, formatClock, matchSourceTerms, normalise, scoreAttempt, words,
+  checkTerm, completion, containsHindi, fill, formatClock, matchSourceTerms, normalise, scoreAttempt, words,
   type Answers, type GameConfig, type PageData, type RoundConfig,
 } from "@hc/shared";
 import { line, script, strings } from "../content.js";
@@ -112,12 +112,20 @@ export async function answer(ctx: ChatContext, quick: string | null, question: s
 
   switch (kind) {
     case "refuse": {
+      const s = sayRound(r, "chat.translate_refused");
       const x = strings.sahayikaExtra?.refuseTranslate;
-      return { id: "refuse", spoken: true, en: x.en, hi: x.hi, source: "guard", blocked: true };
+      return { id: "refuse", spoken: true, en: s?.en ?? x.en, hi: s?.hi ?? x.hi, source: "guard", blocked: true };
     }
     case "hint": return ok(hint(ctx));
     case "score": return ok(sayRound(r, "chat.ask_score"));
-    case "time": return ok(sayRound(r, "chat.ask_time", { time_left: formatClock(ctx.timeLeftSeconds ?? 0) }));
+    case "time": {
+      const left = ctx.timeLeftSeconds ?? 0;
+      const c = ctx.page ? completion(ctx.round!, ctx.page, ctx.answers, ctx.config.scoring.minWordsPerSentence) : { done: 0, total: 1 };
+      const usedShare = 1 - left / (ctx.round!.timeLimitMinutes * 60);
+      const behind = c.done / (c.total || 1) < usedShare - 0.1;
+      const vars = { time_left: Math.max(0, Math.ceil(left / 60)), done: c.done, total: c.total };
+      return ok((behind ? sayRound(r, "chat.ask_time_behind", vars) : null) ?? sayRound(r, "chat.ask_time", vars) ?? sayRound(r, "chat.ask_time", { time_left: formatClock(left) }));
+    }
     case "credits": return ok(sayRound(r, "chat.ask_credits", { total_credits: ctx.totalCredits }));
     case "glossary": return ok(sayRound(r, "chat.ask_glossary"));
   }
@@ -126,6 +134,10 @@ export async function answer(ctx: ChatContext, quick: string | null, question: s
   const term = findTerm(question, ctx);
   if (term) {
     return ok(sayRound(r, "chat.ask_term", { en_term: term.en, hi_term: term.hi, wrong_word: term.avoid[0] ?? "—" }));
+  }
+  if (has(q, "hindi for", "hindi of", "in hindi", "meaning of", "का हिंदी", "मतलब")) {
+    const nf = sayRound(r, "chat.term_not_found");
+    if (nf) return ok(nf);
   }
   const f = faqMatch(question, [r, "before_game", "end"]);
   if (f) return { id: "faq", spoken: true, en: f.en, hi: f.hi, source: "faq", blocked: false };

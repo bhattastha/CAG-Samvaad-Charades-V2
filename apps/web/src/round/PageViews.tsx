@@ -1,6 +1,5 @@
-import { Fragment, useEffect, useId, useRef, useState } from "react";
+import { Fragment } from "react";
 import type { Answers, ChartLayout, ClientField, ClientPart, FigureLayout, TableLayout } from "@hc/shared";
-import { Icon } from "../components/Icon";
 import { t } from "../lib/strings";
 import { TranslationEditor, type EditorHandle, type GlossClick, type WatchClick } from "../editor/TranslationEditor";
 import type { GlossForm } from "../editor/extensions";
@@ -229,7 +228,6 @@ export interface DraftProps {
   focusedPart: string | null;
   register(key: FieldKey, h: EditorHandle | null): void;
   onField(partId: string, key: string, v: string): void;
-  onTick(partId: string, done: boolean): void;
   onFocus(partId: string, key: string, editor?: Editor): void;
   onBlocked(kind: string): void;
   onTyping(): void;
@@ -255,7 +253,7 @@ export function FieldEditor({ p, f, d, compact = false, singleLine = false }: { 
       gloss={d.terms ? glossFormsFor(p.id, f.key, d.terms[p.id]?.[f.key]) : undefined}
       onGlossClick={d.onGlossClick ? (g) => d.onGlossClick!(p.id, f.key, g) : undefined}
       locked={f.locked}
-      readOnly={d.readOnly || !!d.answers[p.id]?.done}
+      readOnly={d.readOnly}
       compact={compact}
       singleLine={singleLine}
       watch={d.watch}
@@ -268,28 +266,6 @@ export function FieldEditor({ p, f, d, compact = false, singleLine = false }: { 
       onWatchClick={(w) => d.onWatchClick(p.id, f.key, w)}
       onXlitAccept={d.onXlit}
     />
-  );
-}
-
-/** "Mark as done": a hollow circle that fills green with a drawn check and a tiny +1 when the segment is finished. */
-export function TickButton({ done, disabled, onClick }: { done: boolean; disabled: boolean; onClick(): void }) {
-  const [fx, setFx] = useState(0);
-  const prev = useRef(done);
-  const id = useId();
-  useEffect(() => { if (done && !prev.current) setFx((n) => n + 1); prev.current = done; }, [done]);
-  const help = done ? t("round.doneHelp") : t("round.tickHelp");
-  return (
-    <span className="relative inline-flex">
-      <button type="button" onClick={onClick} disabled={disabled} aria-pressed={done} aria-describedby={id} title={help}
-        className={`hc-tick ${done ? "is-done" : ""}`}>
-        <span className="hc-tick-circle" aria-hidden>
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path className="hc-tick-path" d="M5 12.5l4.5 4.5L19 7" /></svg>
-        </span>
-        <span>{done ? t("round.partDone") : t("round.tick")}</span>
-      </button>
-      <span id={id} className="sr-only">{help}</span>
-      {fx > 0 && done && <span key={fx} className="hc-plus1" aria-hidden>{t("round.plus1")}</span>}
-    </span>
   );
 }
 
@@ -322,6 +298,7 @@ export function PartEditorBody({ p, d }: { p: ClientPart; d: DraftProps }) {
     return (
       <div className="space-y-2">
         {L.title && f(L.title) && <div className="font-semibold"><FieldEditor p={p} f={f(L.title)!} d={d} compact /></div>}
+        <FigureImage L={L} />
         {L.labels.length > 0 && (
           <div className="grid sm:grid-cols-2 gap-2">
             {L.labels.map((k) => f(k) && (
@@ -358,73 +335,13 @@ export function PartEditorBody({ p, d }: { p: ClientPart; d: DraftProps }) {
   return <div className={cls}>{p.fields[0] && <FieldEditor p={p} f={p.fields[0]} d={d} compact={["header", "footer", "footnote"].includes(p.type)} />}</div>;
 }
 
+/** Read-only stack of the Hindi parts (manager console preview). */
 export function DraftPanel(d: DraftProps) {
   return (
     <div className="space-y-3">
-      {d.parts.map((p) => {
-        if (!p.editable) {
-          return <div key={p.id} className="text-right text-[12.5px] text-muted en">{p.fields[0]?.en}</div>;
-        }
-        const done = !!d.answers[p.id]?.done;
-        const linked = d.focusedPart === p.id;
-        const f = (k?: string) => p.fields.find((x) => x.key === k);
-        const head = (
-          <div className="flex items-center justify-between gap-2 mb-1">
-            <span className="text-[11px] font-bold tracking-wide text-muted">{t(`round.partTypes.${p.type}`)}</span>
-            <div className="flex items-center gap-2">
-              {!done && <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-[12px] font-semibold text-muted">{t("round.partIncomplete")}</span>}
-              {!d.readOnly && <TickButton done={done} disabled={false} onClick={() => d.onTick(p.id, !done)} />}
-            </div>
-          </div>
-        );
-        let body: React.ReactNode;
-        if (p.type === "table") {
-          const L = p.layout as TableLayout;
-          body = (
-            <div>
-              {L.title && f(L.title) && <div className="font-semibold mb-1.5"><FieldEditor p={p} f={f(L.title)!} d={d} compact singleLine /></div>}
-              <div className="overflow-x-auto rounded-lg border border-gray-200">
-                <table className="w-full text-[14px] border-collapse">
-                  <tbody>
-                    {L.rows.map((row, ri) => (
-                      <tr key={ri} className={ri === 0 ? "bg-gray-50 font-semibold" : "border-t border-gray-100"}>
-                        {row.map((k, ci) => { const c = f(k); return <td key={ci} className={`px-2 py-1 align-top ${c?.numeric ? "text-right bg-gray-50/60 text-muted" : "min-w-[7rem]"}`}>{c ? <FieldEditor p={p} f={c} d={d} compact singleLine /> : null}</td>; })}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              {L.note && f(L.note) && <div className="text-[13px] mt-1"><FieldEditor p={p} f={f(L.note)!} d={d} compact /></div>}
-            </div>
-          );
-        } else if (p.type === "chart") {
-          const L = p.layout as ChartLayout;
-          body = (
-            <div>
-              {L.title && f(L.title) && <div className="text-center font-semibold mb-1"><FieldEditor p={p} f={f(L.title)!} d={d} compact /></div>}
-              <ChartSvg layout={L} labels={L.xLabels.map((k) => f(k)?.en ?? "")} />
-              <div className="grid sm:grid-cols-2 gap-2 mt-2">
-                {[...L.series.map((s) => s.name), ...L.xLabels, L.yAxis].filter((k): k is string => !!k && !f(k)?.numeric).map((k, i) => (
-                  <div key={k} className="flex items-center gap-2 text-[14px]">
-                    {i < L.series.length && <span className="w-3 h-3 rounded-sm shrink-0" style={{ background: SERIES[i % SERIES.length] }} />}
-                    <div className="flex-1 rounded-md border border-gray-200 px-2"><FieldEditor p={p} f={f(k)!} d={d} compact singleLine /></div>
-                  </div>
-                ))}
-              </div>
-              {L.source && f(L.source) && <div className="text-[13px] mt-1.5 italic"><FieldEditor p={p} f={f(L.source)!} d={d} compact /></div>}
-            </div>
-          );
-        } else {
-          const cls = p.type === "heading" ? "font-bold" : p.type === "headnote" ? "rounded-lg bg-gray-50 border border-gray-200 px-3 py-1.5" : p.type === "header" || p.type === "footer" || p.type === "footnote" ? "text-[15px]" : "";
-          body = <div className={cls}>{p.fields[0] && <FieldEditor p={p} f={p.fields[0]} d={d} compact={["header", "footer", "footnote"].includes(p.type)} />}</div>;
-        }
-        return (
-          <div key={p.id} data-dst={p.id} className={`rounded-xl border p-2.5 transition ${done ? "border-green-300 bg-success-soft/40" : "border-gray-200 bg-white"} ${linked ? "linked" : ""}`}>
-            {head}
-            {body}
-          </div>
-        );
-      })}
+      {d.parts.map((p) => p.editable
+        ? <div key={p.id} data-dst={p.id} className="rounded-xl border border-gray-200 bg-white p-2.5"><div className="text-[11px] font-bold tracking-wide text-muted mb-1">{t(`round.partTypes.${p.type}`)}</div><PartEditorBody p={p} d={d} /></div>
+        : <div key={p.id} className="text-right text-[12.5px] text-muted en">{p.fields[0]?.en}</div>)}
     </div>
   );
 }

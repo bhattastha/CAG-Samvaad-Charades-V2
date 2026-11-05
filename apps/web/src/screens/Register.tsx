@@ -6,7 +6,7 @@ import { api, ApiError } from "../lib/api";
 import { scriptLine, useConfig, useLines, type Progress } from "../lib/queries";
 import { sfx } from "../lib/sfx";
 import { t, tList } from "../lib/strings";
-import type { Line } from "../lib/voice";
+import { announce, type Line } from "../lib/voice";
 import { Coin, Header, Page } from "../components/Layout";
 import { Icon } from "../components/Icon";
 import { SahayakGuide } from "../components/Sahayika";
@@ -111,6 +111,15 @@ export function Register() {
   const { data: scriptLines } = useLines("before_game");
   const [doneLine, setDoneLine] = useState<Line | null>(null);
   const otpRef = useRef<HTMLInputElement>(null);
+  // Sahayika's field-by-field lines (script R-02 … R-10); the guide panel shows the latest one
+  const [say, setSay] = useState<Line | null>(null);
+  const sayId = (id: string) => { const l = scriptLines?.find((x) => x.id === id); if (l && l.id !== say?.id) { setSay(l); announce(l); } };
+  const onFieldFocus = (e: React.FocusEvent) => { const k = (e.target as HTMLElement).id; if (["name", "mobile", "email", "office", "address"].includes(k)) sayId(`before_game.registration.${k}`); };
+  useEffect(() => {
+    if (step !== "done") return;
+    const tm = window.setTimeout(() => sayId("before_game.welcome.idle"), 15_000);
+    return () => window.clearTimeout(tm);
+  }, [step]);
 
   const validate = () => {
     const e: Record<string, string> = {};
@@ -122,7 +131,7 @@ export function Register() {
       if (address.trim().length < 5) e.address = t("registration.errAddress");
     }
     setErrors(e);
-    if (Object.keys(e).length) sfx("error");
+    if (Object.keys(e).length) { sfx("error"); sayId("before_game.registration.error"); }
     return !Object.keys(e).length;
   };
 
@@ -133,6 +142,7 @@ export function Register() {
       setDevCode(r.devCode ?? null);
       setStep("otp");
       sfx("pop");
+      sayId("before_game.registration.verify");
       setTimeout(() => otpRef.current?.focus(), 80);
     } catch (e) {
       const code = (e as ApiError).code;
@@ -155,6 +165,7 @@ export function Register() {
       if (returning || !office) { setReturning(false); setStep("form"); setOtp(""); return; }
       const r = await api<{ line: Line }>("/players/register", { body: { name: f.name.trim(), mobile: f.mobile, officeId: office.id, officeAddress: address.trim() } });
       setDoneLine(r.line);
+      setSay(null);
       setStep("done");
       sfx("fanfare");
       setTimeout(() => sfx("coin"), 900);
@@ -170,8 +181,8 @@ export function Register() {
 
   const credits = cfg?.registration?.credits ?? 2;
   // Sahayak's lines come from the script (editable in the manager console); the strings are only a fallback
-  const guideLine: Line = scriptLine(scriptLines, "before_game.screen.registration_open", t("ob.reg.guide", { n: credits, title: finalTitle(cfg) || "champion" }));
-  const doneGuide: Line = doneLine ?? scriptLine(scriptLines, "before_game.screen.registration_done", t("registration.doneGuide", { n: credits }));
+  const guideLine: Line = say ?? scriptLine(scriptLines, "before_game.screen.registration_open", t("ob.reg.guide", { n: credits, title: finalTitle(cfg) || "champion" }));
+  const doneGuide: Line = (step === "done" ? say : null) ?? doneLine ?? scriptLine(scriptLines, "before_game.screen.registration_done", t("registration.doneGuide", { n: credits }));
 
   if (step === "done") {
     return (
@@ -191,7 +202,7 @@ export function Register() {
               <p className="mt-1 text-muted">{t("registration.unlockedSub")}</p>
               <div className="mt-4 text-5xl font-extrabold text-gold-deep tnum">+<CountUp to={credits} /> <span className="text-2xl">{t("common.credits")}</span></div>
               <div className="mt-5 text-left"><SahayakGuide lines={[doneGuide]} /></div>
-              <GameButton className="mt-6 w-full" sound="whoosh" onClick={() => nav("/how-to-play")}>{t("registration.toTraining")} <Icon name="arrowRight" size={18} /></GameButton>
+              <GameButton className="mt-6 w-full" sound="whoosh" data-testid="register-to-training" onClick={() => { sayId("before_game.welcome.start_training"); nav("/how-to-play"); }}>{t("registration.toTraining")} <Icon name="arrowRight" size={18} /></GameButton>
             </motion.div>
           </div>
         </Page>
@@ -206,7 +217,7 @@ export function Register() {
       <Header />
       <Page>
         <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-6 items-start [&>*]:min-w-0">
-          <motion.form initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="card min-w-0 p-4 sm:p-8" noValidate
+          <motion.form initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="card min-w-0 p-4 sm:p-8" noValidate onFocusCapture={onFieldFocus}
             onSubmit={(e) => { e.preventDefault(); if (step === "form" && validate()) sendOtp(); if (step === "otp") verify(); }}>
             <Steps at={step === "form" ? 0 : 1} />
             {returning
@@ -230,7 +241,7 @@ export function Register() {
               </div>
               <div className="sm:col-span-2">
                 <Field id="email" icon="mail" label={t("registration.email")} error={fieldErr("email")}>
-                  <input id="email" type="email" className="input ob-input" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} autoComplete="email" />
+                  <input id="email" type="email" className="input ob-input" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} autoComplete="email" placeholder="name@cag.gov.in" data-testid="register-email-input" />
                 </Field>
               </div>
               <div className={`sm:col-span-2 ${hidden}`}>
@@ -278,7 +289,7 @@ export function Register() {
             {step === "form" && (
               <div className="mt-3 text-sm text-muted flex flex-wrap items-center gap-x-3">
                 <span>{t("registration.submitNote")}</span>
-                <button type="button" className="font-semibold text-navy-600 underline" onClick={() => { setReturning(!returning); setErrors({}); }}>
+                <button type="button" className="font-semibold text-navy-600 underline" data-testid="register-toggle-returning" onMouseEnter={() => { if (!returning) sayId("before_game.registration.signin"); }} onClick={() => { setReturning(!returning); setErrors({}); }}>
                   {returning ? t("registration.newLink") : t("registration.returningLink")}
                 </button>
               </div>
@@ -287,7 +298,7 @@ export function Register() {
           </motion.form>
 
           <div className="space-y-4 lg:sticky lg:top-24">
-            {cfg && <RewardsJourney cfg={cfg} hero />}
+            {cfg && <div onMouseEnter={() => sayId("before_game.registration.rewards")}><RewardsJourney cfg={cfg} hero /></div>}
             <SahayakGuide lines={[guideLine]} subtitle={t("ob.reg.guideRole")} />
           </div>
         </div>

@@ -5,7 +5,8 @@ import { useConfig, useProgress } from "../lib/queries";
 import { useEffect, useRef, useState } from "react";
 import { api } from "../lib/api";
 import { Icon } from "./Icon";
-import { useToasts } from "../lib/store";
+import { usePrefs, useToasts } from "../lib/store";
+import { stop as stopVoice } from "../lib/voice";
 import { t } from "../lib/strings";
 import { sfx } from "../lib/sfx";
 import { useSettingsOpen } from "./Settings";
@@ -145,6 +146,21 @@ function ProfileMenu({ name, office }: { name: string; office?: string }) {
   );
 }
 
+/** Sahayika's voice on/off from any screen (off = lines show as subtitles only). */
+function VoiceMute() {
+  const voice = usePrefs((st) => st.voice);
+  const set = usePrefs((st) => st.set);
+  const unlock = usePrefs((st) => st.unlockAudio);
+  const on = voice === "auto";
+  return (
+    <button role="switch" aria-checked={on} data-testid="voice-mute-toggle" title={on ? t("landing.soundOn") : t("landing.soundOff")} aria-label={t("title.voiceToggle")}
+      onClick={() => { unlock(); set("voice", on ? "tap" : "auto"); sfx("tap"); if (on) stopVoice(); }}
+      className={`rounded-md border w-9 h-9 grid place-items-center hover:bg-navy-50 ${on ? "border-navy/30 bg-navy-50 text-navy" : "border-slate-200 bg-white text-muted"}`}>
+      <Icon name={on ? "volume" : "mute"} size={18} />
+    </button>
+  );
+}
+
 /** Global header (§7): CAG left, brand, BHASHINI right; after sign-in the portal nav, HUD and profile menu. */
 export function Header({ compact = false, hud = true, wide = false }: { compact?: boolean; hud?: boolean; wide?: boolean }) {
   const { data } = useProgress();
@@ -186,6 +202,7 @@ export function Header({ compact = false, hud = true, wide = false }: { compact?
           </nav>
         )}
         <div className="flex items-center gap-2 ml-auto">
+          <VoiceMute />
           {hud && s && (
             <>
               <CreditMeter value={s.totalCredits} compact={compact} />

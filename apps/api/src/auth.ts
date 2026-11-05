@@ -19,19 +19,36 @@ declare module "fastify" {
 
 const hash = (email: string, code: string) => createHash("sha256").update(`${email}:${code}:${env.JWT_SECRET}`).digest("hex");
 export const normEmail = (e: string) => e.trim().toLowerCase();
-const allowedDomains = (process.env.ALLOWED_EMAIL_DOMAINS ?? "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
-export const emailAllowed = (e: string) => !allowedDomains.length || allowedDomains.some((d) => e.endsWith("@" + d));
+const list = (v: string) => v.split(/[,;\s]+/).map((s) => s.trim().toLowerCase()).filter(Boolean);
+const allowedDomains = list(process.env.ALLOWED_EMAIL_DOMAINS ?? "cag.gov.in");
+const allowlist = () => new Set([...list(env.OTP_ALLOWLIST), ...env.ADMIN_EMAILS]);
+/** Only official CAG addresses, plus the OTP_ALLOWLIST test accounts and console admins. */
+export const emailAllowed = (e: string) => allowlist().has(e) || allowedDomains.some((d) => e.endsWith("@" + d));
 
 const EMAIL_PROXY = "https://integrations.emergentagent.com/api/v1/email/send";
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
-const hasMailer = () => !!(env.SMTP_URL || env.EMERGENT_EMAIL_KEY);
+const hasMailer = () => !!((env.EMAIL_RELAY_URL && env.EMAIL_RELAY_API_KEY) || env.SMTP_URL || env.EMERGENT_EMAIL_KEY);
+
+function otpHtml(code: string) {
+  const brand = config().brand.name;
+  const body = str("email.otpBody").replace("{brand}", brand).replace("{code}", code).replace("{minutes}", String(config().auth.otpTtlMinutes));
+  return `<table role="presentation" width="100%"><tr><td style="padding:24px;font-family:Arial,sans-serif;color:#0B2342"><p style="font-size:16px">${esc(body)}</p><p style="font-size:12px;color:#888">Sent by ${esc(brand)}. If you did not request this code, ignore this email.</p></td></tr></table>`;
+}
 
 /** Pluggable OTP sender: SMTP or Emergent managed email when configured; in development the code is logged and is always 123456. */
 async function sendOtp(email: string, code: string) {
-  if (env.EMERGENT_EMAIL_KEY) {
+  if (env.EMAIL_RELAY_URL && env.EMAIL_RELAY_API_KEY) {
     const brand = config().brand.name;
-    const body = str("email.otpBody").replace("{brand}", brand).replace("{code}", code).replace("{minutes}", String(config().auth.otpTtlMinutes));
-    const html = `<table role="presentation" width="100%"><tr><td style="padding:24px;font-family:Arial,sans-serif;color:#0B2342"><p style="font-size:16px">${esc(body)}</p><p style="font-size:12px;color:#888">Sent by ${esc(brand)}. If you did not request this code, ignore this email.</p></td></tr></table>`;
+    const res = await fetch(env.EMAIL_RELAY_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${env.EMAIL_RELAY_API_KEY}` },
+      body: JSON.stringify({ to: [email], subject: str("email.otpSubject").replace("{brand}", brand), body: otpHtml(code), body_type: "html", ...(env.EMAIL_REPLY_TO ? { reply_to: env.EMAIL_REPLY_TO } : {}) }),
+      signal: AbortSignal.timeout(20_000),
+    });
+    if (!res.ok) throw new Error(`OTP relay failed: ${res.status} ${(await res.text()).slice(0, 200)}`);
+  } else if (env.EMERGENT_EMAIL_KEY) {
+    const brand = config().brand.name;
+    const html = otpHtml(code);
     const res = await fetch(EMAIL_PROXY, {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-Email-Key": env.EMERGENT_EMAIL_KEY },
@@ -49,7 +66,7 @@ async function sendOtp(email: string, code: string) {
   } else if (env.isDev) {
     console.log(`[otp] ${email} → ${code} (development)`);
   } else {
-    throw new Error("No OTP sender configured (set SMTP_URL or EMERGENT_EMAIL_KEY)");
+    throw new Error("No OTP sender configured (set EMAIL_RELAY_URL + EMAIL_RELAY_API_KEY, SMTP_URL or EMERGENT_EMAIL_KEY)");
   }
 }
 

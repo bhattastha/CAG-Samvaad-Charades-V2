@@ -415,7 +415,7 @@ function Preview({ pg }: { pg: AdminPage }) {
     <div className="grid gap-4 lg:grid-cols-2">
       <Card title="Source page (English)"><SourcePanel parts={parts} terms={{}} focusedPart={null} sentenceIndex={null} onTerm={() => {}} onPartClick={() => {}} /></Card>
       <Card title="What the player edits">{pg.roundKey === "trial" ? <Empty>Trial: the player starts from an empty editor.</Empty> :
-        <DraftPanel parts={parts} answers={answers} readOnly watch={pg.slips.map((s) => s.wrongText)} focusedPart={null} register={() => {}} onField={() => {}} onTick={() => {}} onFocus={() => {}} onBlocked={() => {}} onTyping={() => {}} onWatchClick={() => {}} onXlit={() => {}} />}
+        <DraftPanel parts={parts} answers={answers} readOnly watch={pg.slips.map((s) => s.wrongText)} focusedPart={null} register={() => {}} onField={() => {}} onFocus={() => {}} onBlocked={() => {}} onTyping={() => {}} onWatchClick={() => {}} onXlit={() => {}} />}
       </Card>
     </div>
   );

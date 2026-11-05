@@ -150,20 +150,16 @@ export interface ReportLineInput {
 export function reportCardLines(i: ReportLineInput): { announce: string[]; after: string[]; titleEarned: boolean; best: number } {
   const p = `${i.roundKey}.report_card.`;
   const best = Math.max(i.score, i.priorBest ?? -1);
-  const announce: string[] = [];
+  // Sahayika script order: opening praise, the level line by best score, then the chance-2/3 comparison
+  const announce: string[] = [p + "opening"];
   const titleEarned = best >= i.passMark;
   if (titleEarned) {
-    const isNewBest = i.priorBest === null || i.score > i.priorBest;
-    if (i.chanceNo === 1) announce.push(p + "title_earned_first_chance");
-    else if (isNewBest && (i.priorBest === null || i.priorBest < i.passMark)) announce.push(p + "first_pass_on_retry");
-    else if (isNewBest) announce.push(p + "new_best");
-    else announce.push(p + "not_new_best");
-    announce.push(p + "title_name", p + "credits_line");
-  } else {
-    if (i.chancesLeft > 0 && best >= i.passMark - 5) announce.push(p + "so_close");
-    else if (i.chancesLeft > 0) announce.push(p + "below_pass_chances_left");
-    else announce.push(p + "below_pass_no_chances");
-  }
+    announce.push(p + "title_earned_first_chance");
+    if (i.score >= 75) announce.push(p + "high_score");
+  } else if (i.chancesLeft > 0 && best >= 25) announce.push(p + "so_close");
+  else if (i.chancesLeft > 0) announce.push(p + "below_pass_chances_left");
+  else announce.push(p + "below_pass_no_chances");
+  if (i.chanceNo > 1 && i.priorBest !== null) announce.push(p + (i.score > i.priorBest ? "new_best" : "not_new_best"));
   const after: string[] = [];
   if (i.roundKey === "trial") after.push(p + "typing_only_next");
   if (i.leftCount > 0) after.push(p + "left_count_note");

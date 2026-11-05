@@ -257,7 +257,12 @@ export async function report(db: Db, a: AttemptRow) {
   const vars = {
     name, score: a.score, best_score: sel.best, chance: a.chance_no, chances_left: r.chancesLeft,
     marks_short: Math.max(0, config().titlePassMark - sel.best), credits: r.credits, total_credits: summary.totalCredits, leaves: a.left_page_count,
+    old_best: priorBest ?? 0,
   };
+  // one tip from the weakest stat (Sahayika script, report card part 5)
+  const m = (a.measures ?? {}) as Record<string, number>;
+  const weakest = (["translation", "completion", "sentence", "time"] as const).filter((k) => typeof m[k] === "number").sort((x, y) => m[x] - m[y])[0];
+  if (weakest && m[weakest] < 0.9) sel.after.unshift(`${a.round_key}.report_card.tip_weak_${weakest}`);
   const round = roundOf(config(), a.round_key);
   const idx = config().rounds.findIndex((x) => x.key === a.round_key);
   // suggest the next step: under the Trial-first rule, retry the Trial until it is passed; then (or always,

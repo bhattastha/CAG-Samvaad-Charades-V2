@@ -17,21 +17,21 @@ const ans = (t: string): Answers => ({ passage: { fields: { t }, done: false } }
 const run = (t: string, used = 8 * 60) => scoreAttempt({ config, round: trial, page, answers: ans(t), usedSeconds: used });
 
 describe("§11 scorer on the seed trial passage", () => {
-  it("reference vs itself → translation 1, glossary 12/12", () => {
+  it("reference vs itself → translation 1, glossary 7/7", () => {
     const r = run(ref);
     expect(r.measures.translation).toBe(1);
-    expect(r.counts.glossaryCorrect).toBe(12);
-    expect(r.counts.glossaryTotal).toBe(12);
-    expect(r.counts.completionDone).toBe(16);
+    expect(r.counts.glossaryCorrect).toBe(7);
+    expect(r.counts.glossaryTotal).toBe(7);
+    expect(r.counts.completionDone).toBe(9);
     expect(r.score).toBe(100);
   });
   it("empty → 0", () => {
     expect(run("").score).toBe(0);
     expect(run("   ‍  ").score).toBe(0);
   });
-  it("विपणन → मार्केटिंग gives glossary 11/12 and a term tip", () => {
+  it("विपणन → मार्केटिंग gives glossary 6/7 and a term tip", () => {
     const r = run(ref.replaceAll("विपणन", "मार्केटिंग"));
-    expect(r.counts.glossaryCorrect).toBe(11);
+    expect(r.counts.glossaryCorrect).toBe(6);
     expect(r.tip).toMatchObject({ kind: "term", en: "marketing", hi: "विपणन", wrong: "मार्केटिंग" });
   });
   it("time fractions 0.4 / 0.75 / 1.0 → 1.0 / 0.8 / 0.6", () => {
@@ -116,20 +116,21 @@ describe("credits and totals", () => {
   });
 });
 
-describe("report card line selection (§10.3)", () => {
+describe("report card line selection (Sahayika script)", () => {
   const base = { roundKey: "primary" as const, passMark: 33, leftCount: 0, firstTimeAllPlayed: false };
-  it("first chance pass", () => {
-    expect(reportCardLines({ ...base, chanceNo: 1, score: 50, priorBest: null, chancesLeft: 2 }).announce[0]).toBe("primary.report_card.title_earned_first_chance");
+  const ids = (x: Parameters<typeof reportCardLines>[0]) => reportCardLines(x).announce.map((s) => s.replace("primary.report_card.", ""));
+  it("opening line, then the level line; outstanding score adds high_score", () => {
+    expect(ids({ ...base, chanceNo: 1, score: 50, priorBest: null, chancesLeft: 2 })).toEqual(["opening", "title_earned_first_chance"]);
+    expect(ids({ ...base, chanceNo: 1, score: 80, priorBest: null, chancesLeft: 2 })).toEqual(["opening", "title_earned_first_chance", "high_score"]);
   });
-  it("first pass on retry / new best / not new best", () => {
-    expect(reportCardLines({ ...base, chanceNo: 2, score: 40, priorBest: 20, chancesLeft: 1 }).announce[0]).toBe("primary.report_card.first_pass_on_retry");
-    expect(reportCardLines({ ...base, chanceNo: 2, score: 60, priorBest: 40, chancesLeft: 1 }).announce[0]).toBe("primary.report_card.new_best");
-    expect(reportCardLines({ ...base, chanceNo: 3, score: 30, priorBest: 40, chancesLeft: 0 }).announce[0]).toBe("primary.report_card.not_new_best");
+  it("chance 2 or 3 adds new best / lower than best", () => {
+    expect(ids({ ...base, chanceNo: 2, score: 60, priorBest: 40, chancesLeft: 1 })).toEqual(["opening", "title_earned_first_chance", "new_best"]);
+    expect(ids({ ...base, chanceNo: 3, score: 30, priorBest: 40, chancesLeft: 0 })).toEqual(["opening", "title_earned_first_chance", "not_new_best"]);
   });
-  it("so close / below pass", () => {
-    expect(reportCardLines({ ...base, chanceNo: 1, score: 30, priorBest: null, chancesLeft: 2 }).announce[0]).toBe("primary.report_card.so_close");
-    expect(reportCardLines({ ...base, chanceNo: 1, score: 10, priorBest: null, chancesLeft: 2 }).announce[0]).toBe("primary.report_card.below_pass_chances_left");
-    expect(reportCardLines({ ...base, chanceNo: 3, score: 10, priorBest: 5, chancesLeft: 0 }).announce[0]).toBe("primary.report_card.below_pass_no_chances");
+  it("so close (25-32) / under 25 / no chances", () => {
+    expect(ids({ ...base, chanceNo: 1, score: 26, priorBest: null, chancesLeft: 2 })[1]).toBe("so_close");
+    expect(ids({ ...base, chanceNo: 1, score: 10, priorBest: null, chancesLeft: 2 })[1]).toBe("below_pass_chances_left");
+    expect(ids({ ...base, chanceNo: 3, score: 10, priorBest: 5, chancesLeft: 0 })[1]).toBe("below_pass_no_chances");
   });
 });
 

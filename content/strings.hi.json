@@ -5,14 +5,14 @@
     "listen": "🔊 सुनें",
     "next": "आगे",
     "glossaryButton": "शब्दावली",
-    "sahayikaButton": "सहायक",
+    "sahayikaButton": "सहायिका",
     "copyPasteOffBadge": "कॉपी-पेस्ट बंद",
     "chanceOf": "मौका {n} / {max}",
     "creditsUpTo": "{n} क्रेडिट तक",
     "timeLeft": "{time} शेष",
     "officersOnly": "केवल कैग अधिकारियों के लिए",
-    "mute": "सहायक की आवाज़ बंद करें",
-    "unmute": "सहायक की आवाज़ चालू करें"
+    "mute": "सहायिका की आवाज़ बंद करें",
+    "unmute": "सहायिका की आवाज़ चालू करें"
   },
   "title": {
     "heading": "संवाद शराड्स",
@@ -184,7 +184,7 @@
   "reportCard": {
     "heading": "रिपोर्ट कार्ड · {roundName}",
     "headingEn": "Report card",
-    "sahayikaAnnounces": "Sahayak announces",
+    "sahayikaAnnounces": "Sahayika announces",
     "thisTime": "इस बार के अंक",
     "howYouDid": "इस बार आपने कैसा किया",
     "measureTranslation": "अनुवाद",
@@ -313,7 +313,7 @@
       "en": "That part is your job, and I know you can do it! I can give you a hint or a glossary word instead.",
       "hi": "यह हिस्सा तो आपको ही लिखना है, और आप कर लेंगे! मैं आपको एक इशारा या शब्दावली का शब्द दे सकती हूँ।"
     },
-    "sahayikaSays": "सहायक कहती हैं",
+    "sahayikaSays": "सहायिका कहती हैं",
     "chatLimit": "इस राउंड में आपके सवाल पूरे हो गए। अब आप खुद आगे बढ़िए, आप कर लेंगे!"
   },
   "certificate": {
@@ -352,7 +352,7 @@
     "allDone": "वाह! सारे राउंड खेल लिए।"
   },
   "chat": {
-    "title": "सहायक से पूछिए",
+    "title": "सहायिका से पूछिए",
     "placeholder": "किसी शब्द या नियम के बारे में पूछिए…",
     "send": "भेजें",
     "quick": {

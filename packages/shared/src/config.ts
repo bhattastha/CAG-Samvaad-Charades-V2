@@ -20,6 +20,8 @@ const RoundSchema = z.object({
   playable: z.boolean().default(true),
   /** report pages per bundle for this level (0 = Trial passage measured in words) */
   pages: z.number().int().nonnegative().default(0),
+  /** true = the whole bundle is one continuous scrolling report instead of page-by-page */
+  scrollMode: z.boolean().default(false),
   phase: z.string().optional(),
 });
 export type RoundConfig = z.infer<typeof RoundSchema>;

@@ -34,6 +34,11 @@
       "guideRole": "Your game guide",
       "heroNote": "Banked the moment you register. Win the rest, level by level."
     },
+    "briefing": {
+      "kicker": "Sahayika's welcome briefing",
+      "hear": "Hear the full briefing",
+      "done": "Let's begin"
+    },
     "train": {
       "kicker": "Training ground",
       "stepOf": "Step {n} of {total}",
@@ -57,7 +62,7 @@
           "sub": "Three tools that make Hindi typing fast and accurate."
         },
         {
-          "title": "Meet Your Guide – Sahayak",
+          "title": "Meet Your Guide – Sahayika",
           "short": "Guide",
           "sub": "Your companion throughout the translation challenge."
         }
@@ -182,7 +187,7 @@
         "tryLive": "Live suggestions from BHASHINI"
       },
       "coach": {
-        "dialogue": "Hello! I'm Sahayak, your guide throughout the challenge. I'm here to help you navigate missions, understand terminology and make the most of your translation toolkit.",
+        "dialogue": "Hello! I'm Sahayika, your guide throughout the challenge. I'm here to help you navigate missions, understand terminology and make the most of your translation toolkit.",
         "rolesHeading": "How I help",
         "roles": [
           {
@@ -222,9 +227,9 @@
           "How do I type in Hindi?",
           "How do I win a title?"
         ],
-        "rightKicker": "Sahayak",
+        "rightKicker": "Sahayika",
         "rightHeading": "Always one tap away",
-        "rightBody": "Open Sahayak from the top bar in any mission for a hint, a glossary term or a time check."
+        "rightBody": "Open Sahayika from the top bar in any mission for a hint, a glossary term or a time check."
       },
       "contextKicker": {
         "0": "Mission briefing",
@@ -256,7 +261,7 @@
             "Roman-to-Hindi transliteration",
             "Glossary – Shabd Udyan",
             "Speak to Type, where available",
-            "Sahayak for guidance"
+            "Sahayika for guidance"
           ]
         },
         {

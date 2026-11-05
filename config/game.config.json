@@ -2,8 +2,8 @@
   "game": {
     "name": "संवाद शराड्स",
     "nameEn": "Samvaad Charades",
-    "guide": "सहायक",
-    "guideEn": "Sahayak"
+    "guide": "सहायिका",
+    "guideEn": "Sahayika"
   },
   "registration": {
     "credits": 2
@@ -66,6 +66,7 @@
       "creditCap": 25,
       "bhashiniDraft": true,
       "voiceTyping": false,
+      "scrollMode": true,
       "completionCountedBy": "paragraph",
       "titleEn": "Anuvad Visheshagya",
       "titleMeaning": "The Translation Expert",
@@ -188,7 +189,7 @@
     "translation": "ai4bharat/indictrans-v2-all-gpu--t4",
     "asrHindi": "ai4bharat/conformer-hi-gpu--t4",
     "ttsEnglish": "bhashini/bodhan/indic-tts",
-    "ttsGender": "male",
+    "ttsGender": "female",
     "transliteration": "ai4bharat/indicxlit--cpu-fsv2"
   },
   "brand": {
@@ -216,8 +217,8 @@
     "trialQualifyingScore": 33,
     "unlockRule": "all-open",
     "trialWords": {
-      "min": 300,
-      "max": 400,
+      "min": 200,
+      "max": 200,
       "sourceSection": "Conclusion"
     }
   }

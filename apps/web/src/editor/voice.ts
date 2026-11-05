@@ -12,6 +12,7 @@ export class VoiceTyping {
   private ctx: AudioContext | null = null;
   private stream: MediaStream | null = null;
   private rec: any = null;
+  private silence: ReturnType<typeof setTimeout> | undefined;
   constructor(private cb: VoiceCallbacks) {}
 
   async start() {
@@ -34,9 +35,12 @@ export class VoiceTyping {
         if (m.type === "unavailable" || m.type === "error") { clearTimeout(timer); ws.close(); this.stopAudio(); done(false); return; }
         if (m.type === "ready") {
           clearTimeout(timer);
-          try { await this.startAudio((buf) => ws.readyState === 1 && ws.send(buf)); done(true); } catch { done(false); }
+          try { await this.startAudio((buf) => ws.readyState === 1 && ws.send(buf)); done(true); } catch { done(false); return; }
+          // BHASHINI sometimes accepts the stream but never answers: switch to the browser's Hindi recogniser
+          this.silence = setTimeout(() => this.switchToWebSpeech(), 8000);
         }
         if (m.type === "text") {
+          clearTimeout(this.silence);
           const t = applyDanda(m.text ?? "");
           if (m.final) { this.cb.onInterim(""); if (t) this.cb.onFinal(t); } else this.cb.onInterim(t);
         }
@@ -54,6 +58,15 @@ export class VoiceTyping {
     const node = new AudioWorkletNode(this.ctx, "pcm16");
     node.port.onmessage = (e) => { if (e.data.pcm) send(e.data.pcm); };
     src.connect(node);
+  }
+
+  private switchToWebSpeech() {
+    if (!this.ws) return;
+    this.ws.onclose = null;
+    try { this.ws.send("stop"); } catch { /* closed */ }
+    this.ws.close(); this.ws = null;
+    this.stopAudio();
+    if (!this.startWebSpeech()) { this.cb.onState("idle"); this.cb.onUnavailable(); }
   }
 
   private startWebSpeech(): boolean {
@@ -84,6 +97,7 @@ export class VoiceTyping {
   }
 
   stop() {
+    clearTimeout(this.silence);
     try { this.ws?.send("stop"); } catch { /* closed */ }
     this.ws?.close(); this.ws = null;
     this.rec?.stop(); this.rec = null;

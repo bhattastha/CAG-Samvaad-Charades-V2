@@ -67,7 +67,7 @@ export function Round() {
     const now = Date.now();
     if (now - lastBlock.current < 700) return;
     lastBlock.current = now;
-    if (kind === "locked") { push(t("round.numbersLocked"), "info"); sfx("error"); return; }
+    if (kind === "locked") { push(t("round.numbersLocked"), "info"); sfx("error"); sayLine("in_round.number_mismatch"); return; }
     push(t("round.copyPasteToast"), "warn");
     sfx("error");
     sayLine("in_round.copy_paste_blocked", {}, false);
@@ -104,7 +104,7 @@ export function Round() {
   useEffect(() => {
     if (!active || !view) return;
     const used = (nowMs - startMs) / 1000;
-    if (used >= limitS / 2) sayLine("in_round.half_time");
+    if (used >= limitS / 2 && prog.done / (prog.total || 1) < 0.3) sayLine("in_round.half_time");
     const w = cfg?.fairPlay;
     if (w && remaining <= w.warnAtMinutesLeft * 60 && remaining > w.warnAtMinutesLeftSecond * 60) {
       if (!said.current.has("in_round.five_min_left")) { push(t("round.fiveMinToast"), "info"); setSrNote(t("round.fiveMinSr")); sfx("warn"); }
@@ -114,7 +114,7 @@ export function Round() {
       if (!said.current.has("in_round.one_min_left")) { setSrNote(t("round.oneMinSr")); sfx("warn"); }
       sayLine("in_round.one_min_left");
     }
-    if (view.roundKey === "trial" && Date.now() - lastTyping.current > 90_000) { sayLine("in_round.under_source"); lastTyping.current = Date.now(); }
+    if (Date.now() - lastTyping.current > 120_000) { sayLine("in_round.under_source"); lastTyping.current = Date.now(); }
   }, [Math.floor(nowMs / 5000)]);
   // spatial + sound feedback when a sentence/part is cleared; a burst when everything is done
   const prevDone = useRef<number | null>(null);
@@ -123,6 +123,7 @@ export function Round() {
     if (prevDone.current !== null && prog.done > prevDone.current && active) {
       const anchor = document.querySelector("[data-hud-progress]")?.getBoundingClientRect() ?? null;
       if (view?.roundKey === "trial") floatText(t("round.sentenceDone"), anchor, "good"); // main rounds show the +1 on the segment itself
+      if (view?.roundKey === "trial" && prevDone.current === 0) sayLine("in_round.first_sentence");
       sfx(prog.done >= prog.total ? "fanfare" : "success");
       if (prog.done >= prog.total) { setBurst((b) => b + 1); floatText(t("round.allCleared"), null, "gold"); }
     }
@@ -145,9 +146,10 @@ export function Round() {
       await at.submit();
     } catch { /* the server job submits from the last autosave anyway */ }
     if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    sayLine("in_round.submitted", {}, false);
     await qc.invalidateQueries({ queryKey: ["progress"] });
     nav(`/report/${id}?fx=${auto ? "timeup" : "done"}`, { replace: true });
-  }, [at, id, nav, qc, submitting]);
+  }, [at, id, nav, qc, submitting, sayLine]);
   const pressSubmit = () => {
     const win = (cfg?.fairPlay.confirmSubmitWindowSeconds ?? 4) * 1000;
     if (partsLeft > 0 && Date.now() > confirmUntil) {
@@ -215,7 +217,8 @@ export function Round() {
   const pageNos = useMemo(() => [...new Set((view?.page.parts ?? []).map((p) => p.pageNo).filter((n): n is number => typeof n === "number"))].sort((a, b) => a - b), [view]);
   const [pageIdx, setPageIdx] = useState(0);
   const curPage = pageNos[pageIdx];
-  const visibleParts = useMemo(() => (pageNos.length > 1 ? (view?.page.parts ?? []).filter((p) => (p.pageNo ?? pageNos[0]) === curPage) : view?.page.parts ?? []), [view, pageNos, curPage]);
+  const scrollMode = !!round?.scrollMode;
+  const visibleParts = useMemo(() => (pageNos.length > 1 && !scrollMode ? (view?.page.parts ?? []).filter((p) => (p.pageNo ?? pageNos[0]) === curPage) : view?.page.parts ?? []), [view, pageNos, curPage, scrollMode]);
   const pageDone = (n: number) => (view?.page.parts ?? []).filter((p) => p.pageNo === n && p.editable && p.tickGroup).every((p) => answers[p.id]?.done);
   const watchTexts = useMemo(() => watchWords.map((w) => w.text), [watchWords]);
   // words / characters of the Hindi on the focused page (status bar)
@@ -276,11 +279,12 @@ export function Round() {
   };
   const draftProps: DraftProps = {
     parts: visibleParts, answers, readOnly, watch: watchTexts, focusedPart, register,
-    onField: (pid, key, v) => at.update(pid, { field: [key, v] }),
+    // autosave: a segment counts as reviewed once the player opens or edits it (no "Mark as done")
+    onField: (pid, key, v) => at.update(pid, { field: [key, v], done: true }),
     onHtml: (pid, key, h) => at.update(pid, { html: [key, h] }),
     terms: view.page.sourceTerms, rich: true, onGlossClick,
-    onTick: (pid, done) => { at.update(pid, { done }); if (!done) sfx("tap"); },
-    onFocus, onBlocked, onTyping, onXlit: xlitAccept,
+    onFocus: (pid, key, ed) => { onFocus(pid, key, ed); if (!readOnly && !answers[pid]?.done) at.update(pid, { done: true }); },
+    onBlocked, onTyping, onXlit: xlitAccept,
     onWatchClick: (pid, key, w) => {
       const ww = watchWords.find((x) => x.text === w.word);
       setMenu({ rect: w.rect, pair: "", en: ww?.en ?? w.word, options: (ww?.options ?? []).map((hi, i) => ({ hi, tag: i === 0 ? "approved" as const : "variant" as const })), avoid: [w.word], mode: "replace", target: fieldTarget(pid, key), range: { from: w.from, to: w.to }, current: w.word, currentKind: "avoid" });
@@ -349,7 +353,13 @@ export function Round() {
   );
   const statusBar = (
     <div className="hc-statusbar fixed bottom-0 inset-x-0 z-40 h-9 px-2 sm:px-4 flex items-center gap-3 text-[12.5px] text-navy" role="group" aria-label={t("round.status.label")}>
-      <PageControl pageNos={pageNos.length ? pageNos : [1]} idx={pageNos.length ? pageIdx : 0} onChange={(i) => { setPageIdx(i); sfx("whoosh"); }} done={pageDone} />
+      {scrollMode ? (
+        <div className="shrink-0 flex items-center gap-2 whitespace-nowrap" data-testid="scroll-progress">
+          <span className="font-bold text-navy max-sm:hidden">{t("round.scrollMode")}</span>
+          <span className="w-24 sm:w-40 h-2 rounded-full bg-slate-200 overflow-hidden"><span className="block h-full bg-success transition-[width] duration-500" style={{ width: `${Math.round((prog.done / (prog.total || 1)) * 100)}%` }} /></span>
+          <span className="tnum font-semibold" data-testid="scroll-progress-pct">{t("round.scrollProgress", { pct: Math.round((prog.done / (prog.total || 1)) * 100) })}</span>
+        </div>
+      ) : <PageControl pageNos={pageNos.length ? pageNos : [1]} idx={pageNos.length ? pageIdx : 0} onChange={(i) => { setPageIdx(i); sfx("whoosh"); }} done={pageDone} />}
       <span className="tnum text-muted truncate whitespace-nowrap">{t("round.status.words", { n: counts.words })}<span className="max-sm:hidden">, {t("round.status.chars", { m: counts.chars })}</span></span>
       <div className="ml-auto inline-flex items-center gap-0.5" role="group" aria-label={t("round.status.zoom")}>
         <span className="hidden sm:inline text-muted mr-1 font-semibold">{t("round.status.zoom")}</span>
@@ -426,7 +436,7 @@ export function Round() {
         <main className="hc-canvas w-full flex-1 px-3 sm:px-5 py-3 pb-14" data-canvas onMouseOver={overPair} onMouseLeave={() => setHoverPair(null)} aria-label={t("round.workbench")}>
           <div style={zoomStyle}>
             <SegmentRows parts={visibleParts} allParts={view.page.parts} terms={view.page.sourceTerms} onTerm={onTermPick} focusedPart={focusedPart}
-              onSelect={(pid) => setFocusedPart(pid)} d={draftProps} collapsed={collapsed} />
+              onSelect={(pid) => setFocusedPart(pid)} d={draftProps} collapsed={collapsed} lazy={scrollMode} />
           </div>
         </main>
       )}
@@ -444,9 +454,9 @@ export function Round() {
       {slim && <div className="fixed bottom-12 right-3 z-40 w-[min(34rem,calc(100vw-1.5rem))]"><SahayikaLine line={slim} autoSpeak={false} clamp onClose={() => setSlim(null)} /></div>}
 
       <GlossaryDrawer open={glossOpen} onClose={() => setGlossOpen(false)} onInsert={insertGlossary} initial={glossQuery} />
-      <ChatPanel open={chatOpen} onClose={() => setChatOpen(false)} attemptId={view.id} quick={cfg.sahayika.quickQuestions}
+      <ChatPanel open={chatOpen} onClose={() => { setChatOpen(false); sayLine("chat.panel_close", {}, false); }} attemptId={view.id} quick={cfg.sahayika.quickQuestions}
         thinking={lines?.find((l) => l.id === `${view.roundKey}.chat.thinking`) ?? null}
-        opener={null} />
+        opener={lines?.find((x) => x.id === `${view.roundKey}.chat.panel_open`) ?? null} />
 
       {/* left the page: warning card on return (§12) */}
       {fair.left && active && (
