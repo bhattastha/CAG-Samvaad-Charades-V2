@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { t } from "../lib/strings";
 import { announce, stop, useVoice, type Line } from "../lib/voice";
@@ -19,7 +20,7 @@ export function Briefing({ lines, open, onClose }: { lines: Line[]; open: boolea
     if (played.current && st.status === "idle" && i < lines.length - 1) { const tm = window.setTimeout(() => setI((n) => n + 1), 600); return () => window.clearTimeout(tm); }
   }, [st.status, st.line?.id]);
   const close = () => { stop(); onClose(); };
-  return (
+  return createPortal(
     <AnimatePresence>
       {open && cur && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[96] bg-navy/60 grid place-items-center p-4" role="dialog" aria-modal="true" data-testid="briefing-modal">
@@ -48,6 +49,7 @@ export function Briefing({ lines, open, onClose }: { lines: Line[]; open: boolea
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }

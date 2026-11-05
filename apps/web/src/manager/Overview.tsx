@@ -7,11 +7,9 @@ import { Donut, Funnel, GroupedBars, HBars, Histogram, LEVEL_COLORS, LineTrend, 
 
 type Range = "7d" | "30d" | "all";
 const MEASURES = [
-  { key: "translation", label: "Translation", color: PALETTE[0] },
-  { key: "completion", label: "Completion", color: PALETTE[1] },
-  { key: "sentence", label: "Sentence", color: PALETTE[2] },
-  { key: "glossary", label: "Glossary", color: PALETTE[3] },
-  { key: "time", label: "Time", color: PALETTE[4] },
+  { key: "quality", label: "Translation Quality", color: PALETTE[0] },
+  { key: "glossary", label: "Glossary Usage", color: PALETTE[3] },
+  { key: "timeliness", label: "Timeliness & Completion", color: PALETTE[4] },
 ];
 const KIND: Record<string, { tone: any; label: string }> = {
   registration: { tone: "navy", label: "Registered" }, start: { tone: "slate", label: "Started" }, submit: { tone: "green", label: "Submitted" },

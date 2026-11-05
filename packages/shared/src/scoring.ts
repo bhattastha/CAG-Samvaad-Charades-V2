@@ -45,8 +45,32 @@ export function calibrateChrF(c: number, floor: number, ceil: number): number {
   return clamp01((c - floor) / (ceil - floor));
 }
 
+// Hindi inflections and postpositions folded away so "रिपोर्टों में" ~ "रिपोर्ट" (meaning, not exact form)
+const HI_SUFFIX = /(ियों|ाओं|ाएं|ाएँ|ियाँ|ियां|ओं|ों|ें|एं|ता|ती|ते|ना|नी|ने|ा|ी|े|ि|ु|ू|ं|ँ)$/u;
+const HI_STOP = new Set(["का", "की", "के", "को", "में", "से", "पर", "ने", "है", "हैं", "था", "थी", "थे", "और", "तथा", "एवं", "भी", "यह", "वह", "इस", "उस", "एक", "द्वारा", "लिए", "गया", "गई", "गए", "किया", "हो", "या"]);
+function stems(s: string): string[] {
+  return words(s).filter((w) => !HI_STOP.has(w)).map((w) => (w.length > 3 ? w.replace(HI_SUFFIX, "") : w).toLowerCase());
+}
+/** Order-free content-word F-beta on stems: valid reordering or re-inflection is not penalised. */
+function stemF(hyp: string, ref: string, beta = 2): number {
+  const h = stems(hyp), r = stems(ref);
+  if (!h.length || !r.length) return h.length === r.length ? 1 : 0;
+  const rc = new Map<string, number>();
+  r.forEach((w) => rc.set(w, (rc.get(w) ?? 0) + 1));
+  let m = 0;
+  for (const w of h) { const c = rc.get(w) ?? 0; if (c > 0) { m++; rc.set(w, c - 1); } }
+  const P = m / h.length, R = m / r.length;
+  if (!P || !R) return 0;
+  return ((1 + beta * beta) * P * R) / (beta * beta * P + R);
+}
+/** Meaning-oriented similarity to CAG's published Hindi: character n-grams (chrF) blended with order-free stem overlap. */
+export function similarity(hyp: string, ref: string, order = 6, beta = 2): number {
+  if (!normalise(hyp)) return 0;
+  return 0.6 * chrF(hyp, ref, order, beta) + 0.4 * stemF(hyp, ref, beta);
+}
+
 /** §11 समय: 1 if f ≤ share, then linear down to `atLimit` at f = 1. */
-export function timeMeasure(usedSeconds: number, limitSeconds: number, share = 0.5, atLimit = 0.6): number {
+export function timeMeasure(usedSeconds: number, limitSeconds: number, share = 0.5, atLimit = 0): number {
   const f = clamp01(limitSeconds > 0 ? usedSeconds / limitSeconds : 1);
   if (f <= share) return 1;
   return 1 - ((f - share) / (1 - share)) * (1 - atLimit);
@@ -67,16 +91,29 @@ export interface GrammarIssue {
   penalty: number;
 }
 
+/** Scoring model v2 (55 / 25 / 20). Shares are 0–1; marks = share × weight. */
 export interface Measures {
-  translation: number;
-  completion: number;
-  sentence: number;
+  model: 2;
+  /** Translation Quality share (Trial: similarity; draft rounds: gain over the BHASHINI draft) */
+  quality: number;
   glossary: number;
+  /** Timeliness & Completion share = completion × time (0 when the draft gain gate is not met) */
+  timeliness: number;
+  similarity: number;
+  draftSimilarity: number | null;
+  fluency: number;
+  completion: number;
   time: number;
 }
 export interface Counts {
-  translation10: number;
-  sentence10: number;
+  qualityMarks: number;
+  glossaryMarks: number;
+  timelinessMarks: number;
+  similarityPct: number;
+  draftSimilarityPct: number | null;
+  gainPct: number | null;
+  /** draft rounds: Timeliness & Completion needs a quality gain ≥ the gate */
+  timelinessGated: boolean;
   completionDone: number;
   completionTotal: number;
   completionUnit: "sentence" | "paragraph";
@@ -179,39 +216,67 @@ export interface ScoreInput {
   usedSeconds: number;
 }
 
-export function scoreAttempt({ config, round, page, answers, usedSeconds }: ScoreInput): ScoreResult {
-  const sc = config.scoring;
-  const limitSeconds = round.timeLimitMinutes * 60;
-  const allText = page.parts.map((p) => partPlayerText(answers, p)).join(" ");
-  const empty = normalise(allText).length === 0;
+const round1 = (x: number) => Math.round(x * 10) / 10;
 
-  // अनुवाद: length-weighted calibrated chrF per part
-  let wSum = 0, tSum = 0;
+/** Fluency-adjusted similarity of one set of answers, length-weighted over the FULL source (untranslated parts score 0). */
+function docQuality(page: PageData, answers: Answers, grammar: GrammarIssue[], sc: GameConfig["scoring"]) {
+  let wSum = 0, sSum = 0, nWords = 0;
   for (const p of page.parts) {
     if (!p.editable) continue;
     const ref = partRefText(p);
     const w = normalise(ref).length;
     if (!w) continue;
-    const c = calibrateChrF(chrF(partPlayerText(answers, p), ref, sc.chrfOrder, sc.chrfBeta), sc.chrfFloor, sc.chrfCeil);
-    tSum += c * w;
+    const hyp = partPlayerText(answers, p);
+    nWords += words(hyp).length;
+    sSum += calibrateChrF(similarity(hyp, ref, sc.chrfOrder, sc.chrfBeta), sc.chrfFloor, sc.chrfCeil) * w;
     wSum += w;
   }
-  const translation = wSum ? tSum / wSum : 0;
+  const sim = wSum ? sSum / wSum : 0;
+  // light grammar/fluency check: issues per 100 words; 10 or more per 100 words → fluency 0
+  const fluency = nWords ? clamp01(1 - (grammar.length / (nWords / 100)) * 0.1) : 0;
+  return { sim, fluency, quality: sim * (0.9 + 0.1 * fluency) };
+}
+
+const draftAnswers = (page: PageData): Answers =>
+  Object.fromEntries(page.parts.filter((p) => p.editable).map((p) => [p.id, { fields: Object.fromEntries(p.fields.filter((f) => !f.numeric).map((f) => [f.key, f.draft ?? ""])), done: false }]));
+
+export function scoreAttempt({ config, round, page, answers, usedSeconds }: ScoreInput): ScoreResult {
+  const sc = config.scoring;
+  const w = config.scoringWeights;
+  const limitSeconds = round.timeLimitMinutes * 60;
+  const allText = page.parts.map((p) => partPlayerText(answers, p)).join(" ");
+  const empty = normalise(allText).length === 0;
+
+  const grammar = grammarIssues(round, page, answers, sc.minWordsPerSentence);
+  const mine = docQuality(page, answers, grammar, sc);
+  // Primary / Secondary / Professional: marks for the improvement over the BHASHINI draft
+  const hasDraft = round.bhashiniDraft && page.parts.some((p) => p.fields.some((f) => f.draft));
+  let quality = mine.quality, draftSim: number | null = null, gain: number | null = null;
+  if (hasDraft) {
+    const da = draftAnswers(page);
+    draftSim = docQuality(page, da, grammarIssues(round, page, da, sc.minWordsPerSentence), sc).quality;
+    gain = draftSim >= 1 ? 0 : clamp01((mine.quality - draftSim) / (1 - draftSim));
+    quality = gain;
+  }
 
   const comp = completion(round, page, answers, sc.minWordsPerSentence);
-  const grammar = grammarIssues(round, page, answers, sc.minWordsPerSentence);
-  const sentence = empty ? 0 : clamp01(1 - grammar.reduce((s, g) => s + g.penalty, 0));
   const termChecks = page.terms.map((t) => checkTerm(allText, t));
   const glossaryCorrect = termChecks.filter((t) => t.correct).length;
   const glossary = page.terms.length ? glossaryCorrect / page.terms.length : 1;
   const tm = config.timeMarks;
   const time = timeMeasure(usedSeconds, limitSeconds, tm.fullMarksIfFinishedWithinShareOfLimit, tm.marksAtTimeLimit);
+  const completionShare = comp.done / (comp.total || 1);
+  const gated = gain !== null && gain < sc.draftGainGate;
+  const timeliness = empty || gated ? 0 : completionShare * time;
 
-  const measures: Measures = { translation, completion: comp.done / (comp.total || 1), sentence, glossary, time };
-  const w = config.scoringWeights;
-  const score = empty
-    ? 0
-    : Math.round(measures.translation * w.translation + measures.completion * w.completion + measures.sentence * w.sentenceConstruction + measures.glossary * w.glossary + measures.time * w.time);
+  const measures: Measures = {
+    model: 2, quality: empty ? 0 : quality, glossary: empty ? 0 : glossary, timeliness, similarity: mine.sim, draftSimilarity: draftSim,
+    fluency: mine.fluency, completion: completionShare, time,
+  };
+  const qualityMarks = round1(measures.quality * w.translationQuality);
+  const glossaryMarks = round1(measures.glossary * w.glossary);
+  const timelinessMarks = round1(measures.timeliness * w.timelinessCompletion);
+  const score = empty ? 0 : round1(measures.quality * w.translationQuality + measures.glossary * w.glossary + measures.timeliness * w.timelinessCompletion);
 
   const firstBadTerm = termChecks.find((t) => !t.correct);
   const tip: Tip = firstBadTerm
@@ -224,8 +289,11 @@ export function scoreAttempt({ config, round, page, answers, usedSeconds }: Scor
     score: Math.max(0, Math.min(config.scoreOutOf, score)),
     measures,
     counts: {
-      translation10: Math.round(translation * 10),
-      sentence10: Math.round(sentence * 10),
+      qualityMarks, glossaryMarks, timelinessMarks,
+      similarityPct: Math.round(mine.sim * 100),
+      draftSimilarityPct: draftSim === null ? null : Math.round(draftSim * 100),
+      gainPct: gain === null ? null : Math.round(gain * 100),
+      timelinessGated: gated,
       completionDone: comp.done,
       completionTotal: comp.total,
       completionUnit: round.completionCountedBy,

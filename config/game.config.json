@@ -85,7 +85,7 @@
       "voiceTyping": false,
       "completionCountedBy": "paragraph",
       "titleEn": "Anuvad Varchaspati",
-      "titleMeaning": "The PhD-level master translator",
+      "titleMeaning": "The Master of Translation",
       "levelLabel": "Level 5",
       "playable": false,
       "pages": 300,
@@ -97,16 +97,9 @@
   "bestOfChancesCounts": true,
   "titlePassMark": 33,
   "scoreOutOf": 100,
-  "scoringWeights": {
-    "translation": 30,
-    "completion": 20,
-    "sentenceConstruction": 20,
-    "glossary": 20,
-    "time": 10
-  },
   "timeMarks": {
     "fullMarksIfFinishedWithinShareOfLimit": 0.5,
-    "marksAtTimeLimit": 0.6
+    "marksAtTimeLimit": 0
   },
   "creditFormula": "round credits = best score / 100 x round credit cap",
   "creditDecimals": 1,
@@ -146,7 +139,8 @@
     "chrfBeta": 2,
     "chrfFloor": 0.2,
     "chrfCeil": 0.85,
-    "minWordsPerSentence": 2
+    "minWordsPerSentence": 2,
+    "draftGainGate": 0.1
   },
   "auth": {
     "mode": "email-otp",
@@ -221,5 +215,10 @@
       "max": 200,
       "sourceSection": "Conclusion"
     }
+  },
+  "scoringWeights": {
+    "translationQuality": 55,
+    "glossary": 25,
+    "timelinessCompletion": 20
   }
 }

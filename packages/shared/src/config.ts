@@ -42,12 +42,11 @@ export const GameConfigSchema = z
     bestOfChancesCounts: z.boolean(),
     titlePassMark: z.number().min(0).max(100),
     scoreOutOf: z.number().positive(),
+    /** v2: Translation Quality (incl. sentence construction) 55, Glossary Usage 25, Timeliness & Completion 20 */
     scoringWeights: z.object({
-      translation: z.number(),
-      completion: z.number(),
-      sentenceConstruction: z.number(),
+      translationQuality: z.number(),
       glossary: z.number(),
-      time: z.number(),
+      timelinessCompletion: z.number(),
     }),
     timeMarks: z.object({
       fullMarksIfFinishedWithinShareOfLimit: z.number().min(0).max(1),
@@ -80,6 +79,8 @@ export const GameConfigSchema = z
       chrfFloor: z.number(),
       chrfCeil: z.number(),
       minWordsPerSentence: z.number().int(),
+      /** draft rounds: Timeliness & Completion counts only when the quality gain is at least this share */
+      draftGainGate: z.number().min(0).max(1).default(0.1),
     }),
     auth: z.object({ mode: z.string(), otpLength: z.number().int(), otpTtlMinutes: z.number() }),
     ui: z.object({
@@ -116,7 +117,7 @@ export const GameConfigSchema = z
     if (keys[0] !== "trial") ctx.addIssue({ code: z.ZodIssueCode.custom, message: "the first round must be trial (mandatory entry level)" });
     if (new Set(keys).size !== keys.length) ctx.addIssue({ code: z.ZodIssueCode.custom, message: `duplicate round keys: ${keys.join(",")}` });
     const w = c.scoringWeights;
-    const ws = w.translation + w.completion + w.sentenceConstruction + w.glossary + w.time;
+    const ws = w.translationQuality + w.glossary + w.timelinessCompletion;
     if (Math.abs(ws - c.scoreOutOf) > 1e-9) ctx.addIssue({ code: z.ZodIssueCode.custom, message: `scoring weights sum to ${ws}, expected ${c.scoreOutOf}` });
   });
 

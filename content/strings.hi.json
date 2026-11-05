@@ -190,7 +190,7 @@
     "measureTranslation": "अनुवाद",
     "measureTime": "समय",
     "measureCompletion": "पूर्णता",
-    "measureGlossary": "शब्दावली",
+    "measureGlossary": "शब्दावली का उपयोग",
     "measureSentence": "वाक्य संरचना",
     "marksOf10": "{n} / 10 अंक",
     "wordsOf": "{n} / {total} शब्द",
@@ -221,7 +221,19 @@
     "legendSlip": "भाषिणी की गलती जो रह गई",
     "missingTerms": "ये शब्दावली शब्द नहीं मिले:",
     "timeMin": "{used} min / {limit} min",
-    "autoSubmitted": "समय पूरा होने पर अपने-आप जमा हुआ"
+    "autoSubmitted": "समय पूरा होने पर अपने-आप जमा हुआ",
+    "measureQuality": "अनुवाद की गुणवत्ता",
+    "measureQualitySub": "वाक्य संरचना सहित",
+    "measureGlossarySub": "CAG के मानक हिंदी शब्द",
+    "measureTimeliness": "समयबद्धता और पूर्णता",
+    "measureTimelinessSub": "कितना, कितनी जल्दी",
+    "marksOf": "{n}/{max} अंक",
+    "timelinessGated": "गुणवत्ता में 10% सुधार आवश्यक",
+    "scoreExplain": [
+      "अनुवाद की गुणवत्ता (वाक्य संरचना सहित) – 55: आपकी हिंदी CAG की प्रकाशित हिंदी रिपोर्ट से कितनी मेल खाती है, और आपके वाक्य सही व सहज हैं या नहीं।",
+      "शब्दावली का उपयोग – 25: क्या आपने CAG के मानक हिंदी शब्द इस्तेमाल किए (जैसे Annexure → अनुलग्नक)।",
+      "समयबद्धता और पूर्णता – 20: आपने कितना पाठ पूरा किया, और कितनी जल्दी। आधे समय में सब पूरा करने पर पूरे अंक।"
+    ]
   },
   "total": {
     "heading": "आपका कुल स्कोर",

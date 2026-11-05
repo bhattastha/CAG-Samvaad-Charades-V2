@@ -143,7 +143,7 @@ function PlayerDrawer({ id, onClose }: { id: string; onClose(): void }) {
                     <td className={`${td} whitespace-nowrap text-xs`}>{fmtDate(a.startedAt)}</td>
                     <td className={`${td} tabular-nums text-xs`}>{a.minutes === null ? "—" : `${a.minutes} min`}</td>
                     <td className={`${td} font-bold tabular-nums`}>{fmt(a.score)}</td>
-                    <td className={`${td} tabular-nums text-xs text-slate-600`}>{a.measures ? ["translation", "completion", "sentence", "glossary", "time"].map((k) => Math.round((a.measures[k] ?? 0) * 100)).join(" / ") : "—"}</td>
+                    <td className={`${td} tabular-nums text-xs text-slate-600`}>{a.measures ? (a.measures.model === 2 ? ["quality", "glossary", "timeliness"] : ["translation", "completion", "sentence", "glossary", "time"]).map((k) => Math.round((a.measures[k] ?? 0) * 100)).join(" / ") : "—"}</td>
                     <td className={`${td} text-xs`}>{a.leaves} left · {a.pasteBlocks} paste · {a.chat} chat</td>
                   </tr>
                 ))}</tbody>

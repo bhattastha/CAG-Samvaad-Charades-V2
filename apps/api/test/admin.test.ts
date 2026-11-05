@@ -70,7 +70,7 @@ describe("console analytics", () => {
     expect(trial.submitted).toBe(1);
     expect(trial.avgBest).toBeGreaterThan(33);
     expect(trial.histogram.reduce((n: number, b: any) => n + b.n, 0)).toBe(1);
-    expect(trial.measures.translation).toBeGreaterThan(90);
+    expect(trial.measures.quality).toBeGreaterThan(90);
     expect(o.json.fairPlay.leaveEvents).toBe(1);
     expect(o.json.glossary.termsChecked).toBeGreaterThan(0);
     expect(o.json.trend.at(-1).registrations).toBe(1);
@@ -146,7 +146,7 @@ describe("content library and settings", () => {
   it("validates and stores evaluation settings, including the unlock rule and chrF band", async () => {
     const base = (await call("GET", "/api/admin/config", viewer)).json.effective;
     expect((await call("PUT", "/api/admin/config/settings", mgr, { scoring: { chrfFloor: 0.9, chrfCeil: 0.5 } })).status).toBe(400);
-    expect((await call("PUT", "/api/admin/config/settings", mgr, { scoringWeights: { translation: 50, completion: 20, sentenceConstruction: 20, glossary: 20, time: 10 } })).status).toBe(400);
+    expect((await call("PUT", "/api/admin/config/settings", mgr, { scoringWeights: { translationQuality: 60, glossary: 25, timelinessCompletion: 20 } })).status).toBe(400);
     const ok = await call("PUT", "/api/admin/config/settings", mgr, { unlockRule: "trial-pass-unlocks-all", scoring: { chrfFloor: 0.25, chrfCeil: 0.8, minWordsPerSentence: 3 }, avoidThreshold: 0.65 });
     expect(ok.status).toBe(200);
     expect(ok.json.effective.levels.unlockRule).toBe("trial-pass-unlocks-all");

@@ -82,13 +82,12 @@ function MissionStep() {
 
 // ---------------------------------------------------------------- step 2: score
 
-const MEASURE_COLORS = ["bg-primary", "bg-navy-600", "bg-success", "bg-gold", "bg-sky-500"];
+const MEASURE_COLORS = ["bg-primary", "bg-gold", "bg-sky-500"];
 
 function ScoreStep({ cfg }: { cfg: PublicConfig }) {
   const w = cfg.scoringWeights;
   const items: [string, number][] = [
-    [t("ob.train.score.measures.translation"), w.translation], [t("ob.train.score.measures.completion"), w.completion],
-    [t("ob.train.score.measures.sentence"), w.sentenceConstruction], [t("ob.train.score.measures.glossary"), w.glossary], [t("ob.train.score.measures.time"), w.time],
+    [t("ob.train.score.measures.quality"), w.translationQuality], [t("ob.train.score.measures.glossary"), w.glossary], [t("ob.train.score.measures.timeliness"), w.timelinessCompletion],
   ];
   const out = cfg.scoreOutOf;
   const pass = cfg.titlePassMark;
@@ -143,7 +142,7 @@ function ScoreStep({ cfg }: { cfg: PublicConfig }) {
           {rows.map((r, i) => (
             <motion.div key={r.key} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 + i * 0.1 }} whileHover={{ y: -3 }}
               className={`text-center rounded-ui px-1 py-2 border ${r.phase2 ? "border-dashed border-purple-300 bg-purple-50" : "border-slate-200 bg-white"}`}>
-              <div className="mx-auto w-fit"><Medal k={r.key} size={48} shine={!r.phase2} /></div>
+              <div className="mx-auto w-fit"><Medal k={r.key} size={48} shine={!r.phase2} phase2={r.phase2} /></div>
               <div className="mt-1 text-[10px] sm:text-[12px] font-bold text-navy leading-tight break-words hyphens-auto">{r.title}</div>
               {r.phase2 && <div className="mt-0.5 text-[10px] font-bold uppercase tracking-wide text-purple-700">{t("ob.train.score.phase2")}</div>}
             </motion.div>
@@ -367,9 +366,9 @@ function ContextPanel({ i, cfg, tool }: { i: number; cfg: PublicConfig | undefin
     );
   }
   if (i === 1) {
-    const keys = ["translation", "completion", "sentence", "glossary", "time"] as const;
+    const keys = ["quality", "glossary", "timeliness"] as const;
     const w = cfg?.scoringWeights;
-    const pts = w ? [w.translation, w.completion, w.sentenceConstruction, w.glossary, w.time] : [];
+    const pts = w ? [w.translationQuality, w.glossary, w.timelinessCompletion] : [];
     return (
       <Panel kicker={t("ob.train.score.criteriaKicker")} heading={t("ob.train.score.criteriaHeading")} speak={keys.map((k) => `${t(`ob.train.score.measures.${k}`)}. ${t(`ob.train.score.criteria.${k}`)}`).join(" ")}>
         <ul className="space-y-2.5">

@@ -399,7 +399,7 @@ export async function adminRoutes(app: FastifyInstance, db: Db) {
       trialQualifyingScore: z.number().min(0).max(100).optional(),
       titlePassMark: z.number().min(0).max(100).optional(),
       maxChancesPerRound: z.number().int().min(1).max(10).optional(),
-      scoringWeights: z.object({ translation: z.number().min(0), completion: z.number().min(0), sentenceConstruction: z.number().min(0), glossary: z.number().min(0), time: z.number().min(0) }).optional(),
+      scoringWeights: z.object({ translationQuality: z.number().min(0), glossary: z.number().min(0), timelinessCompletion: z.number().min(0) }).optional(),
       unlockRule: z.enum(["all-open", "trial-pass-unlocks-all"]).optional(),
       scoring: z.object({ chrfFloor: z.number().min(0).max(1).optional(), chrfCeil: z.number().min(0).max(1).optional(), minWordsPerSentence: z.number().int().min(1).max(20).optional() })
         .refine((x) => x.chrfFloor === undefined || x.chrfCeil === undefined || x.chrfFloor < x.chrfCeil, { message: "chrF floor must be below the ceiling" }).optional(),

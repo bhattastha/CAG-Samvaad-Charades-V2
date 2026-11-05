@@ -76,7 +76,7 @@ export function Journey() {
                       </motion.div>
                     )}
                     <div className="flex items-center gap-3 lg:flex-col lg:items-start lg:gap-2">
-                      <Medal k={r.key} size={54} locked={locked} shine={res.titleEarned || preview} />
+                      <Medal k={r.key} size={54} locked={!res.titleEarned && !preview} phase2={preview} shine={res.titleEarned} />
                       <div>
                         <div className="text-[11px] font-bold uppercase tracking-[0.16em] text-navy-600">{r.levelLabel}</div>
                         <div className="text-lg font-extrabold leading-tight text-navy">{roundName(r)}</div>
@@ -124,12 +124,19 @@ export function Journey() {
             </div>
             <div>
               <div className="kicker mb-2">{t("journey.titles")}</div>
-              <div className="grid grid-cols-2 gap-3">
-                {cfg.rounds.filter((r) => r.playable !== false).map((r, i) => (
-                  <div key={r.key} className={`rounded-ui border p-2 text-center ${s.rounds[i].titleEarned ? "border-gold-light bg-gold-soft" : "border-slate-200"}`}>
-                    <div className="flex justify-center"><Medal k={r.key} size={44} locked={!s.rounds[i].titleEarned} /></div>
+              <div className="grid grid-cols-2 gap-3" data-testid="title-collection">
+                {/* Varchaspati crown card across the top, then Visheshagya, Vidvaan, Nipun, Pathik */}
+                {cfg.rounds.filter((r) => r.playable === false).map((r) => (
+                  <div key={r.key} className="col-span-2 rounded-ui border border-dashed border-purple-300 bg-purple-50 p-2 flex items-center justify-center gap-3" data-testid={`title-card-${r.key}`}>
+                    <Medal k={r.key} size={44} phase2 />
+                    <div className="text-left"><div className="text-xs font-bold">{r.titleEn}</div><div className="text-[11px] text-purple-700 font-semibold">{t("journey.titleComingPhase2")}</div></div>
+                  </div>
+                ))}
+                {cfg.rounds.map((r, i) => ({ r, res: s.rounds[i] })).filter(({ r }) => r.playable !== false).reverse().map(({ r, res }) => (
+                  <div key={r.key} className={`rounded-ui border p-2 text-center ${res?.titleEarned ? "border-gold-light bg-gold-soft" : "border-slate-200"}`} data-testid={`title-card-${r.key}`}>
+                    <div className="flex justify-center"><Medal k={r.key} size={44} locked={!res?.titleEarned} /></div>
                     <div className="text-xs font-bold mt-1">{r.titleEn}</div>
-                    <div className="text-[11px] text-muted">{s.rounds[i].titleEarned ? r.titleMeaning : t("journey.titleLocked")}</div>
+                    <div className="text-[11px] text-muted">{res?.titleEarned ? r.titleMeaning : t("journey.titleLocked")}</div>
                   </div>
                 ))}
               </div>

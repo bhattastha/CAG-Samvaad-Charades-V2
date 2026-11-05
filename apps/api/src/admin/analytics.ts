@@ -99,14 +99,15 @@ export async function overview(db: Db, range: Range) {
     const bests = [...bestBy.values()];
     const hist = Array.from({ length: 10 }, (_, i) => ({ from: i * 10, to: i === 9 ? 100 : i * 10 + 9, n: 0 }));
     for (const b of bests) hist[Math.min(9, Math.floor(b / 10))].n++;
-    const m = (k: string) => r1((avg(sub.map((a) => Number(a.measures?.[k] ?? NaN)).filter((x) => !Number.isNaN(x))) ?? NaN) * 100);
+    // scoring v2 keys; pre-v2 attempts stored "translation" where v2 stores "quality"
+    const m = (k: string) => r1((avg(sub.map((a) => Number(a.measures?.[k] ?? (k === "quality" ? a.measures?.translation : undefined) ?? NaN)).filter((x) => !Number.isNaN(x))) ?? NaN) * 100);
     return {
       key: r.key, name: r.nameEn ?? r.name, nameHi: r.name, levelLabel: r.levelLabel, playable: r.playable !== false,
       started: mine.length, submitted: sub.length, players: bests.length,
       avgBest: r1(avg(bests)), medianBest: r1(median(bests)), avgScore: r1(avg(sub.map((a) => a.score!))),
       passRate: pct(bests.filter((b) => b >= cfg.titlePassMark).length, bests.length),
       histogram: hist,
-      measures: { translation: m("translation"), completion: m("completion"), sentence: m("sentence"), glossary: m("glossary"), time: m("time") },
+      measures: { quality: m("quality"), glossary: m("glossary"), timeliness: m("timeliness"), completion: m("completion"), time: m("time") },
       avgMinutes: r1(avg(sub.filter((a) => a.submitted_at).map((a) => (+new Date(a.submitted_at!) - +new Date(a.started_at)) / 60_000))),
     };
   });

@@ -172,7 +172,7 @@ function VarchaspatiPreview({ r, onBack }: { r: RoundConfig; onBack(): void }) {
       <Page>
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ type: "spring", stiffness: 200, damping: 26 }} className="relative mx-auto max-w-4xl card shadow-pop overflow-hidden">
           <div className="bg-gradient-to-r from-purple-950 via-purple-900 to-purple-700 text-white px-6 sm:px-8 py-7 flex items-center gap-5">
-            <motion.div initial={{ scale: 0.85, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 260, damping: 22, delay: 0.15 }}><Medal k="varchaspati" size={90} shine /></motion.div>
+            <motion.div initial={{ scale: 0.85, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 260, damping: 22, delay: 0.15 }}><Medal k="varchaspati" size={90} phase2 /></motion.div>
             <div className="flex-1">
               <div className="kicker !text-purple-200">{t("varchaspati.kicker")}</div>
               <h1 className="text-4xl font-extrabold tracking-tight">{t("varchaspati.heading")}</h1>

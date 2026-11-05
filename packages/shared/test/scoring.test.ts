@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
-  chrF, parseGameConfig, roundCredits, roundOf, scoreAttempt, seedToPage, summarise, timeMeasure,
+  chrF, similarity, parseGameConfig, roundCredits, roundOf, scoreAttempt, seedToPage, summarise, timeMeasure,
   reportCardLines, romanToDevanagari, findForbidden, matchSourceTerms, glossaryKey, entriesForSector, type Answers, type SeedPage, type GlossaryEntry,
 } from "../src/index.js";
 
@@ -17,9 +17,10 @@ const ans = (t: string): Answers => ({ passage: { fields: { t }, done: false } }
 const run = (t: string, used = 8 * 60) => scoreAttempt({ config, round: trial, page, answers: ans(t), usedSeconds: used });
 
 describe("§11 scorer on the seed trial passage", () => {
-  it("reference vs itself → translation 1, glossary 7/7", () => {
+  it("reference vs itself → quality 1, glossary 7/7, 55 + 25 + 20 = 100", () => {
     const r = run(ref);
-    expect(r.measures.translation).toBe(1);
+    expect(r.measures.quality).toBe(1);
+    expect(r.counts).toMatchObject({ qualityMarks: 55, glossaryMarks: 25, timelinessMarks: 20 });
     expect(r.counts.glossaryCorrect).toBe(7);
     expect(r.counts.glossaryTotal).toBe(7);
     expect(r.counts.completionDone).toBe(9);
@@ -34,16 +35,29 @@ describe("§11 scorer on the seed trial passage", () => {
     expect(r.counts.glossaryCorrect).toBe(6);
     expect(r.tip).toMatchObject({ kind: "term", en: "marketing", hi: "विपणन", wrong: "मार्केटिंग" });
   });
-  it("time fractions 0.4 / 0.75 / 1.0 → 1.0 / 0.8 / 0.6", () => {
+  it("time factor 1.0 within 50% of the time, falling linearly to 0 at 100%", () => {
     expect(timeMeasure(0.4 * 1200, 1200)).toBeCloseTo(1.0);
-    expect(timeMeasure(0.75 * 1200, 1200)).toBeCloseTo(0.8);
-    expect(timeMeasure(1.0 * 1200, 1200)).toBeCloseTo(0.6);
-    expect(timeMeasure(2 * 1200, 1200)).toBeCloseTo(0.6);
+    expect(timeMeasure(0.75 * 1200, 1200)).toBeCloseTo(0.5);
+    expect(timeMeasure(1.0 * 1200, 1200)).toBeCloseTo(0);
+    expect(run(ref, 20 * 60).counts.timelinessMarks).toBe(0);
+    expect(run(ref, 15 * 60).score).toBe(90);
   });
-  it("Latin words and missing danda lower sentence construction", () => {
+  it("Latin words and missing danda lower fluency (light grammar check)", () => {
     const r = run("SAIL ek company hai");
-    expect(r.measures.sentence).toBeLessThan(0.9);
+    expect(r.measures.fluency).toBeLessThan(0.9);
     expect(r.grammar.some((g) => g.code === "missing_danda")).toBe(true);
+  });
+  it("untranslated half scores lower than the full text; valid reordering keeps most of the similarity", () => {
+    const half = ref.slice(0, Math.floor(ref.length / 2));
+    expect(run(half).measures.quality).toBeLessThan(run(ref).measures.quality * 0.7);
+    const first = ref.split("।")[0]!;
+    const words = first.trim().split(" ");
+    const swapped = [...words.slice(Math.ceil(words.length / 2)), ...words.slice(0, Math.ceil(words.length / 2))].join(" ");
+    expect(similarity(swapped, first)).toBeGreaterThan(0.75);
+  });
+  it("score keeps one decimal", () => {
+    const r = run(ref.replaceAll("विपणन", "मार्केटिंग"), 13 * 60);
+    expect(Math.round(r.score * 10) / 10).toBe(r.score);
   });
   it("chrF is 1 for identity and lower for a partial", () => {
     expect(chrF("कंपनी के पास", "कंपनी के पास")).toBe(1);
@@ -169,5 +183,28 @@ describe("helpers", () => {
     expect(findForbidden("अनुवाद पथिक")).toEqual([]);
     expect(findForbidden("Become a Guru")).toEqual(["Guru"]);
     expect(findForbidden("gurudwara")).toEqual([]);
+  });
+});
+
+describe("draft rounds score the gain over the BHASHINI draft", () => {
+  const primary = roundOf(config, "primary");
+  const words = ref.split(" ");
+  const draft = words.map((w, i) => (i % 3 === 0 ? "शब्द" : w)).join(" ");
+  const dpage = { ...page, parts: page.parts.map((p) => ({ ...p, tickGroup: "g1", fields: p.fields.map((f) => ({ ...f, draft })) })) };
+  const runP = (t: string) => scoreAttempt({ config, round: primary, page: dpage, answers: { passage: { fields: { t }, done: true } }, usedSeconds: 10 * 60 });
+  it("submitting the draft unchanged gives 0 quality and no timeliness", () => {
+    const r = runP(draft);
+    expect(r.measures.quality).toBe(0);
+    expect(r.counts.timelinessGated).toBe(true);
+    expect(r.counts.timelinessMarks).toBe(0);
+  });
+  it("fixing the draft to CAG's Hindi gives the full gain", () => {
+    const r = runP(ref);
+    expect(r.measures.quality).toBe(1);
+    expect(r.counts.qualityMarks).toBe(55);
+    expect(r.counts.timelinessMarks).toBe(20);
+  });
+  it("making the draft worse is clamped at 0", () => {
+    expect(runP(words.slice(0, 5).join(" ")).measures.quality).toBe(0);
   });
 });

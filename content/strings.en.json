@@ -254,6 +254,7 @@
     "creditsMeter": "Credits",
     "titles": "Title collection",
     "titleLocked": "Not yet won",
+    "titleComingPhase2": "Coming in Phase 2",
     "allDone": "Every level played. Your Hall of Fame is ready.",
     "hallOfFame": "Hall of Fame",
     "rewards": "Rewards",
@@ -439,12 +440,12 @@
     "measureTranslation": "Translation",
     "measureTime": "Time",
     "measureCompletion": "Completion",
-    "measureGlossary": "Glossary",
+    "measureGlossary": "Glossary Usage",
     "measureSentence": "Sentences",
     "measureTranslationSub": "Closeness to CAG's Hindi",
     "measureTimeSub": "Time taken",
     "measureCompletionSub": "Completed",
-    "measureGlossarySub": "CAG terms used",
+    "measureGlossarySub": "CAG's standard Hindi terms",
     "measureSentenceSub": "Sentence construction",
     "marksOf10": "{n}/10",
     "wordsOf": "{n}/{total} terms",
@@ -482,7 +483,18 @@
     "trialUnlocked": "Trial cleared! Every level is now open.",
     "sessionId": "Session",
     "goalTrial": "Score {n} more in the Trial to unlock every level",
-    "goalPick": "Choose your next level on the map"
+    "goalPick": "Choose your next level on the map",
+    "measureQuality": "Translation Quality",
+    "measureQualitySub": "incl. sentence construction",
+    "measureTimeliness": "Timeliness & Completion",
+    "measureTimelinessSub": "How much, how quickly",
+    "marksOf": "{n}/{max}",
+    "timelinessGated": "Needs a 10% quality gain",
+    "scoreExplain": [
+      "Translation Quality (incl. sentence construction) – 55: How closely your Hindi matches CAG's published Hindi report, and whether your sentences are correct and read naturally.",
+      "Glossary Usage – 25: Whether you used CAG's standard Hindi terms (for example Annexure → अनुलग्नक).",
+      "Timeliness & Completion – 20: How much of the text you finished, and how quickly. Finish everything within half the time for full marks."
+    ]
   },
   "total": {
     "heading": "Hall of Fame",

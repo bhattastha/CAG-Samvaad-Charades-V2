@@ -110,20 +110,16 @@
         "criteriaKicker": "Evaluation criteria",
         "criteriaHeading": "What the evaluators look for",
         "criteria": {
-          "translation": "How close your Hindi is to CAG's published standard.",
-          "completion": "How much of the page you translated.",
-          "sentence": "Grammar, full stops and clean Hindi sentences.",
-          "glossary": "Approved Hindi terms used for audit vocabulary.",
-          "time": "Finish with time to spare for the best score."
+          "quality": "How closely your Hindi matches CAG's published Hindi report, and whether your sentences are correct and read naturally.",
+          "glossary": "Whether you used CAG's standard Hindi terms (for example Annexure → अनुलग्नक).",
+          "timeliness": "How much of the text you finished, and how quickly. Finish everything within half the time for full marks."
         },
         "measures": {
-          "translation": "Translation Quality",
-          "completion": "Completion",
-          "sentence": "Sentence Construction",
+          "quality": "Translation Quality (incl. sentence construction)",
           "glossary": "Glossary Usage",
-          "time": "Time"
+          "timeliness": "Timeliness & Completion"
         },
-        "creditsNote": "Higher scores earn more of each level's credits. A weaker later attempt never reduces them."
+        "creditsNote": "Credits per level = level credits × (best score ÷ 100), shown to one decimal. Credits change only when you set a new best; a weaker later attempt never reduces them."
       },
       "toolkit": {
         "tabs": {

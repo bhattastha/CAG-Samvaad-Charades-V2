@@ -127,45 +127,7 @@ export function Stamp({ text, tone = "good" }: { text: string; tone?: "good" | "
 
 // ---------------- rank insignia (one per level title) ----------------
 
-/** Tier metals: Bronze → Silver → Gold → Platinum → Purple. Shape and numeral carry the meaning, not colour alone. */
-const TIER: Record<string, { a: string; b: string; edge: string; mark: string; glyph: string; metal: string }> = {
-  // metal tiers: Bronze, Silver, Gold, Platinum, Purple
-  trial: { a: "#F0C29A", b: "#A0592A", edge: "#6B3A17", mark: "#FFF4E8", glyph: "T", metal: "Bronze" },
-  primary: { a: "#F1F3F6", b: "#8F98A6", edge: "#5B6474", mark: "#1F2937", glyph: "I", metal: "Silver" },
-  secondary: { a: "#FFE58A", b: "#C8961E", edge: "#7A5A0E", mark: "#4A3300", glyph: "II", metal: "Gold" },
-  pro: { a: "#FFFFFF", b: "#AEB9CB", edge: "#4E5D78", mark: "#22314D", glyph: "III", metal: "Platinum" },
-  varchaspati: { a: "#D8B4FE", b: "#6B21A8", edge: "#3B0764", mark: "#FFFFFF", glyph: "V", metal: "Purple" },
-};
-export function Medal({ k, size = 72, locked = false, shine = false }: { k: string; size?: number; locked?: boolean; shine?: boolean }) {
-  const t = TIER[k] ?? TIER.trial;
-  const id = `ins-${k}-${locked ? "l" : "u"}`;
-  return (
-    <div className={`relative grid place-items-center ${locked ? "opacity-60" : ""}`} style={{ width: size, height: size }} aria-hidden data-metal={t.metal} data-testid={`medal-${k}`}>
-      <svg viewBox="0 0 64 64" width={size} height={size}>
-        <defs>
-          <linearGradient id={id} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor={locked ? "#E2E8F0" : t.a} />
-            <stop offset="1" stopColor={locked ? "#94A3B8" : t.b} />
-          </linearGradient>
-          <linearGradient id={`${id}-s`} x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#fff" stopOpacity=".55" /><stop offset=".5" stopColor="#fff" stopOpacity="0" /></linearGradient>
-        </defs>
-        {/* laurel wings for earned titles */}
-        {!locked && k !== "trial" && <path d="M10 40c-4-6-4-14 0-20M54 40c4-6 4-14 0-20M7 34c-2-4-2-8 0-12M57 34c2-4 2-8 0-12" stroke={t.b} strokeWidth="2.2" strokeLinecap="round" fill="none" opacity=".8" />}
-        <path d="M32 4l20 7v15c0 14-8.6 26-20 31C20.6 52 12 40 12 26V11z" fill={`url(#${id})`} stroke={locked ? "#94A3B8" : t.edge} strokeWidth="1.6" />
-        <path d="M32 9l15.5 5.5V26c0 11-6.6 20.6-15.5 24.8C23.1 46.6 16.5 37 16.5 26V14.5z" fill="none" stroke={locked ? "#CBD5E1" : "#ffffff"} strokeOpacity=".55" strokeWidth="1.2" />
-        <path d="M32 4l20 7v15c0 2-.2 4-.5 6H12.5c-.3-2-.5-4-.5-6V11z" fill={`url(#${id}-s)`} />
-        {locked ? (
-          <path d="M26.5 31v-3.5a5.5 5.5 0 0111 0V31M24.5 31h15v10h-15z" stroke="#475569" strokeWidth="2" fill="none" strokeLinejoin="round" />
-        ) : (
-          <text x="32" y={t.glyph.length > 2 ? 35 : 36} textAnchor="middle" fontSize={t.glyph.length > 2 ? 14 : 17} fontWeight="800" fill={t.mark} fontFamily="Noto Sans, sans-serif" letterSpacing="0.5">{t.glyph}</text>
-        )}
-        {!locked && k === "pro" && <path d="M32 13l3 3.5-3 3.5-3-3.5z" fill="#E0F2FE" stroke={t.edge} strokeWidth=".8" />}
-        {!locked && <path d="M24 44l8 4 8-4" stroke={t.mark} strokeOpacity=".7" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />}
-      </svg>
-      {shine && !locked && <span className="absolute inset-0 animate-shine" style={{ clipPath: "polygon(50% 6%, 81% 17%, 81% 41%, 50% 89%, 19% 41%, 19% 17%)", background: "linear-gradient(110deg,transparent 40%,rgba(255,255,255,.65) 50%,transparent 60%)", backgroundSize: "200% 100%" }} />}
-    </div>
-  );
-}
+export { Medal } from "./Badge3D";
 
 // ---------------- ambient background: a slow, faint scan line over the grid ----------------
 

@@ -86,7 +86,7 @@ export function Total() {
             <SahayikaPanel lines={said} />
             {cfg.rounds.some((r) => r.playable === false) && (
               <motion.button whileHover={{ y: -2 }} onClick={() => nav("/play/varchaspati")} className="w-full text-left rounded-card bg-gradient-to-r from-purple-950 via-purple-900 to-purple-700 text-white p-5 flex items-center gap-4 shadow-pop border border-purple-400/30">
-                <Medal k="varchaspati" size={60} shine />
+                <Medal k="varchaspati" size={60} phase2 />
                 <span className="flex-1"><span className="block kicker !text-purple-200">{t("varchaspati.kicker")}</span>
                   <span className="block text-xl font-extrabold">{t("varchaspati.teaser")}</span><span className="block text-sm text-purple-100">{t("varchaspati.tagline")}</span></span>
                 <Icon name="arrowRight" size={24} />

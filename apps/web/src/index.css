@@ -215,3 +215,11 @@ html, body { overflow-x: clip; }
 .hc-reduce-motion .hc-tick.is-done, .hc-reduce-motion .hc-plus1 { animation: none !important; }
 .hc-reduce-motion .hc-plus1 { display: none; }
 .hc-reduce-motion .hc-tick-path, .hc-reduce-motion .hc-tick, .hc-reduce-motion .hc-tick-circle { transition: none !important; }
+
+/* 3D badges: shine sweep (looping on won titles, once on first unlock) and the crown sparkle */
+@keyframes badge-sweep { 0% { transform: translateX(0) skewX(-20deg); } 60%, 100% { transform: translateX(120px) skewX(-20deg); } }
+.badge-sweep { animation: badge-sweep 4.5s ease-in-out infinite 1s; }
+.badge-sweep-once { animation: badge-sweep 1.65s ease-out 1 both; }
+@keyframes badge-sparkle { 0%, 100% { opacity: .2; } 50% { opacity: 1; } }
+.badge-sparkle { animation: badge-sparkle 1.8s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .badge-sweep, .badge-sweep-once, .badge-sparkle { animation: none; } }

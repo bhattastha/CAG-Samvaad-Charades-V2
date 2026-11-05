@@ -5,11 +5,9 @@ import { Card, ConfirmDanger, Notice, PageHeader, Pill, ReadOnlyNote, btn, fmtDa
 import { PALETTE } from "./charts";
 
 const WEIGHTS = [
-  { key: "translation", label: "Translation quality", help: "chrF similarity to CAG's own Hindi" },
-  { key: "completion", label: "Completion", help: "Sentences finished (Trial) or parts ticked" },
-  { key: "sentenceConstruction", label: "Sentence construction", help: "Latin words, missing ।, repeated words…" },
-  { key: "glossary", label: "Glossary", help: "CAG standard terms used, no avoid-forms" },
-  { key: "time", label: "Time", help: "Full marks within half the limit" },
+  { key: "translationQuality", label: "Translation Quality (incl. sentence construction)", help: "Meaning-based similarity to CAG's Hindi + light grammar check; draft rounds score the gain over the draft" },
+  { key: "glossary", label: "Glossary Usage", help: "Approved Shabd Udyan terms used ÷ terms in the source" },
+  { key: "timelinessCompletion", label: "Timeliness & Completion", help: "Completion × time factor (full within half the limit)" },
 ] as const;
 const RESET_PHRASE = "RESET ALL TEST DATA";
 

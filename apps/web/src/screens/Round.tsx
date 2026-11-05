@@ -280,7 +280,7 @@ export function Round() {
   const draftProps: DraftProps = {
     parts: visibleParts, answers, readOnly, watch: watchTexts, focusedPart, register,
     // autosave: a segment counts as reviewed once the player opens or edits it (no "Mark as done")
-    onField: (pid, key, v) => at.update(pid, { field: [key, v], done: true }),
+    onField: (pid, key, v) => { if (v !== (answers[pid]?.fields[key] ?? "")) at.update(pid, { field: [key, v], done: true }); },
     onHtml: (pid, key, h) => at.update(pid, { html: [key, h] }),
     terms: view.page.sourceTerms, rich: true, onGlossClick,
     onFocus: (pid, key, ed) => { onFocus(pid, key, ed); if (!readOnly && !answers[pid]?.done) at.update(pid, { done: true }); },

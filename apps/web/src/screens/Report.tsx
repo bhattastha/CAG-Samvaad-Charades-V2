@@ -16,8 +16,12 @@ import { Icon } from "../components/Icon";
 export interface ReportData {
   attemptId: string; roundKey: string; roundName: string; title: string; limitMinutes: number; chanceNo: number; maxChances: number;
   playerName: string; score: number; autoSubmitted: boolean;
-  counts: { translation10: number; sentence10: number; completionDone: number; completionTotal: number; completionUnit: "sentence" | "paragraph"; glossaryCorrect: number; glossaryTotal: number; usedMinutes: number; limitMinutes: number };
-  measures: { translation: number; completion: number; sentence: number; glossary: number; time: number };
+  counts: {
+    qualityMarks?: number; glossaryMarks?: number; timelinessMarks?: number; gainPct?: number | null; timelinessGated?: boolean;
+    completionDone: number; completionTotal: number; completionUnit: "sentence" | "paragraph"; glossaryCorrect: number; glossaryTotal: number; usedMinutes: number; limitMinutes: number;
+  };
+  /** model 2 = 55/25/20; older attempts keep their five legacy measures */
+  measures: { model?: 2; quality?: number; timeliness?: number; glossary: number; completion: number; time: number; translation?: number };
   best: number; chances: (number | null)[]; bestChance: number | null; titleEarned: boolean; roundCredits: number; totalCredits: number; maxCredits: number;
   stars: number; starsTotal: number; chancesLeft: number; leftCount: number;
   announce: Line[]; titleNeeded: Line | null; tip: Line; after: Line[];
@@ -34,25 +38,30 @@ type Phase = "stamp" | "scoring" | "card";
 /** Copy may end in a text arrow; the button already carries an arrow icon. */
 const noArrow = (s: string) => s.replace(/\s*\u2192\s*$/, "");
 
-function bars(r: ReportData) {
+/** The three scoring measures (55 / 25 / 20) with their marks. */
+function bars(r: ReportData, w: { translationQuality: number; glossary: number; timelinessCompletion: number }) {
   const c = r.counts;
+  const m = r.measures;
+  const v2 = m.model === 2;
+  const q = v2 ? m.quality ?? 0 : m.translation ?? 0;
+  const tc = v2 ? m.timeliness ?? 0 : m.completion * m.time;
+  const marks = (n: number | undefined, share: number, max: number) => t("reportCard.marksOf", { n: n ?? Math.round(share * max * 10) / 10, max });
+  const done = c.completionUnit === "sentence" ? t("reportCard.sentencesOf", { n: c.completionDone, total: c.completionTotal }) : t("reportCard.paragraphsOf", { n: c.completionDone, total: c.completionTotal });
   return [
-    ["type", t("reportCard.measureTranslation"), t("reportCard.measureTranslationSub"), r.measures.translation, t("reportCard.marksOf10", { n: c.translation10 }), "bg-primary"],
-    ["clock", t("reportCard.measureTime"), t("reportCard.measureTimeSub"), r.measures.time, t("reportCard.timeMin", { used: c.usedMinutes, limit: c.limitMinutes }), "bg-sky-500"],
-    ["check", t("reportCard.measureCompletion"), t("reportCard.measureCompletionSub"), r.measures.completion,
-      c.completionUnit === "sentence" ? t("reportCard.sentencesOf", { n: c.completionDone, total: c.completionTotal }) : t("reportCard.paragraphsOf", { n: c.completionDone, total: c.completionTotal }), "bg-navy-600"],
-    ["book", t("reportCard.measureGlossary"), t("reportCard.measureGlossarySub"), r.measures.glossary, t("reportCard.wordsOf", { n: c.glossaryCorrect, total: c.glossaryTotal }), "bg-gold"],
-    ["layers", t("reportCard.measureSentence"), t("reportCard.measureSentenceSub"), r.measures.sentence, t("reportCard.marksOf10", { n: c.sentence10 }), "bg-success"],
+    ["type", t("reportCard.measureQuality"), t("reportCard.measureQualitySub"), q, marks(c.qualityMarks, q, w.translationQuality), "bg-primary"],
+    ["book", t("reportCard.measureGlossary"), `${t("reportCard.measureGlossarySub")} · ${t("reportCard.wordsOf", { n: c.glossaryCorrect, total: c.glossaryTotal })}`, m.glossary, marks(c.glossaryMarks, m.glossary, w.glossary), "bg-gold"],
+    ["clock", t("reportCard.measureTimeliness"), c.timelinessGated ? t("reportCard.timelinessGated") : `${done} · ${t("reportCard.timeMin", { used: c.usedMinutes, limit: c.limitMinutes })}`, tc, marks(c.timelinessMarks, tc, w.timelinessCompletion), "bg-sky-500"],
   ] as const;
 }
 
 /** Interstitial: the stamp, then the "scoring machine" filling the five stats one by one. */
 function Interstitial({ r, phase, onNext, roundLabel }: { r: ReportData; phase: Phase; onNext(): void; roundLabel: string }) {
+  const w = useWeights();
   const [shown, setShown] = useState(0);
   useEffect(() => {
     if (phase === "stamp") { sfx(r.autoSubmitted ? "warn" : "success"); const tm = setTimeout(onNext, 1700); return () => clearTimeout(tm); }
     if (phase === "scoring") {
-      if (shown < 5) { const tm = setTimeout(() => { setShown(shown + 1); sfx("tick"); }, 450); return () => clearTimeout(tm); }
+      if (shown < 3) { const tm = setTimeout(() => { setShown(shown + 1); sfx("tick"); }, 450); return () => clearTimeout(tm); }
       const tm = setTimeout(onNext, 900);
       return () => clearTimeout(tm);
     }
@@ -71,7 +80,7 @@ function Interstitial({ r, phase, onNext, roundLabel }: { r: ReportData; phase: 
             <div className="text-center kicker text-gold-light">{t("complete.measuring")}</div>
             <div className="mt-2 text-center text-lg font-semibold">{t("complete.scoring")}</div>
             <div className="mt-6 space-y-3">
-              {bars(r).map(([ic, label, , v, count, c], i) => (
+              {bars(r, w).map(([ic, label, , v, count, c], i) => (
                 <motion.div key={label} initial={{ opacity: 0, x: -8 }} animate={i < shown ? { opacity: 1, x: 0 } : { opacity: 0.3, x: 0 }} transition={{ duration: 0.25 }} className="grid grid-cols-[2rem_7rem_1fr_8.5rem] items-center gap-3">
                   <span className="grid place-items-center w-8 h-8 rounded-ui bg-white/10 border border-white/10 text-gold-light"><Icon name={ic} size={16} /></span><span className="font-bold">{label}</span>
                   <div className="h-2 rounded-full bg-white/15 overflow-hidden"><motion.div className={`h-full rounded-full ${c}`} initial={{ width: 0 }} animate={{ width: i < shown ? `${v * 100}%` : 0 }} transition={{ duration: 0.5, ease: "easeOut" }} /></div>
@@ -88,7 +97,11 @@ function Interstitial({ r, phase, onNext, roundLabel }: { r: ReportData; phase: 
 }
 
 /** §7.7 Report card — designs 06, 09, 11, 13. */
+const W0 = { translationQuality: 55, glossary: 25, timelinessCompletion: 20 };
+const useWeights = () => useConfig().data?.scoringWeights ?? W0;
+
 export function Report() {
+  const w = useWeights();
   const { id = "" } = useParams();
   const [sp, setSp] = useSearchParams();
   const nav = useNavigate();
@@ -130,7 +143,7 @@ export function Report() {
             {r.titleEarned ? (
               <motion.div initial={{ scale: 0.92, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 260, damping: 24, delay: 0.6 }}
                 className="flex items-center gap-4 rounded-card bg-white/[0.07] border border-gold/40 p-4">
-                <Medal k={r.roundKey} size={84} shine />
+                <Medal k={r.roundKey} size={96} sweep />
                 <div>
                   <div className="kicker text-gold-light">{t("complete.titleUnlocked")}</div>
                   <div className="text-3xl font-extrabold tracking-tight">{round?.titleEn ?? r.title}</div>
@@ -187,7 +200,7 @@ export function Report() {
             </div>
             <h3 className="mt-6 pt-4 border-t border-slate-200 text-lg font-bold text-navy">{t("reportCard.howYouDid")}</h3>
             <div className="mt-2 space-y-3">
-              {bars(r).map(([ic, hi, sub, v, count], i) => (
+              {bars(r, w).map(([ic, hi, sub, v, count], i) => (
                 <motion.div key={hi} initial={{ opacity: 0, x: 8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 + i * 0.08, duration: 0.3 }} className="grid grid-cols-[1.75rem_7.5rem_1fr_auto] sm:grid-cols-[1.75rem_10rem_1fr_9rem] items-center gap-3">
                   <span aria-hidden className="grid place-items-center w-7 h-7 rounded-ui bg-navy-50 border border-slate-200 text-navy-600"><Icon name={ic} size={15} /></span>
                   <div><div className="font-semibold text-navy">{hi}</div><div className="text-xs text-muted">{sub}</div></div>
