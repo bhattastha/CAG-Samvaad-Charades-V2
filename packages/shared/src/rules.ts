@@ -154,7 +154,8 @@ export function reportCardLines(i: ReportLineInput): { announce: string[]; after
   const announce: string[] = [p + "opening"];
   const titleEarned = best >= i.passMark;
   if (titleEarned) {
-    announce.push(p + "title_earned_first_chance");
+    // the level line only when this attempt first wins the title; a held title relies on new_best / not_new_best
+    if (i.priorBest === null || i.priorBest < i.passMark) announce.push(p + "title_earned_first_chance");
     if (i.score >= 75) announce.push(p + "high_score");
   } else if (i.chancesLeft > 0 && best >= 25) announce.push(p + "so_close");
   else if (i.chancesLeft > 0) announce.push(p + "below_pass_chances_left");

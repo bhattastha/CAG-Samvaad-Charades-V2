@@ -138,8 +138,9 @@ describe("report card line selection (Sahayika script)", () => {
     expect(ids({ ...base, chanceNo: 1, score: 80, priorBest: null, chancesLeft: 2 })).toEqual(["opening", "title_earned_first_chance", "high_score"]);
   });
   it("chance 2 or 3 adds new best / lower than best", () => {
-    expect(ids({ ...base, chanceNo: 2, score: 60, priorBest: 40, chancesLeft: 1 })).toEqual(["opening", "title_earned_first_chance", "new_best"]);
-    expect(ids({ ...base, chanceNo: 3, score: 30, priorBest: 40, chancesLeft: 0 })).toEqual(["opening", "title_earned_first_chance", "not_new_best"]);
+    expect(ids({ ...base, chanceNo: 2, score: 60, priorBest: 40, chancesLeft: 1 })).toEqual(["opening", "new_best"]);
+    expect(ids({ ...base, chanceNo: 2, score: 60, priorBest: 20, chancesLeft: 1 })).toEqual(["opening", "title_earned_first_chance", "new_best"]);
+    expect(ids({ ...base, chanceNo: 3, score: 30, priorBest: 40, chancesLeft: 0 })).toEqual(["opening", "not_new_best"]);
   });
   it("so close (25-32) / under 25 / no chances", () => {
     expect(ids({ ...base, chanceNo: 1, score: 26, priorBest: null, chancesLeft: 2 })[1]).toBe("so_close");

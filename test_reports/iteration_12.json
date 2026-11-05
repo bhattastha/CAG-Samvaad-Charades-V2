@@ -1,0 +1,41 @@
+{
+  "summary": "Iteration 12 retested the 8 follow-up items from iteration 11 on PREVIEW (API, UI and offline scorer). VERIFIED (6 of 8): (1) The big score shows one decimal: 97.7, 23.4 and 59.9 display as-is, and integers show without decimals (96 / 100, 100 / 100). (2) The heading reads 'Your three measures' and 'five stats' no longer appears. (3) /how-to-play step 2 subtitle reads 'Every translation is evaluated on three measures: quality, glossary, and timeliness & completion.' (4) Profile history medals are data-state=locked for 22.7, 23.4 and 0, and won for 96, 100, 59.9 and 97.7. (5) The report card kicker is right in every case. qa.cr6 primary ch2 (23.4 < 96), qa.cr7 primary ch2 (23.4 < 97.7) and qa.cr6 trial ch3 (59.9 < 100) show 'TITLE HELD · BEST STANDS', +0.0 and no badge-sweep-once. First wins (qa.cr7 97.7, qa.cr6 96, trial 100) show 'TITLE UNLOCKED', the sweep, and +4.9 / +4.8 / +3.0. (6) The Sahayika panel lists the opening line, then the level line, then high_score or not_new_best, so no announce lines are dropped. (8) scripts/emergent/test-otp.sh works with DATABASE_URL and JWT_SECRET unset: the planted code verifies with 200 and a wrong code is rejected. PARTIAL (7) Fluency: the offline scorer gives pure CAG reference text TQ 55/55, fluency 1.0 and score 100, so the refKeys filter works. A real submission is different. qa.cr7 Primary with the reference in every field and all parts done scored 97.7 with TQ 52.7/55 and fluency 0.902. Cause: the server re-adds locked chips like '83 per cent', and grammarIssues then flags 'per' and 'cent' as latin_word (34 own issues). That ~2.5 TQ penalty is one no player can avoid. Also, a stale FAQ answer and a contradictory Sahayika line on held re-attempts.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "POST /api/attempts/:id/submit (packages/shared/src/scoring.ts:186 grammarIssues)", "issue": "latin_word check uses `!f.locked.includes(w)`. f.locked holds whole phrases ('83 per cent'), so the single words 'per'/'cent' inside locked chips are always flagged. Players can't remove locked chips (game.ts:179 re-adds them), so every page with Latin text in locked chips loses fluency. Offline on r38-primary-bundle: pure reference gives TQ 55 and fluency 1.0. Reference with the locked chips inline gives TQ 52.5, fluency 0.897 and 44 latin issues. Real submission: TQ 52.7. Fix: build a Set of words from the locked phrases (f.locked.flatMap(words)) and test w against it."},
+      {"endpoint": "Report announce (packages/shared/src/rules.ts:155-157 reportCardLines)", "issue": "On a lower re-attempt after the title was already won, announce still includes '<round>.report_card.title_earned_first_chance' ('Brilliant, QA! Welcome, Anuvad Nipun. 4.8 more credits are yours.'). This contradicts the +0.0 chip and the 'Title held · best stands' kicker shown just below it, and it appears on every later attempt. Fix: push it only when this attempt first crosses the mark (score >= passMark && (priorBest ?? -1) < passMark)."},
+      {"endpoint": "POST /api/sahayika/chat (content/sahayika.script.json faq.before_game[9])", "issue": "Typed question 'How am I scored?' outside a round matches the FAQ and returns stale 'Five measures: translation quality, time, completion, glossary terms and sentence construction...' (Hindi 'पाँच मानक'). Knowledge facts are updated, but this FAQ entry is not."},
+      {"endpoint": "scoring.ts:288 tip", "issue": "The tip uses unfiltered grammar[0], so a reference-perfect attempt still gets 'end every sentence with a full stop (।)' for issues CAG's own Hindi also has. Use own(grammar)."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "Report.tsx heldOnly", "issue": "heldOnly = titleEarned && score < best. A higher re-attempt after the title was already won (new best, e.g. 40 -> 60) still shows 'Title unlocked', the sweep and +roundCredits (the full round total, not the delta gained). An attempt equal to the best on a later chance behaves the same way. Not reproduced live: no such player exists, and it would spend chances.", "selector": "[data-testid=report-title-kicker]", "priority": "LOW"}
+    ],
+    "integration_issues": [
+      {"flow": "Report card on held re-attempt", "issue": "The Sahayika panel's second line claims new credits and welcomes the title again, while the chip shows +0.0 (backend announce issue above)", "affected_selectors": [".sahayika-panel p"]}
+    ],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/backend/tests/test_iter12_followups.py", "/app/test_reports/pytest/iter12.xml"],
+  "action_items": [
+    "scoring.ts:186: exempt the words inside locked phrases from latin_word (split f.locked into words). Without this, a near-reference draft-round answer can't reach 55 TQ on pages with 'per cent' chips.",
+    "rules.ts:156-157: add title_earned_first_chance to announce only when this attempt first wins the title; for a held title, rely on not_new_best.",
+    "content/sahayika.script.json faq.before_game 'How am I scored?': update the en and hi answers to three measures (55/25/20).",
+    "Optional: scoring.ts:288 tip from the filtered (own) grammar; Report.tsx heldOnly could compare against priorBest/pass mark so a higher re-attempt after a win shows the credit delta; stale comment Report.tsx:57 'five stats'."
+  ],
+  "critical_code_review_comments": [
+    "rules.ts reportCardLines: titleEarned = best >= passMark is used both for 'has title' and 'won now'. Separate the two (wonNow vs held).",
+    "Report.tsx credits chip shows r.roundCredits (the cumulative round credits) as '+X'. It is only right on a first win.",
+    "game.ts:179 re-adds missing locked tokens at the END of the field text, so an answer that translated '83 per cent' as '83 प्रतिशत' gets a stray chip tail, which adds a missing_danda and lowers chrF. Consider whether CAG's reference ('प्रतिशत') conflicts with locking 'per cent' at all."
+  ],
+  "updated_files": ["/app/backend/tests/test_iter12_followups.py"],
+  "success_rate": {"backend": "6/9 checks pass (OTP script 2/2, held report data 1/1, lower reattempt 1/1, reference fluency 0/1, knowledge/FAQ 0/2, announce 0/1 – plus cr7 lower reattempt)", "frontend": "100% of requested UI items (decimals, heading, how-to-play, profile medals, held/unlocked kicker + chip, panel lines)"},
+  "test_credentials": "Used /app/memory/test_credentials.md flow: test-otp.sh + POST /api/auth/otp/verify. /otp/request not called.",
+  "seed_data_creation": "Registered new player qa.cr7@cag.gov.in (name 'TEST_QA Iter12', Delhi office) and submitted 2 Primary attempts: 4e8b5f9c-8aa4-4f6a-bb79-a3c5b3a84d98 (reference text, 97.7, first win) and 744d5676-45b3-4240-b8f9-d38d4720339d (unchanged draft, 23.4, held). Nothing deleted.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "test-otp.sh now works (plant then verify; codes are single-use, so re-plant per browser session). In the browser, set localStorage hc.briefing.v1='1' before /how-to-play to avoid the briefing modal. qa.cr7 has 1 Primary chance left and all other levels unplayed; qa.cr6 has 1 Primary chance left. Offline scoring: put a tsx script in /app/apps/api (import loadGlossary+loadPage from ./src/pages.js, call loadGlossary(db) first) and run `npx tsx --env-file=/app/backend/.env x.ts` with DATABASE_URL from /proc/<server.ts pid>/environ. The Primary tests in test_iter12_followups.py spend chances; run with -k 'not Primary' for regression.",
+  "rca of the issue": "Fluency cap: grammarIssues line 186 compares each word to f.locked (an array of multi-word phrases), so words inside locked chips are never exempt. The refKeys filter doesn't remove them because the reference has 'प्रतिशत', not 'per cent'. Repro: start Primary on r38-primary-bundle, paste the hiReference into each field and mark all done, submit. Result: fluency 0.902, TQ 52.7. Held announce: reportCardLines pushes title_earned_first_chance whenever best >= passMark, even when priorBest already passed. Repro: /report/fe904098-fc6e-45a2-9a74-fddac94860bf (qa.cr6)."
+}

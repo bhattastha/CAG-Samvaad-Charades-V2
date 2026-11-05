@@ -181,9 +181,10 @@ function grammarIssues(round: RoundConfig, page: PageData, answers: Answers, min
       const text = normalise(fieldText(answers, p, f.key));
       if (!text) continue;
       const refLatin = new Set(words(f.hiReference).filter((w) => LATIN_WORD.test(w)).map((w) => w.toLowerCase()));
+      const lockedWords = new Set(f.locked.flatMap((l) => words(l)));
       const ws = words(text);
       for (const w of ws) {
-        if (LATIN_WORD.test(w) && !refLatin.has(w.toLowerCase()) && !f.locked.includes(w))
+        if (LATIN_WORD.test(w) && !refLatin.has(w.toLowerCase()) && !lockedWords.has(w))
           out.push({ code: "latin_word", partId: p.id, fieldKey: f.key, text: w, penalty: 0.05 });
         if (DEPENDENT_SIGN.test(w)) out.push({ code: "vowel_sign_start", partId: p.id, fieldKey: f.key, text: w, penalty: 0.03 });
       }
@@ -283,10 +284,11 @@ export function scoreAttempt({ config, round, page, answers, usedSeconds }: Scor
   const score = empty ? 0 : round1(measures.quality * w.translationQuality + measures.glossary * w.glossary + measures.timeliness * w.timelinessCompletion);
 
   const firstBadTerm = termChecks.find((t) => !t.correct);
+  const ownGrammar = own(grammar);
   const tip: Tip = firstBadTerm
     ? { kind: "term", en: firstBadTerm.term.en, hi: firstBadTerm.term.hi, wrong: firstBadTerm.avoidFound }
-    : grammar[0]
-      ? { kind: "grammar", code: grammar[0].code, text: grammar[0].text }
+    : ownGrammar[0]
+      ? { kind: "grammar", code: ownGrammar[0].code, text: ownGrammar[0].text }
       : { kind: "praise" };
 
   return {

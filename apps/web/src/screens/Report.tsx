@@ -54,7 +54,7 @@ function bars(r: ReportData, w: { translationQuality: number; glossary: number; 
   ] as const;
 }
 
-/** Interstitial: the stamp, then the "scoring machine" filling the five stats one by one. */
+/** Interstitial: the stamp, then the "scoring machine" filling the three measures one by one. */
 function Interstitial({ r, phase, onNext, roundLabel }: { r: ReportData; phase: Phase; onNext(): void; roundLabel: string }) {
   const w = useWeights();
   const [shown, setShown] = useState(0);
@@ -132,7 +132,11 @@ export function Report() {
   const titleLine = r.announce[0];
   const restLines = r.announce.slice(1);
   // a lower re-attempt after the title was already won: nothing new earned this time
-  const heldOnly = r.titleEarned && r.score < r.best;
+  const priorBest = Math.max(-1, ...r.chances.filter((c, i) => i + 1 !== r.chanceNo && c !== null).map((c) => c as number));
+  const heldOnly = r.titleEarned && priorBest >= (cfg?.titlePassMark ?? 33);
+  // credits gained by this attempt (a new best raises them; a lower attempt adds nothing)
+  const cap = round?.creditCap ?? 0;
+  const gained = Math.max(0, Math.round((r.roundCredits - (priorBest > 0 ? Math.round(priorBest * cap * 10 / 100) / 10 : 0)) * 10) / 10);
   return (
     <>
       <Header />
@@ -158,7 +162,7 @@ export function Report() {
             <div className="flex items-center justify-between gap-3">
               <motion.span initial={{ y: 8, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.9, duration: 0.3 }}
                 className="inline-flex items-center gap-2 rounded-ui text-navy-900 px-4 py-2 text-xl font-extrabold tnum shadow-gold" style={{ background: "linear-gradient(180deg, #E9D7A6, #C49B3D)" }}>
-                <Coin size={24} /> +<CountUp to={heldOnly ? 0 : r.roundCredits} decimals={1} />
+                <Coin size={24} /> +<CountUp to={gained} decimals={1} />
               </motion.span>
               <span className="text-lg font-bold tnum">{t("reportCard.runningTotal", { n: r.totalCredits })}</span>
             </div>

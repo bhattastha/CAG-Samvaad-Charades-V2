@@ -3675,8 +3675,8 @@
       },
       {
         "q": "How am I scored?",
-        "en": "Five measures: translation quality, time, completion, glossary terms and sentence construction. Translation quality carries the most weight.",
-        "hi": "पाँच मानक: अनुवाद की गुणवत्ता, समय, पूर्णता, शब्दावली के शब्द और वाक्य संरचना। अनुवाद की गुणवत्ता का भार सबसे अधिक है।"
+        "en": "Three measures, out of 100: Translation Quality (incl. sentence construction) – 55: how closely your Hindi matches CAG's published Hindi report, and whether your sentences are correct and read naturally. Glossary Usage – 25: whether you used CAG's standard Hindi terms (for example Annexure → अनुलग्नक). Timeliness & Completion – 20: how much of the text you finished, and how quickly. Finish everything within half the time for full marks.",
+        "hi": "100 में से तीन मानक: अनुवाद की गुणवत्ता (वाक्य संरचना सहित) – 55: आपकी हिंदी CAG की प्रकाशित हिंदी रिपोर्ट से कितनी मेल खाती है, और वाक्य सही व सहज हैं या नहीं। शब्दावली का उपयोग – 25: क्या आपने CAG के मानक हिंदी शब्द इस्तेमाल किए (जैसे Annexure → अनुलग्नक)। समयबद्धता और पूर्णता – 20: आपने कितना पाठ पूरा किया, और कितनी जल्दी। आधे समय में सब पूरा करने पर पूरे अंक।"
       },
       {
         "q": "How do I type in Hindi?",

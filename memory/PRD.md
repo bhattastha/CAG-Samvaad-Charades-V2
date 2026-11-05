@@ -44,3 +44,16 @@ User choices: Emergent managed email for OTP; publish seeded Report 38 sample pa
 - Phase 1.4 (remove Mark as done) ON HOLD: conflicts with Phase 4.3 + final check (Primary/Secondary keep Mark as done). Autosave already every 10 s.
 - Pending phases 2–8: CAG email domain + BHASHINI email relay (needs EMAIL_RELAY_URL/KEY, OTP_ALLOWLIST, reply-to), Trial 200 words, report structure (footnotes/tables/charts), Professional scrolling mode, Sahayika female mascot + voice, script load from docx/review PDF (PDF + note image not received), metal badges.
 - Open question from user: Trial "speak" (voice typing, websocket /api/speech/asr/stream → Dhruva socket.io) not working — not yet diagnosed.
+## 5 Nov 2026 — CR v1.0 phases 2–8 + scoring v2 + 3D badges (preview only, not published)
+- Phase 2: sign-in limited to @cag.gov.in + OTP_ALLOWLIST (bhattastha1520@gmail.com, asthabhatt152000@gmail.com) + ADMIN_EMAILS; OTP sent via BHASHINI relay (EMAIL_RELAY_URL in backend/.env, EMAIL_RELAY_API_KEY secret, Bearer, body {to:[],subject,body,body_type:"html"}). Verified 200 for @cag.gov.in.
+- Phase 3: Trial passages trimmed to ~200 words (seed + Neon, glossary terms pruned to those present). Speak: Dhruva Hindi ASR returns DHRUVA-101 upstream for all models; client falls back to browser hi-IN after 8 s of silence.
+- Mark as done removed everywhere; a segment counts as reviewed on focus or real edit (unchanged values no longer trigger autosave).
+- Phase 4/5: figures shown on both sides; Pro = continuous scroll (config rounds[].scrollMode), lazy editor mount, progress bar.
+- Phase 6/7: Sahayika (female) mascot assets + female TTS (ttsGender female, config + DB override); docx script imported via scripts/import-sahayika-docx.py (reference/sahayika/); triggers wired (landing hovers/idle, registration fields, briefing modal W-01..W-11, training lines, pre-round, in-round, chat open/close, report card + buttons); header mute toggle.
+- Scoring v2 (new attempts only): Translation Quality 55 (0.6 chrF + 0.4 stem-overlap similarity vs CAG Hindi over full text, × (0.9+0.1·fluency), grammar issues also present in the reference not penalised; draft rounds score gain over draft, unchanged draft = 0) + Glossary 25 + Timeliness&Completion 20 (completion × time factor 1→0 from 50%→100% time; draft rounds only if gain ≥ 10%). Score 1 decimal (attempts.score double precision). Credits = cap × best/100 (1 decimal, total 50).
+- 3D metal badges (components/Badge3D.tsx, exported as Medal): I Bronze, II Silver, III Gold, IV Platinum, V Royal; won/locked/phase2 states, hover tilt, shine sweep, reduced-motion respected. Title Collection: Varchaspati full-width first ("Coming in Phase 2"), then IV→I.
+- Tests: shared 26/26, api 27/27; testing agent iterations 10–12 (all items verified, follow-ups fixed).
+## Backlog
+- P0: user review then publish (also run scripts/emergent/package.sh); re-generate failed Sahayika audio lines (some TTS timeouts; live TTS covers them).
+- P1: manager console updates (user will specify); BHASHINI ASR recovery check; optional AI meaning-similarity scorer.
+- Note: preview and live share the Neon DB (Trial passage change is already live).
