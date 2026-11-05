@@ -430,6 +430,11 @@
     "tapToContinue": "Tap for your report card",
     "titleUnlocked": "Title unlocked",
     "titleHeld": "Title held",
+    "weakTitle": "Where you lost the most marks",
+    "weakSub": "Translation Quality: polish these first next time",
+    "weakLost": "−{n} marks",
+    "weakSentence": "Sentence {n}",
+    "weakMatch": "{n}% match with CAG's Hindi",
     "newBest": "New personal best"
   },
   "reportCard": {

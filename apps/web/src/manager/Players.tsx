@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../lib/api";
 import { Card, ConfirmDanger, Drawer, Empty, Kpi, PageHeader, Pill, ago, btn, fmt, fmtDate, input, th, td, tr, useIsManager, select } from "./ui";
 import { LEVEL_COLORS, Meter } from "./charts";
+import { Medal } from "../components/Juice";
 
 const LEVELS = [
   { key: "trial", label: "Trial" }, { key: "primary", label: "Primary" }, { key: "secondary", label: "Secondary" }, { key: "pro", label: "Professional" },
@@ -67,7 +68,7 @@ export function Players() {
               </tr></thead>
               <tbody>{rows.map((p) => (
                 <tr key={p.id} className={`${tr} cursor-pointer`} onClick={() => setParams({ open: p.id })} tabIndex={0} onKeyDown={(e) => e.key === "Enter" && setParams({ open: p.id })}>
-                  <td className={td}><div className="font-semibold text-slate-900">{p.name}</div><div className="text-xs text-slate-500">{p.email}</div></td>
+                  <td className={td}><div className="flex items-center gap-2">{(() => { const top = [...p.rounds].reverse().find((x: any) => x.titleEarned); return top ? <span title={`Highest title: ${top.key}`}><Medal k={top.key} size={28} /></span> : null; })()}<div><div className="font-semibold text-slate-900">{p.name}</div><div className="text-xs text-slate-500">{p.email}</div></div></div></td>
                   <td className={`${td} max-w-[16rem]`}><div className="truncate text-xs text-slate-700" title={p.office}>{p.office}</div><div className="text-xs text-slate-500">{p.state}</div></td>
                   {LEVELS.map((l) => {
                     const r = p.rounds.find((x: any) => x.key === l.key);
@@ -124,7 +125,7 @@ function PlayerDrawer({ id, onClose }: { id: string; onClose(): void }) {
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
               {p.rounds.filter((r: any) => r.playable).map((r: any) => (
                 <div key={r.key} className="rounded-md border border-slate-200 p-3">
-                  <div className="flex items-center gap-1.5 text-xs font-semibold uppercase text-slate-500"><span className="h-2 w-2 rounded-sm" style={{ background: LEVEL_COLORS[r.key] }} aria-hidden />{r.key}</div>
+                  <div className="flex items-center gap-1.5 text-xs font-semibold uppercase text-slate-500"><Medal k={r.key} size={24} locked={!r.titleEarned} />{r.key}</div>
                   <div className="mt-1 text-xl font-bold tabular-nums">{fmt(r.best)}</div>
                   <div className="text-xs text-slate-500">{r.chancesUsed} chances used · {r.credits} cr</div>
                   {r.titleEarned && <div className="mt-1"><Pill tone="gold">Title earned</Pill></div>}
@@ -135,7 +136,7 @@ function PlayerDrawer({ id, onClose }: { id: string; onClose(): void }) {
           <Card title="Attempt history" pad={false}>
             {p.history.length ? (
               <div className="overflow-x-auto"><table className="w-full text-sm">
-                <thead className="bg-slate-50"><tr><th className={th}>Level · chance</th><th className={th}>Bundle</th><th className={th}>Started</th><th className={th}>Time</th><th className={th}>Score</th><th className={th}>Measures (T/C/S/G/Ti)</th><th className={th}>Signals</th></tr></thead>
+                <thead className="bg-slate-50"><tr><th className={th}>Level · chance</th><th className={th}>Bundle</th><th className={th}>Started</th><th className={th}>Time</th><th className={th}>Score</th><th className={th} title="v2: Translation Quality / Glossary / Timeliness & Completion (older attempts: T/C/S/G/Ti)">Measures (Q/G/TC)</th><th className={th}>Signals</th></tr></thead>
                 <tbody>{p.history.map((a: any) => (
                   <tr key={a.id} className={tr}>
                     <td className={td}><b>{a.roundName}</b> · {a.chanceNo}<div>{a.status === "active" ? <Pill tone="navy">in progress</Pill> : a.autoSubmitted ? <Pill tone="amber">timed out</Pill> : <Pill tone="green">submitted</Pill>}</div></td>

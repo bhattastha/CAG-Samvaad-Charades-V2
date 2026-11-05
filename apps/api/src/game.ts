@@ -209,7 +209,7 @@ export async function submit(db: Db, a: AttemptRow, auto = false): Promise<Attem
   const limit = round.timeLimitMinutes * 60;
   const usedSeconds = auto ? limit : Math.min(limit, (end.getTime() - new Date(a.started_at).getTime()) / 1000);
   const res = scoreAttempt({ config: config(), round, page, answers: a.answers, usedSeconds });
-  const result = { counts: res.counts, flags: res.flags, grammar: res.grammar.map((g) => ({ code: g.code, partId: g.partId, fieldKey: g.fieldKey, text: g.text })), termChecks: res.termChecks.map((t) => ({ en: t.term.en, hi: t.term.hi, correct: t.correct, present: t.present, avoidFound: t.avoidFound })) };
+  const result = { counts: res.counts, weakSpots: res.weakSpots, flags: res.flags, grammar: res.grammar.map((g) => ({ code: g.code, partId: g.partId, fieldKey: g.fieldKey, text: g.text })), termChecks: res.termChecks.map((t) => ({ en: t.term.en, hi: t.term.hi, correct: t.correct, present: t.present, avoidFound: t.avoidFound })) };
   const row = await db.one<AttemptRow>(
     `UPDATE attempts SET status='submitted', submitted_at=$2, auto_submitted=$3, measures=$4, score=$5, tip=$6, result=$7
      WHERE id=$1 AND status='active' RETURNING *`,
@@ -284,6 +284,7 @@ export async function report(db: Db, a: AttemptRow) {
     score: a.score,
     autoSubmitted: a.auto_submitted,
     counts: a.result.counts,
+    weakSpots: a.result.weakSpots ?? [],
     measures: a.measures,
     best: r.best,
     chances: r.chances,
@@ -299,8 +300,13 @@ export async function report(db: Db, a: AttemptRow) {
     leftCount: a.left_page_count,
     announce: sel.announce.map((id) => say(id, vars)).filter(Boolean),
     titleNeeded: sel.titleEarned ? null : say(`${a.round_key}.report_card.title_needed_note`, vars),
-    tip: tipLine(a.round_key, a.tip),
-    after: sel.after.map((id) => say(id, vars)).filter(Boolean),
+    // report card: praise or motivation (no glossary hints here), then how to score better and what to do next
+    tip: say(`${a.round_key}.report_card.${(a.score ?? 0) >= 75 ? "motivate_high" : sel.titleEarned ? "motivate_mid" : "motivate_low"}`, vars) ?? tipLine(a.round_key, { kind: "praise" } as ScoreResult["tip"]),
+    after: [
+      ...sel.after.map((id) => say(id, vars)),
+      a.tip?.kind === "grammar" ? tipLine(a.round_key, a.tip) : null,
+      next && sel.titleEarned ? say(`${a.round_key}.report_card.go_next`, vars) : r.chancesLeft > 0 ? say(`${a.round_key}.report_card.improve_retry`, vars) : null,
+    ].filter(Boolean),
     nextRound: next ? { key: next.key, name: next.name, unlocked: true } : null,
     trialPassed: summary.trialPassed,
     trialGated,
@@ -317,6 +323,7 @@ export async function review(db: Db, a: AttemptRow) {
     page: playerPage(p, false),
     answers: a.answers,
     flags: a.result.flags,
+    weakSpots: a.result.weakSpots ?? [],
     termChecks: a.result.termChecks.map((t: any) => ({ en: t.en, hi: t.hi, correct: t.correct })),
   };
 }

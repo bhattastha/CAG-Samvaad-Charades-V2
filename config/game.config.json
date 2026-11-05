@@ -39,7 +39,8 @@
       "titleMeaning": "The Skilled Translator",
       "levelLabel": "Level 2",
       "playable": true,
-      "pages": 10
+      "pages": 10,
+      "scrollMode": true
     },
     {
       "key": "secondary",
@@ -55,7 +56,8 @@
       "titleMeaning": "The Translation Scholar",
       "levelLabel": "Level 3",
       "playable": true,
-      "pages": 20
+      "pages": 20,
+      "scrollMode": true
     },
     {
       "key": "pro",

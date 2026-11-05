@@ -136,7 +136,10 @@ export interface ScoreResult {
   grammar: GrammarIssue[];
   flags: Flag[];
   empty: boolean;
+  /** the sentences (Trial) or parts (draft rounds) that lost the most Translation Quality marks, worst first */
+  weakSpots: WeakSpot[];
 }
+export interface WeakSpot { partId: string; sentence: number | null; en: string; similarityPct: number; lostMarks: number }
 
 const fieldText = (answers: Answers, part: Part, key: string) => answers[part.id]?.fields?.[key] ?? "";
 const editableFields = (p: Part) => p.fields.filter((f) => !f.numeric);
@@ -241,6 +244,31 @@ function docQuality(page: PageData, answers: Answers, grammar: GrammarIssue[], s
 const draftAnswers = (page: PageData): Answers =>
   Object.fromEntries(page.parts.filter((p) => p.editable).map((p) => [p.id, { fields: Object.fromEntries(p.fields.filter((f) => !f.numeric).map((f) => [f.key, f.draft ?? ""])), done: false }]));
 
+const splitSentences = (s: string) => s.split(/(?<=[।?!])\s+/u).map((x) => x.trim()).filter(Boolean);
+
+/** Where the Translation Quality marks went: per sentence (Trial) or per part, marks lost = share of the text × (1 − similarity) × weight. */
+function weakSpotsOf(round: RoundConfig, page: PageData, answers: Answers, sc: GameConfig["scoring"], weight: number, n = 3): WeakSpot[] {
+  const units: { partId: string; sentence: number | null; en: string; ref: string; hyp: string }[] = [];
+  for (const p of page.parts) {
+    if (!p.editable) continue;
+    const ref = partRefText(p), hyp = partPlayerText(answers, p);
+    const enS = p.enSentences ?? [], refS = splitSentences(ref);
+    if (round.completionCountedBy === "sentence" && enS.length > 1 && enS.length === refS.length) {
+      const hypS = splitSentences(hyp);
+      enS.forEach((en, i) => units.push({ partId: p.id, sentence: i, en, ref: refS[i]!, hyp: hypS[i] ?? "" }));
+    } else units.push({ partId: p.id, sentence: null, en: p.fields.map((f) => f.en).join(" "), ref, hyp });
+  }
+  const total = units.reduce((t, u) => t + normalise(u.ref).length, 0) || 1;
+  return units
+    .map((u) => {
+      const sim = calibrateChrF(similarity(u.hyp, u.ref, sc.chrfOrder, sc.chrfBeta), sc.chrfFloor, sc.chrfCeil);
+      return { partId: u.partId, sentence: u.sentence, en: u.en.length > 160 ? u.en.slice(0, 157) + "…" : u.en, similarityPct: Math.round(sim * 100), lostMarks: Math.round((normalise(u.ref).length / total) * (1 - sim) * weight * 10) / 10 };
+    })
+    .filter((u) => u.lostMarks >= 0.5)
+    .sort((a, b) => b.lostMarks - a.lostMarks)
+    .slice(0, n);
+}
+
 export function scoreAttempt({ config, round, page, answers, usedSeconds }: ScoreInput): ScoreResult {
   const sc = config.scoring;
   const w = config.scoringWeights;
@@ -292,6 +320,7 @@ export function scoreAttempt({ config, round, page, answers, usedSeconds }: Scor
       : { kind: "praise" };
 
   return {
+    weakSpots: empty ? [] : weakSpotsOf(round, page, answers, sc, w.translationQuality),
     score: Math.max(0, Math.min(config.scoreOutOf, score)),
     measures,
     counts: {

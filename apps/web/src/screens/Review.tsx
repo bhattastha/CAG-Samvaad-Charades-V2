@@ -5,8 +5,9 @@ import { api } from "../lib/api";
 import { t } from "../lib/strings";
 import { Header, Page, PageTitle, Spinner } from "../components/Layout";
 import { Icon } from "../components/Icon";
+import { WeakSpots, type WeakSpot } from "../components/WeakSpots";
 
-interface ReviewData { roundKey: string; page: { parts: ClientPart[] }; answers: Answers; flags: Flag[]; termChecks: { en: string; hi: string; correct: boolean }[] }
+interface ReviewData { roundKey: string; page: { parts: ClientPart[] }; answers: Answers; flags: Flag[]; termChecks: { en: string; hi: string; correct: boolean }[]; weakSpots?: WeakSpot[] }
 
 const CLS: Record<string, string> = { avoid: "hc-watch", slip: "hc-watch", latin: "hc-latin", grammar: "hc-latin" };
 
@@ -26,6 +27,7 @@ export function Review() {
   const { data } = useQuery({ queryKey: ["review", id], queryFn: () => api<ReviewData>(`/attempts/${id}/review`) });
   if (!data) return <><Header /><Spinner /></>;
   const missing = data.termChecks.filter((x) => !x.correct);
+  const weakParts = new Set((data.weakSpots ?? []).filter((w) => w.sentence === null).map((w) => w.partId));
   return (
     <>
       <Header />
@@ -40,7 +42,7 @@ export function Review() {
         <div className="grid lg:grid-cols-[1.6fr_1fr] gap-6">
           <div className="card p-5 sm:p-6 space-y-3 text-[18px] leading-[1.8] text-ink" data-allow-select>
             {data.page.parts.filter((p) => p.editable).map((p) => (
-              <div key={p.id}>
+              <div key={p.id} className={weakParts.has(p.id) ? "-ml-3 pl-3 border-l-4 border-amber-400 bg-amber-50/60 rounded-r" : ""} data-testid={weakParts.has(p.id) ? `review-weak-${p.id}` : undefined}>
                 {p.fields.filter((f) => !f.numeric).map((f) => {
                   const v = data.answers[p.id]?.fields[f.key] ?? "";
                   if (!v) return null;
@@ -49,7 +51,9 @@ export function Review() {
               </div>
             ))}
           </div>
-          <aside className="card p-5 self-start">
+          <aside className="self-start space-y-4">
+          <WeakSpots spots={data.weakSpots ?? []} />
+          <div className="card p-5">
             <h2 className="font-bold text-navy flex items-center gap-2"><Icon name="book" size={18} className="text-navy-600" /> {t("reportCard.measureGlossary")}</h2>
             <ul className="mt-3 divide-y divide-slate-100">
               {data.termChecks.map((x) => (
@@ -57,6 +61,7 @@ export function Review() {
               ))}
             </ul>
             {missing.length > 0 && <p className="mt-3 text-sm text-muted">{t("reportCard.missingTerms")} <span className="en">{missing.map((m) => m.en).join(", ")}</span></p>}
+          </div>
           </aside>
         </div>
       </Page>

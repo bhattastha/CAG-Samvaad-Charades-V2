@@ -3574,6 +3574,246 @@
       "en": "You still have {chances_left} chances on the {level} Round, and your best is {best_score}. One more go could win you the title!",
       "hi": "{level} राउंड में अभी {chances_left} मौके बाकी हैं, और आपका बेस्ट {best_score} है। एक और कोशिश, और टाइटल आपका हो सकता है!",
       "scriptId": "J-02"
+    },
+    {
+      "id": "trial.report_card.motivate_high",
+      "section": "trial",
+      "part": "report_card",
+      "moment": "motivate_high",
+      "spoken": true,
+      "when": "report card / workbench (added Nov 2026)",
+      "en": "Take a bow, {name}! {score} is a superb score. Your Hindi reads like a CAG report, and that is real craft.",
+      "hi": "शाबाश, {name}! {score} शानदार स्कोर है। आपकी हिंदी CAG रिपोर्ट जैसी पढ़ी जाती है, यही असली हुनर है।"
+    },
+    {
+      "id": "trial.report_card.motivate_mid",
+      "section": "trial",
+      "part": "report_card",
+      "moment": "motivate_mid",
+      "spoken": true,
+      "when": "report card / workbench (added Nov 2026)",
+      "en": "Good job, {name}! {score} wins the title. A little more polish and you can push it much higher.",
+      "hi": "बढ़िया काम, {name}! {score} पर टाइटल आपका है। थोड़ा और निखारिए, स्कोर और ऊपर जाएगा।"
+    },
+    {
+      "id": "trial.report_card.motivate_low",
+      "section": "trial",
+      "part": "report_card",
+      "moment": "motivate_low",
+      "spoken": true,
+      "when": "report card / workbench (added Nov 2026)",
+      "en": "Don't give up, {name}! Every attempt sharpens your Hindi. You need {marks_short} more marks for the title, and you can get them.",
+      "hi": "हिम्मत मत हारिए, {name}! हर कोशिश आपकी हिंदी को निखारती है। टाइटल के लिए {marks_short} अंक और चाहिए, और आप ये ला सकते हैं।"
+    },
+    {
+      "id": "trial.report_card.go_next",
+      "section": "trial",
+      "part": "report_card",
+      "moment": "go_next",
+      "spoken": true,
+      "when": "report card / workbench (added Nov 2026)",
+      "en": "You're ready for the next round. Go for it!",
+      "hi": "आप अगले राउंड के लिए तैयार हैं। आगे बढ़िए!"
+    },
+    {
+      "id": "trial.report_card.improve_retry",
+      "section": "trial",
+      "part": "report_card",
+      "moment": "improve_retry",
+      "spoken": true,
+      "when": "report card / workbench (added Nov 2026)",
+      "en": "You still have {chances_left} chance(s) here. Try again and improve your score; only your best counts.",
+      "hi": "यहाँ आपके पास अभी {chances_left} मौके बचे हैं। फिर से कोशिश कीजिए और स्कोर बढ़ाइए; सबसे अच्छा स्कोर ही गिना जाता है।"
+    },
+    {
+      "id": "trial.in_round.glossary_hint",
+      "section": "trial",
+      "part": "in_round",
+      "moment": "glossary_hint",
+      "spoken": true,
+      "when": "report card / workbench (added Nov 2026)",
+      "en": "Glossary tip: in this part, write “{en_term}” as “{hi_term}”, the approved CAG term from Shabd Udyan.",
+      "hi": "शब्दावली सुझाव: इस हिस्से में “{en_term}” के लिए “{hi_term}” लिखिए, यह शब्द उद्यान का मानक CAG शब्द है।"
+    },
+    {
+      "id": "primary.report_card.motivate_high",
+      "section": "primary",
+      "part": "report_card",
+      "moment": "motivate_high",
+      "spoken": true,
+      "when": "report card / workbench (added Nov 2026)",
+      "en": "Take a bow, {name}! {score} is a superb score. Your Hindi reads like a CAG report, and that is real craft.",
+      "hi": "शाबाश, {name}! {score} शानदार स्कोर है। आपकी हिंदी CAG रिपोर्ट जैसी पढ़ी जाती है, यही असली हुनर है।"
+    },
+    {
+      "id": "primary.report_card.motivate_mid",
+      "section": "primary",
+      "part": "report_card",
+      "moment": "motivate_mid",
+      "spoken": true,
+      "when": "report card / workbench (added Nov 2026)",
+      "en": "Good job, {name}! {score} wins the title. A little more polish and you can push it much higher.",
+      "hi": "बढ़िया काम, {name}! {score} पर टाइटल आपका है। थोड़ा और निखारिए, स्कोर और ऊपर जाएगा।"
+    },
+    {
+      "id": "primary.report_card.motivate_low",
+      "section": "primary",
+      "part": "report_card",
+      "moment": "motivate_low",
+      "spoken": true,
+      "when": "report card / workbench (added Nov 2026)",
+      "en": "Don't give up, {name}! Every attempt sharpens your Hindi. You need {marks_short} more marks for the title, and you can get them.",
+      "hi": "हिम्मत मत हारिए, {name}! हर कोशिश आपकी हिंदी को निखारती है। टाइटल के लिए {marks_short} अंक और चाहिए, और आप ये ला सकते हैं।"
+    },
+    {
+      "id": "primary.report_card.go_next",
+      "section": "primary",
+      "part": "report_card",
+      "moment": "go_next",
+      "spoken": true,
+      "when": "report card / workbench (added Nov 2026)",
+      "en": "You're ready for the next round. Go for it!",
+      "hi": "आप अगले राउंड के लिए तैयार हैं। आगे बढ़िए!"
+    },
+    {
+      "id": "primary.report_card.improve_retry",
+      "section": "primary",
+      "part": "report_card",
+      "moment": "improve_retry",
+      "spoken": true,
+      "when": "report card / workbench (added Nov 2026)",
+      "en": "You still have {chances_left} chance(s) here. Try again and improve your score; only your best counts.",
+      "hi": "यहाँ आपके पास अभी {chances_left} मौके बचे हैं। फिर से कोशिश कीजिए और स्कोर बढ़ाइए; सबसे अच्छा स्कोर ही गिना जाता है।"
+    },
+    {
+      "id": "primary.in_round.glossary_hint",
+      "section": "primary",
+      "part": "in_round",
+      "moment": "glossary_hint",
+      "spoken": true,
+      "when": "report card / workbench (added Nov 2026)",
+      "en": "Glossary tip: in this part, write “{en_term}” as “{hi_term}”, the approved CAG term from Shabd Udyan.",
+      "hi": "शब्दावली सुझाव: इस हिस्से में “{en_term}” के लिए “{hi_term}” लिखिए, यह शब्द उद्यान का मानक CAG शब्द है।"
+    },
+    {
+      "id": "secondary.report_card.motivate_high",
+      "section": "secondary",
+      "part": "report_card",
+      "moment": "motivate_high",
+      "spoken": true,
+      "when": "report card / workbench (added Nov 2026)",
+      "en": "Take a bow, {name}! {score} is a superb score. Your Hindi reads like a CAG report, and that is real craft.",
+      "hi": "शाबाश, {name}! {score} शानदार स्कोर है। आपकी हिंदी CAG रिपोर्ट जैसी पढ़ी जाती है, यही असली हुनर है।"
+    },
+    {
+      "id": "secondary.report_card.motivate_mid",
+      "section": "secondary",
+      "part": "report_card",
+      "moment": "motivate_mid",
+      "spoken": true,
+      "when": "report card / workbench (added Nov 2026)",
+      "en": "Good job, {name}! {score} wins the title. A little more polish and you can push it much higher.",
+      "hi": "बढ़िया काम, {name}! {score} पर टाइटल आपका है। थोड़ा और निखारिए, स्कोर और ऊपर जाएगा।"
+    },
+    {
+      "id": "secondary.report_card.motivate_low",
+      "section": "secondary",
+      "part": "report_card",
+      "moment": "motivate_low",
+      "spoken": true,
+      "when": "report card / workbench (added Nov 2026)",
+      "en": "Don't give up, {name}! Every attempt sharpens your Hindi. You need {marks_short} more marks for the title, and you can get them.",
+      "hi": "हिम्मत मत हारिए, {name}! हर कोशिश आपकी हिंदी को निखारती है। टाइटल के लिए {marks_short} अंक और चाहिए, और आप ये ला सकते हैं।"
+    },
+    {
+      "id": "secondary.report_card.go_next",
+      "section": "secondary",
+      "part": "report_card",
+      "moment": "go_next",
+      "spoken": true,
+      "when": "report card / workbench (added Nov 2026)",
+      "en": "You're ready for the next round. Go for it!",
+      "hi": "आप अगले राउंड के लिए तैयार हैं। आगे बढ़िए!"
+    },
+    {
+      "id": "secondary.report_card.improve_retry",
+      "section": "secondary",
+      "part": "report_card",
+      "moment": "improve_retry",
+      "spoken": true,
+      "when": "report card / workbench (added Nov 2026)",
+      "en": "You still have {chances_left} chance(s) here. Try again and improve your score; only your best counts.",
+      "hi": "यहाँ आपके पास अभी {chances_left} मौके बचे हैं। फिर से कोशिश कीजिए और स्कोर बढ़ाइए; सबसे अच्छा स्कोर ही गिना जाता है।"
+    },
+    {
+      "id": "secondary.in_round.glossary_hint",
+      "section": "secondary",
+      "part": "in_round",
+      "moment": "glossary_hint",
+      "spoken": true,
+      "when": "report card / workbench (added Nov 2026)",
+      "en": "Glossary tip: in this part, write “{en_term}” as “{hi_term}”, the approved CAG term from Shabd Udyan.",
+      "hi": "शब्दावली सुझाव: इस हिस्से में “{en_term}” के लिए “{hi_term}” लिखिए, यह शब्द उद्यान का मानक CAG शब्द है।"
+    },
+    {
+      "id": "pro.report_card.motivate_high",
+      "section": "pro",
+      "part": "report_card",
+      "moment": "motivate_high",
+      "spoken": true,
+      "when": "report card / workbench (added Nov 2026)",
+      "en": "Take a bow, {name}! {score} is a superb score. Your Hindi reads like a CAG report, and that is real craft.",
+      "hi": "शाबाश, {name}! {score} शानदार स्कोर है। आपकी हिंदी CAG रिपोर्ट जैसी पढ़ी जाती है, यही असली हुनर है।"
+    },
+    {
+      "id": "pro.report_card.motivate_mid",
+      "section": "pro",
+      "part": "report_card",
+      "moment": "motivate_mid",
+      "spoken": true,
+      "when": "report card / workbench (added Nov 2026)",
+      "en": "Good job, {name}! {score} wins the title. A little more polish and you can push it much higher.",
+      "hi": "बढ़िया काम, {name}! {score} पर टाइटल आपका है। थोड़ा और निखारिए, स्कोर और ऊपर जाएगा।"
+    },
+    {
+      "id": "pro.report_card.motivate_low",
+      "section": "pro",
+      "part": "report_card",
+      "moment": "motivate_low",
+      "spoken": true,
+      "when": "report card / workbench (added Nov 2026)",
+      "en": "Don't give up, {name}! Every attempt sharpens your Hindi. You need {marks_short} more marks for the title, and you can get them.",
+      "hi": "हिम्मत मत हारिए, {name}! हर कोशिश आपकी हिंदी को निखारती है। टाइटल के लिए {marks_short} अंक और चाहिए, और आप ये ला सकते हैं।"
+    },
+    {
+      "id": "pro.report_card.go_next",
+      "section": "pro",
+      "part": "report_card",
+      "moment": "go_next",
+      "spoken": true,
+      "when": "report card / workbench (added Nov 2026)",
+      "en": "You're ready for the next round. Go for it!",
+      "hi": "आप अगले राउंड के लिए तैयार हैं। आगे बढ़िए!"
+    },
+    {
+      "id": "pro.report_card.improve_retry",
+      "section": "pro",
+      "part": "report_card",
+      "moment": "improve_retry",
+      "spoken": true,
+      "when": "report card / workbench (added Nov 2026)",
+      "en": "You still have {chances_left} chance(s) here. Try again and improve your score; only your best counts.",
+      "hi": "यहाँ आपके पास अभी {chances_left} मौके बचे हैं। फिर से कोशिश कीजिए और स्कोर बढ़ाइए; सबसे अच्छा स्कोर ही गिना जाता है।"
+    },
+    {
+      "id": "pro.in_round.glossary_hint",
+      "section": "pro",
+      "part": "in_round",
+      "moment": "glossary_hint",
+      "spoken": true,
+      "when": "report card / workbench (added Nov 2026)",
+      "en": "Glossary tip: in this part, write “{en_term}” as “{hi_term}”, the approved CAG term from Shabd Udyan.",
+      "hi": "शब्दावली सुझाव: इस हिस्से में “{en_term}” के लिए “{hi_term}” लिखिए, यह शब्द उद्यान का मानक CAG शब्द है।"
     }
   ],
   "knowledge": {

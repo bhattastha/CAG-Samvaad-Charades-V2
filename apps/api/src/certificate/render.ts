@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { fill, type Summary } from "@hc/shared";
 import { config, strings } from "../content.js";
 import { env, ROOT } from "../env.js";
+import { badgeMetal, badgeSvg } from "./badge.js";
 
 const dataUrl = (p: string, type: string) => `data:${type};base64,${readFileSync(p).toString("base64")}`;
 
@@ -55,6 +56,9 @@ h1 .a{color:#22293B}h1 .b{color:#E8590C}
 .credits{margin-top:5mm;font-size:14pt}.credits b{font-size:22pt;color:#1D4ED8}
 .foot{margin-top:auto;width:100%;display:flex;justify-content:space-between;align-items:flex-end;font-size:10pt;color:#4B5563}
 .sign{border-top:1px solid #9CA3AF;padding-top:1mm;min-width:60mm}
+.badge{position:absolute;right:20mm;top:44mm;width:44mm;text-align:center}
+.badge-t{font-family:"Noto Sans",sans-serif;font-weight:700;font-size:11pt;color:#1E3A5F;margin-top:1mm}
+.badge-m{font-family:"Noto Sans",sans-serif;font-size:8.5pt;letter-spacing:.2em;text-transform:uppercase;color:#6B7280}
 </style></head><body><div class="frame">
 <div class="top"><img src="${brand("cag-logo.png")}" alt=""><img src="${brand("bhashini-logo.png")}" alt=""></div>
 ${(() => { const b = config().brand; const name = en ? b.name : b.localized.hi ?? b.name; const [w1, ...rest] = name.split(" "); return `<h1><span class="a">${esc(w1)}</span> <span class="b">${esc(rest.join(" "))}</span></h1>`; })()}
@@ -63,6 +67,7 @@ ${(() => { const b = config().brand; const name = en ? b.name : b.localized.hi ?
 <div class="name">${esc(p.name)}</div>
 <div class="office">${esc(p.office)}</div>
 <div class="body">${esc(titles.length ? c.bodyTitles : c.bodyNoTitles)}</div>
+${titles.length ? (() => { const top = titles[titles.length - 1]!; const rc = config().rounds.find((r) => r.key === top.key); return `<div class="badge">${badgeSvg(top.key)}<div class="badge-t">${esc(rc?.titleEn || top.title)}</div><div class="badge-m">${esc(badgeMetal(top.key))}</div></div>`; })() : ""}
 ${titles.length ? `<div class="titles">${titles.map((t) => { const rc = config().rounds.find((r) => r.key === t.key); return `<span class="pill">${esc(en ? rc?.titleEn || t.title : t.title)}</span>`; }).join("")}</div>` : ""}
 <div class="credits">${esc(c.creditsLabel)} <b>${p.summary.totalCredits}</b> / ${config().maxCredits}</div>
 <div class="foot">

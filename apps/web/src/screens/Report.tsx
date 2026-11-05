@@ -12,6 +12,7 @@ import { Coin, Header, Page, PageTitle, ProgressBar, Spinner, Stars } from "../c
 import { SahayikaLine, SahayikaPanel } from "../components/Sahayika";
 import { Ambient, Burst, CountUp, GameButton, Medal, Stamp } from "../components/Juice";
 import { Icon } from "../components/Icon";
+import { WeakSpots, type WeakSpot } from "../components/WeakSpots";
 
 export interface ReportData {
   attemptId: string; roundKey: string; roundName: string; title: string; limitMinutes: number; chanceNo: number; maxChances: number;
@@ -20,6 +21,7 @@ export interface ReportData {
     qualityMarks?: number; glossaryMarks?: number; timelinessMarks?: number; gainPct?: number | null; timelinessGated?: boolean;
     completionDone: number; completionTotal: number; completionUnit: "sentence" | "paragraph"; glossaryCorrect: number; glossaryTotal: number; usedMinutes: number; limitMinutes: number;
   };
+  weakSpots?: WeakSpot[];
   /** model 2 = 55/25/20; older attempts keep their five legacy measures */
   measures: { model?: 2; quality?: number; timeliness?: number; glossary: number; completion: number; time: number; translation?: number };
   best: number; chances: (number | null)[]; bestChance: number | null; titleEarned: boolean; roundCredits: number; totalCredits: number; maxCredits: number;
@@ -217,6 +219,7 @@ export function Report() {
             </div>
             <div className="mt-5 space-y-2">
               <SahayikaLine line={r.tip} />
+              <WeakSpots spots={r.weakSpots ?? []} compact />
               {r.after.map((l) => <div key={l.id} className="text-[0.95rem] text-muted flex items-start gap-2"><Icon name="info" size={16} className="mt-0.5 text-navy-600" /> {lineText(l)}</div>)}
             </div>
             <div className="mt-5 flex flex-wrap items-center gap-3">

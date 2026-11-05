@@ -176,6 +176,17 @@ export function Round() {
   const register = useCallback((k: FieldKey, h: EditorHandle | null) => { if (h) editors.current.set(k, h); else editors.current.delete(k); }, []);
   const [lastField, setLastField] = useState<FieldKey | null>(null);
   const [focusedPart, setFocusedPart] = useState<string | null>(null);
+  // workbench glossary hints: when the player opens a part, Sahayika names one approved term not yet used there (max one per part, 40 s apart)
+  const hinted = useRef<{ parts: Set<string>; at: number }>({ parts: new Set(), at: 0 });
+  useEffect(() => {
+    if (!view || !focusedPart || hinted.current.parts.has(focusedPart) || Date.now() - hinted.current.at < 40_000) return;
+    const text = Object.values(answers[focusedPart]?.fields ?? {}).join(" ");
+    const term = Object.values(view.page.sourceTerms?.[focusedPart] ?? {}).flat().find((x) => x.hi && !text.includes(x.hi) && !x.variants.some((v) => text.includes(v)));
+    if (!term) return;
+    hinted.current.parts.add(focusedPart);
+    hinted.current.at = Date.now();
+    sayLine("in_round.glossary_hint", { en_term: term.en, hi_term: term.hi }, false);
+  }, [focusedPart]);
   const [sentenceIdx, setSentenceIdx] = useState<number | null>(null);
   const [activeEditor, setActiveEditor] = useState<Editor | null>(null);
   const onFocus = useCallback((partId: string, key: string, ed?: Editor) => { setLastField(fk(partId, key)); setFocusedPart(partId); if (ed) setActiveEditor(ed); }, []);
