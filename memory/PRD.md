@@ -67,3 +67,6 @@ User choices: Emergent managed email for OTP; publish seeded Report 38 sample pa
 - scripts/loadtest.mjs (plant codes with test-otp.sh for qa.ltNN@cag.gov.in, code 246810): 15 concurrent players full Trial flow → 15/15 ok, 0 errors; p50 0.9–3.2 s, dominated by ~200 ms round-trips to Neon in ap-southeast-1 (Singapore). pg pool raised to 20 with keepAlive (≈30–50% faster).
 - package.sh run; redeploy queued (job 2bb627e8).
 - Recommendation: move Neon to the same region as the hosting cluster to cut latency ~5x.
+## 5 Nov 2026 — database moved to Neon us-west-2 (Oregon)
+- scripts/copy-db.sh (OLD=… NEW=…): FK-ordered TRUNCATE + \copy of all public tables + sequence reset; all 16 tables row counts matched. DATABASE_URL (test+live) now = Oregon; NEW_DATABASE_URL holds the same. Old Singapore DB kept untouched as backup (URL saved in /root/.old_db_url, mode 600).
+- Load test 15 concurrent: 15/15 ok, p50 0.2–0.7 s (was 0.9–3.2 s); DB health latency 43 ms. Redeploy queued for live.
