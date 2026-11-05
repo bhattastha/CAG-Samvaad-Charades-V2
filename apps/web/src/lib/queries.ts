@@ -18,6 +18,7 @@ export interface Progress {
 export const useProgress = () =>
   useQuery({
     queryKey: ["progress"], staleTime: 10_000, retry: 4, retryDelay: (n) => Math.min(8000, 800 * 2 ** n),
+    refetchInterval: (q) => (q.state.status === "error" ? 10_000 : false),
     queryFn: () => api<Progress>("/me/progress").catch((e) => {
       if (e instanceof ApiError && (e.status === 401 || e.status === 403)) return { registered: false, role: null } as Progress;
       throw e;

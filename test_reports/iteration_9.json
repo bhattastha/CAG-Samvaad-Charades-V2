@@ -1,0 +1,29 @@
+{
+  "summary": "Tested Phase 1 session persistence on PREVIEW. ALL PASS. (1) Outage handling: with /api/me/progress returning 503 (5 hits: 1 call + 4 retries) or aborted, a reload of /journey or /profile never went to /register. After about 15 s it showed [data-testid=session-check-failed] 'Connection problem. You are still signed in.' + Try again. After the route was removed, Try again put the player back on the same page with the header. With data already cached, in-app navigation during a 503 (to Leaderboard) stayed on the page. A real 401 still sends the player to /register. (2) Three Trial rounds in a row in the UI (qa.p1s03): journey -> Trial card -> Start Mission -> type -> Submit -> report card -> 'Back to map' -> journey. Chances 1/2/3 were submitted with scores 26/21/21. At every step (in-round, report, journey) registered=true, the hc_session cookie was present and the profile-menu avatar/name was visible. 0 navigations to /register, 0 /auth/logout calls, 0 page errors. (3) Backend: login Set-Cookie hc_session HttpOnly Max-Age=43200; JWT lifetime 12 h. A fresh cookie is NOT re-issued on /me/progress, /me/profile or /config. A forged token signed with JWT_SECRET: 5 h left -> Set-Cookie re-issued (sliding works); 7 h left -> not re-issued; expired -> registered:false. Logout clears the cookie (POST and the UI profile menu -> Sign out), then progress returns registered:false and /journey goes to /register. (4) Regression: /api/health 200 healthy; anonymous /api/admin/dashboard|pages|glossary|offices are denied; manager OTP verify returns role manager, /api/admin/me and /api/admin/dashboard return 200, and the /manager console Overview renders.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Session-check-failed card", "issues": ["Plain card with no header or logo. It is fine for an error state. Once in the error state there is no automatic retry (the player must click Try again). Optional: add refetchInterval while isError so it recovers by itself."]},
+      {"screen": "Manager Overview (out of scope, observed)", "issues": ["Engagement funnel shows 'Played Professional 4 133%' (relative to Secondary 3). A percentage above 100% in a funnel is confusing."]}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/test_iter9_session_persistence.py", "/app/tests/load/setup_p1s.py", "/app/test_reports/pytest/pytest_iter9.xml"],
+  "action_items": [
+    "None blocking. Optional: auto-retry in the Player guard's error state (refetchInterval) and cap the funnel % at 100 or compute it against Registered."
+  ],
+  "critical_code_review_comments": [
+    "Logout is stateless: clearSession only clears the cookie, so a copied JWT stays valid for up to 12 h. With sliding renewal it can be kept alive for as long as it is used. If that matters, store the sid server-side and revoke it on logout.",
+    "app.ts onRequest runs `SELECT 1 FROM players WHERE id=$1` (about 0.2 s on Neon) and renewSession for EVERY request with a session cookie, including static asset requests served by Fastify. Consider skipping non-/api URLs or caching the player-exists check.",
+    "useProgress: maps only 401/403 to signed out and retries otherwise (retry 4, 1.6/3.2/6.4/8 s), so the worst case is about 15-19 s of spinner before the error card. That is acceptable, but a shorter first retry would surface the card sooner."
+  ],
+  "updated_files": ["/app/backend/tests/test_iter9_session_persistence.py", "/app/tests/load/setup_p1s.py"],
+  "success_rate": {"backend": "100% (11/11 pytest + forged-token sliding check)", "frontend": "100% (outage guard 503/abort/in-app/401, 3 consecutive rounds, UI sign out, manager console)"},
+  "test_credentials": "OTP planted via /app/scripts/emergent/test-otp.sh and verified via POST /api/auth/otp/verify; /otp/request never called.",
+  "seed_data_creation": "New players: qa.p1s01 (API tests only), qa.p1s02 (outage/logout tests; no attempts), qa.p1s03 (all 3 Trial chances used, scores 26/21/21), names 'QA Session NN', mobile 95000000NN, office = first result of /api/offices?q=delhi (shows as Bhopal, Madhya Pradesh). No data deleted.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Local Playwright is not installed (/tmp/pwv is gone); use the browser_automation tool and plant OTP codes beforehand with test-otp.sh (valid 10 min). Run the pytest with -p no:xdist and export REACT_APP_BACKEND_URL from frontend/.env. qa.p1s02 still has 3 Trial chances; qa.p1s04+ are unused. Phase 1.4 (Mark as done) was not tested, as instructed.",
+  "rca of the issue": "Confirmed: the old guard treated any failed /me/progress as signed out. The new code returns registered:false only for 401/403 and shows the retry card for other errors. It was verified with 503 and aborted requests."
+}

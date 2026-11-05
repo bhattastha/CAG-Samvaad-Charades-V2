@@ -39,3 +39,8 @@ User choices: Emergent managed email for OTP; publish seeded Report 38 sample pa
 - DATABASE_URL (live + test) = Neon pooler (ap-southeast-1). Preview DB copied into Neon (pg_dump→psql). ALTER ROLE/DATABASE search_path=public set (pg_dump had polluted pooled search_path).
 - Preview now also uses Neon (shared with live). ~210 ms per DB round trip from this pod; bundle RSS ~140 MB.
 - test-otp.sh now targets DATABASE_URL.
+## 5 Nov 2026 — CHANGE REQUEST v1.0 (phased; wait for "continue" after each)
+- Phase 1 DONE (preview, iteration_9 100%): useProgress no longer treats errors as signed-out (retry + auto-refetch); Player guard shows "Connection problem. You are still signed in."; sliding session (SESSION_HOURS default 12, min 3) renewed at half-life. NOT yet deployed live.
+- Phase 1.4 (remove Mark as done) ON HOLD: conflicts with Phase 4.3 + final check (Primary/Secondary keep Mark as done). Autosave already every 10 s.
+- Pending phases 2–8: CAG email domain + BHASHINI email relay (needs EMAIL_RELAY_URL/KEY, OTP_ALLOWLIST, reply-to), Trial 200 words, report structure (footnotes/tables/charts), Professional scrolling mode, Sahayika female mascot + voice, script load from docx/review PDF (PDF + note image not received), metal badges.
+- Open question from user: Trial "speak" (voice typing, websocket /api/speech/asr/stream → Dhruva socket.io) not working — not yet diagnosed.
