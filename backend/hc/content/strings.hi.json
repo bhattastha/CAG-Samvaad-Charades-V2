@@ -5,14 +5,14 @@
     "listen": "🔊 सुनें",
     "next": "आगे",
     "glossaryButton": "शब्दावली",
-    "sahayikaButton": "सहायक",
+    "sahayikaButton": "सहायिका",
     "copyPasteOffBadge": "कॉपी-पेस्ट बंद",
     "chanceOf": "मौका {n} / {max}",
     "creditsUpTo": "{n} क्रेडिट तक",
     "timeLeft": "{time} शेष",
     "officersOnly": "केवल कैग अधिकारियों के लिए",
-    "mute": "सहायक की आवाज़ बंद करें",
-    "unmute": "सहायक की आवाज़ चालू करें"
+    "mute": "सहायिका की आवाज़ बंद करें",
+    "unmute": "सहायिका की आवाज़ चालू करें"
   },
   "title": {
     "heading": "संवाद शराड्स",
@@ -184,13 +184,13 @@
   "reportCard": {
     "heading": "रिपोर्ट कार्ड · {roundName}",
     "headingEn": "Report card",
-    "sahayikaAnnounces": "Sahayak announces",
+    "sahayikaAnnounces": "Sahayika announces",
     "thisTime": "इस बार के अंक",
     "howYouDid": "इस बार आपने कैसा किया",
     "measureTranslation": "अनुवाद",
     "measureTime": "समय",
     "measureCompletion": "पूर्णता",
-    "measureGlossary": "शब्दावली",
+    "measureGlossary": "शब्दावली का उपयोग",
     "measureSentence": "वाक्य संरचना",
     "marksOf10": "{n} / 10 अंक",
     "wordsOf": "{n} / {total} शब्द",
@@ -221,7 +221,19 @@
     "legendSlip": "भाषिणी की गलती जो रह गई",
     "missingTerms": "ये शब्दावली शब्द नहीं मिले:",
     "timeMin": "{used} min / {limit} min",
-    "autoSubmitted": "समय पूरा होने पर अपने-आप जमा हुआ"
+    "autoSubmitted": "समय पूरा होने पर अपने-आप जमा हुआ",
+    "measureQuality": "अनुवाद की गुणवत्ता",
+    "measureQualitySub": "वाक्य संरचना सहित",
+    "measureGlossarySub": "CAG के मानक हिंदी शब्द",
+    "measureTimeliness": "समयबद्धता और पूर्णता",
+    "measureTimelinessSub": "कितना, कितनी जल्दी",
+    "marksOf": "{n}/{max} अंक",
+    "timelinessGated": "गुणवत्ता में 10% सुधार आवश्यक",
+    "scoreExplain": [
+      "अनुवाद की गुणवत्ता (वाक्य संरचना सहित) – 55: आपकी हिंदी CAG की प्रकाशित हिंदी रिपोर्ट से कितनी मेल खाती है, और आपके वाक्य सही व सहज हैं या नहीं।",
+      "शब्दावली का उपयोग – 25: क्या आपने CAG के मानक हिंदी शब्द इस्तेमाल किए (जैसे Annexure → अनुलग्नक)।",
+      "समयबद्धता और पूर्णता – 20: आपने कितना पाठ पूरा किया, और कितनी जल्दी। आधे समय में सब पूरा करने पर पूरे अंक।"
+    ]
   },
   "total": {
     "heading": "आपका कुल स्कोर",
@@ -313,7 +325,7 @@
       "en": "That part is your job, and I know you can do it! I can give you a hint or a glossary word instead.",
       "hi": "यह हिस्सा तो आपको ही लिखना है, और आप कर लेंगे! मैं आपको एक इशारा या शब्दावली का शब्द दे सकती हूँ।"
     },
-    "sahayikaSays": "सहायक कहती हैं",
+    "sahayikaSays": "सहायिका कहती हैं",
     "chatLimit": "इस राउंड में आपके सवाल पूरे हो गए। अब आप खुद आगे बढ़िए, आप कर लेंगे!"
   },
   "certificate": {
@@ -352,7 +364,7 @@
     "allDone": "वाह! सारे राउंड खेल लिए।"
   },
   "chat": {
-    "title": "सहायक से पूछिए",
+    "title": "सहायिका से पूछिए",
     "placeholder": "किसी शब्द या नियम के बारे में पूछिए…",
     "send": "भेजें",
     "quick": {

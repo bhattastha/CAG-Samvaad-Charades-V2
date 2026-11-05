@@ -34,6 +34,11 @@
       "guideRole": "Your game guide",
       "heroNote": "Banked the moment you register. Win the rest, level by level."
     },
+    "briefing": {
+      "kicker": "Sahayika's welcome briefing",
+      "hear": "Hear the full briefing",
+      "done": "Let's begin"
+    },
     "train": {
       "kicker": "Training ground",
       "stepOf": "Step {n} of {total}",
@@ -49,7 +54,7 @@
         {
           "title": "How You Score",
           "short": "Scoring",
-          "sub": "Every translation is evaluated on five essential quality measures."
+          "sub": "Every translation is evaluated on three measures: quality, glossary, and timeliness & completion."
         },
         {
           "title": "Your Translation Toolkit",
@@ -57,7 +62,7 @@
           "sub": "Three tools that make Hindi typing fast and accurate."
         },
         {
-          "title": "Meet Your Guide – Sahayak",
+          "title": "Meet Your Guide – Sahayika",
           "short": "Guide",
           "sub": "Your companion throughout the translation challenge."
         }
@@ -105,20 +110,16 @@
         "criteriaKicker": "Evaluation criteria",
         "criteriaHeading": "What the evaluators look for",
         "criteria": {
-          "translation": "How close your Hindi is to CAG's published standard.",
-          "completion": "How much of the page you translated.",
-          "sentence": "Grammar, full stops and clean Hindi sentences.",
-          "glossary": "Approved Hindi terms used for audit vocabulary.",
-          "time": "Finish with time to spare for the best score."
+          "quality": "How closely your Hindi matches CAG's published Hindi report, and whether your sentences are correct and read naturally.",
+          "glossary": "Whether you used CAG's standard Hindi terms (for example Annexure → अनुलग्नक).",
+          "timeliness": "How much of the text you finished, and how quickly. Finish everything within half the time for full marks."
         },
         "measures": {
-          "translation": "Translation Quality",
-          "completion": "Completion",
-          "sentence": "Sentence Construction",
+          "quality": "Translation Quality (incl. sentence construction)",
           "glossary": "Glossary Usage",
-          "time": "Time"
+          "timeliness": "Timeliness & Completion"
         },
-        "creditsNote": "Higher scores earn more of each level's credits. A weaker later attempt never reduces them."
+        "creditsNote": "Credits per level = level credits × (best score ÷ 100), shown to one decimal. Credits change only when you set a new best; a weaker later attempt never reduces them."
       },
       "toolkit": {
         "tabs": {
@@ -182,7 +183,7 @@
         "tryLive": "Live suggestions from BHASHINI"
       },
       "coach": {
-        "dialogue": "Hello! I'm Sahayak, your guide throughout the challenge. I'm here to help you navigate missions, understand terminology and make the most of your translation toolkit.",
+        "dialogue": "Hello! I'm Sahayika, your guide throughout the challenge. I'm here to help you navigate missions, understand terminology and make the most of your translation toolkit.",
         "rolesHeading": "How I help",
         "roles": [
           {
@@ -222,9 +223,9 @@
           "How do I type in Hindi?",
           "How do I win a title?"
         ],
-        "rightKicker": "Sahayak",
+        "rightKicker": "Sahayika",
         "rightHeading": "Always one tap away",
-        "rightBody": "Open Sahayak from the top bar in any mission for a hint, a glossary term or a time check."
+        "rightBody": "Open Sahayika from the top bar in any mission for a hint, a glossary term or a time check."
       },
       "contextKicker": {
         "0": "Mission briefing",
@@ -256,7 +257,7 @@
             "Roman-to-Hindi transliteration",
             "Glossary – Shabd Udyan",
             "Speak to Type, where available",
-            "Sahayak for guidance"
+            "Sahayika for guidance"
           ]
         },
         {

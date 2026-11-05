@@ -63,3 +63,7 @@ User choices: Emergent managed email for OTP; publish seeded Report 38 sample pa
 - Score Breakdown Tips: weakSpots (top 3 sentences/parts by lost Translation Quality marks; draft rounds by missing gain) on report card + Review (amber highlight).
 - Certificate shows highest won 3D badge (certificate/badge.ts). Console: highest badge in Players list, badges on level cards, Q/G/TC measures, funnel % of first step.
 - Tests: shared 26/26, api 27/27, testing agent iteration_13 (follow-ups fixed).
+## 5 Nov 2026 — load test + publish
+- scripts/loadtest.mjs (plant codes with test-otp.sh for qa.ltNN@cag.gov.in, code 246810): 15 concurrent players full Trial flow → 15/15 ok, 0 errors; p50 0.9–3.2 s, dominated by ~200 ms round-trips to Neon in ap-southeast-1 (Singapore). pg pool raised to 20 with keepAlive (≈30–50% faster).
+- package.sh run; redeploy queued (job 2bb627e8).
+- Recommendation: move Neon to the same region as the hosting cluster to cut latency ~5x.

@@ -29,7 +29,9 @@ function wrap(raw: Raw, txImpl: Db["tx"], close: () => Promise<void>): Db {
 export async function openDb(url = env.DATABASE_URL): Promise<Db> {
   if (url.startsWith("postgres")) {
     const { default: pg } = await import("pg");
-    const pool = new pg.Pool({ connectionString: url, max: 10 });
+    // remote managed Postgres: keep warm connections so each request does not pay the TLS handshake
+    const pool = new pg.Pool({ connectionString: url, max: 20, keepAlive: true, idleTimeoutMillis: 60_000, connectionTimeoutMillis: 15_000 });
+    pool.on("error", () => {}); // an idle client dropped by the server must not crash the process
     const tx: Db["tx"] = async (fn) => {
       const c = await pool.connect();
       try {

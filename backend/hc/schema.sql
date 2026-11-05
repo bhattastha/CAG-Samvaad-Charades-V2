@@ -89,3 +89,6 @@ CREATE TABLE IF NOT EXISTS audit_logs (id serial PRIMARY KEY, actor text NOT NUL
 
 -- Anuvaad glossary sectors (sector widens, never narrows); null = general entry
 ALTER TABLE glossary_terms ADD COLUMN IF NOT EXISTS sector text;
+
+-- scoring v2: scores carry one decimal (stored integer scores stay as they are)
+DO $$ BEGIN IF (SELECT data_type FROM information_schema.columns WHERE table_name = 'attempts' AND column_name = 'score' AND table_schema = current_schema()) = 'integer' THEN ALTER TABLE attempts ALTER COLUMN score TYPE double precision; END IF; END $$;

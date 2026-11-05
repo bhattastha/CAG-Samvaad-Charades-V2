@@ -1,260 +1,203 @@
 {
- "page_id": "seed-trial-r38-2025-conclusion",
- "round": "trial",
- "status": "draft",
- "reference_status": "needs_verification",
- "source": {
-  "report": "Report No. 38 of 2025 (Performance Audit – Commercial), Performance of Blast Furnaces in SAIL",
-  "english_pdf_page": 64,
-  "hindi_pdf_pages": [
-   86
+  "page_id": "seed-trial-r38-2025-conclusion",
+  "round": "trial",
+  "status": "draft",
+  "reference_status": "needs_verification",
+  "source": {
+    "report": "Report No. 38 of 2025 (Performance Audit – Commercial), Performance of Blast Furnaces in SAIL",
+    "english_pdf_page": 64,
+    "hindi_pdf_pages": [
+      86
+    ],
+    "printed_page": "40-41",
+    "sector_hidden_from_player": "commercial"
+  },
+  "notes": "Report 38 of 2025 has no section titled 'Conclusion' (निष्कर्ष); its chapters close with 'Summing up' (सारांश) sections instead. This passage is the complete 'Summing up' of Chapter IV (Operational Performance of Blast Furnaces), English PDF pp. 64–65 (printed 40–41), Hindi PDF p. 86 (printed 58), all three paragraphs, unabridged. It is 12 sentences / ~330 words, below the ~20-sentence target, because the CAG sentences are long; no other single section fits the word range better. Reference Hindi was transcribed by eye from the rendered Hindi PDF (not its broken text layer) and normalised to standard Unicode conjuncts (वृद्धि, द्वारा, भट्ठियों, मुद्दों, विद्युत). The printed Hindi's own wording is kept as is, including निस्पादन (s01, printed spelling; elsewhere निष्पादन) and the mixed renderings of 'blast furnace' (ब्लास्ट फर्नेस / विस्फोट भट्ठी) and 'Annual Business Perspective' (वार्षिक व्यापार / व्यावसायिक परिप्रेक्ष्य). A game manager must verify every segment against the printed Hindi before the page is published. Trimmed to ~200 words (CR v1.0, Phase 3).",
+  "segments": [
+    {
+      "segment_id": "s01",
+      "part": "body",
+      "paragraph": 1,
+      "en": "The production of hot metal and the productivity of the blast furnaces are the measures to assess the performance of blast furnace.",
+      "hi_reference": "तप्त धातु का उत्पादन एवं ब्लास्ट फर्नेस की उत्पादकता ब्लास्ट फर्नेस के निस्पादन का आकलन करने के उपाय हैं।",
+      "bhashini_draft": null,
+      "locked_tokens": []
+    },
+    {
+      "segment_id": "s02",
+      "part": "body",
+      "paragraph": 1,
+      "en": "The production capacity of hot metal in SAIL was not augmented as envisaged in the Modernization and Expansion Plan.",
+      "hi_reference": "सेल में तप्त धातु की उत्पादन क्षमता में आधुनिकीकरण एवं विस्तार योजना के अनुसार वृद्धि नहीं की गई।",
+      "bhashini_draft": null,
+      "locked_tokens": []
+    },
+    {
+      "segment_id": "s03",
+      "part": "body",
+      "paragraph": 1,
+      "en": "There was less production of hot metal by 14.73 million tonne and 4.81 million tonne than the Annual Business Perspective and the MoU quantity respectively during 2017-24.",
+      "hi_reference": "वर्ष 2017-24 के दौरान वार्षिक व्यापार परिप्रेक्ष्य एवं समझौता ज्ञापन मात्रा की तुलना में तप्त धातु का उत्पादन क्रमशः 14.73 मिलियन टन एवं 4.81 मिलियन टन कम था।",
+      "bhashini_draft": null,
+      "locked_tokens": [
+        "14.73",
+        "4.81",
+        "2017-24"
+      ]
+    },
+    {
+      "segment_id": "s04",
+      "part": "body",
+      "paragraph": 1,
+      "en": "The percentage of actual production vis-à-vis the Annual Business Perspective targets ranged between 81 per cent (Bhilai Steel Plant) and 97 per cent (Durgapur Steel Plant) during the period 2017-2024.",
+      "hi_reference": "2017-2024 की अवधि के दौरान वार्षिक व्यावसायिक परिप्रेक्ष्य लक्ष्यों की तुलना में वास्तविक उत्पादन का प्रतिशत 81 प्रतिशत (भिलाई इस्पात संयंत्र) एवं 97 प्रतिशत (दुर्गापुर इस्पात संयंत्र) के मध्य रहा।",
+      "bhashini_draft": null,
+      "locked_tokens": [
+        "81",
+        "97",
+        "2017-2024"
+      ]
+    },
+    {
+      "segment_id": "s05",
+      "part": "body",
+      "paragraph": 1,
+      "en": "The performance of the steel plants with respect to the MoU targets were better and ranged between 89 per cent (Bhilai Steel Plant) and 105 per cent (Durgapur Steel Plant) during this period.",
+      "hi_reference": "इस अवधि के दौरान समझौता ज्ञापन लक्ष्यों के संबंध में इस्पात संयंत्रों का प्रदर्शन बेहतर रहा तथा यह 89 प्रतिशत (भिलाई इस्पात संयंत्र) एवं 105 प्रतिशत (दुर्गापुर इस्पात संयंत्र) के मध्य रहा।",
+      "bhashini_draft": null,
+      "locked_tokens": [
+        "89",
+        "105"
+      ]
+    },
+    {
+      "segment_id": "s07",
+      "part": "body",
+      "paragraph": 2,
+      "en": "The excess time taken in planned and unplanned shutdowns affects the available hours for blast furnace operations.",
+      "hi_reference": "नियोजित एवं अनियोजित शटडाउन में लगने वाला अतिरिक्त समय ब्लास्ट फर्नेस परिचालन के लिए उपलब्ध घंटों को प्रभावित करता है।",
+      "bhashini_draft": null,
+      "locked_tokens": []
+    },
+    {
+      "segment_id": "s08",
+      "part": "body",
+      "paragraph": 2,
+      "en": "High unplanned shutdowns were mainly attributable to the shortage of raw materials, poor off take of hot metal by Steel Melting shops, technical (electrical/mechanical/operational/instrumentation failures) and other miscellaneous issues.",
+      "hi_reference": "उच्च अनियोजित शटडाउन मुख्य रूप से कच्चे माल की कमी, स्टील मेल्टिंग दुकानों द्वारा तप्त धातु की खराब निकासी, तकनीकी (विद्युत/यांत्रिक/परिचालन/यंत्र संबंधी विफलताएं) एवं अन्य विविध मुद्दों के कारण थे।",
+      "bhashini_draft": null,
+      "locked_tokens": []
+    },
+    {
+      "segment_id": "s11",
+      "part": "body",
+      "paragraph": 3,
+      "en": "To enhance the performance of blast furnaces, SAIL may strengthen maintenance practices to minimize unplanned shutdowns and strictly adhere to schedules for planned shutdowns.",
+      "hi_reference": "ब्लास्ट फर्नेस के निष्पादन को बढ़ाने के लिए, सेल अनियोजित शटडाउन को कम करने के लिए रखरखाव प्रथाओं को मजबूत करे एवं नियोजित शटडाउन के लिए समय-सारिणी का सख्ती से पालन करे।",
+      "bhashini_draft": null,
+      "locked_tokens": []
+    }
   ],
-  "printed_page": "40-41",
-  "sector_hidden_from_player": "commercial"
- },
- "notes": "Report 38 of 2025 has no section titled 'Conclusion' (निष्कर्ष); its chapters close with 'Summing up' (सारांश) sections instead. This passage is the complete 'Summing up' of Chapter IV (Operational Performance of Blast Furnaces), English PDF pp. 64–65 (printed 40–41), Hindi PDF p. 86 (printed 58), all three paragraphs, unabridged. It is 12 sentences / ~330 words, below the ~20-sentence target, because the CAG sentences are long; no other single section fits the word range better. Reference Hindi was transcribed by eye from the rendered Hindi PDF (not its broken text layer) and normalised to standard Unicode conjuncts (वृद्धि, द्वारा, भट्ठियों, मुद्दों, विद्युत). The printed Hindi's own wording is kept as is, including निस्पादन (s01, printed spelling; elsewhere निष्पादन) and the mixed renderings of 'blast furnace' (ब्लास्ट फर्नेस / विस्फोट भट्ठी) and 'Annual Business Perspective' (वार्षिक व्यापार / व्यावसायिक परिप्रेक्ष्य). A game manager must verify every segment against the printed Hindi before the page is published.",
- "segments": [
-  {
-   "segment_id": "s01",
-   "part": "body",
-   "paragraph": 1,
-   "en": "The production of hot metal and the productivity of the blast furnaces are the measures to assess the performance of blast furnace.",
-   "hi_reference": "तप्त धातु का उत्पादन एवं ब्लास्ट फर्नेस की उत्पादकता ब्लास्ट फर्नेस के निस्पादन का आकलन करने के उपाय हैं।",
-   "bhashini_draft": null,
-   "locked_tokens": []
-  },
-  {
-   "segment_id": "s02",
-   "part": "body",
-   "paragraph": 1,
-   "en": "The production capacity of hot metal in SAIL was not augmented as envisaged in the Modernization and Expansion Plan.",
-   "hi_reference": "सेल में तप्त धातु की उत्पादन क्षमता में आधुनिकीकरण एवं विस्तार योजना के अनुसार वृद्धि नहीं की गई।",
-   "bhashini_draft": null,
-   "locked_tokens": []
-  },
-  {
-   "segment_id": "s03",
-   "part": "body",
-   "paragraph": 1,
-   "en": "There was less production of hot metal by 14.73 million tonne and 4.81 million tonne than the Annual Business Perspective and the MoU quantity respectively during 2017-24.",
-   "hi_reference": "वर्ष 2017-24 के दौरान वार्षिक व्यापार परिप्रेक्ष्य एवं समझौता ज्ञापन मात्रा की तुलना में तप्त धातु का उत्पादन क्रमशः 14.73 मिलियन टन एवं 4.81 मिलियन टन कम था।",
-   "bhashini_draft": null,
-   "locked_tokens": [
-    "14.73",
-    "4.81",
-    "2017-24"
-   ]
-  },
-  {
-   "segment_id": "s04",
-   "part": "body",
-   "paragraph": 1,
-   "en": "The percentage of actual production vis-à-vis the Annual Business Perspective targets ranged between 81 per cent (Bhilai Steel Plant) and 97 per cent (Durgapur Steel Plant) during the period 2017-2024.",
-   "hi_reference": "2017-2024 की अवधि के दौरान वार्षिक व्यावसायिक परिप्रेक्ष्य लक्ष्यों की तुलना में वास्तविक उत्पादन का प्रतिशत 81 प्रतिशत (भिलाई इस्पात संयंत्र) एवं 97 प्रतिशत (दुर्गापुर इस्पात संयंत्र) के मध्य रहा।",
-   "bhashini_draft": null,
-   "locked_tokens": [
-    "81",
-    "97",
-    "2017-2024"
-   ]
-  },
-  {
-   "segment_id": "s05",
-   "part": "body",
-   "paragraph": 1,
-   "en": "The performance of the steel plants with respect to the MoU targets were better and ranged between 89 per cent (Bhilai Steel Plant) and 105 per cent (Durgapur Steel Plant) during this period.",
-   "hi_reference": "इस अवधि के दौरान समझौता ज्ञापन लक्ष्यों के संबंध में इस्पात संयंत्रों का प्रदर्शन बेहतर रहा तथा यह 89 प्रतिशत (भिलाई इस्पात संयंत्र) एवं 105 प्रतिशत (दुर्गापुर इस्पात संयंत्र) के मध्य रहा।",
-   "bhashini_draft": null,
-   "locked_tokens": [
-    "89",
-    "105"
-   ]
-  },
-  {
-   "segment_id": "s06",
-   "part": "body",
-   "paragraph": 2,
-   "en": "The blast furnace productivity could be achieved by Bokaro and Rourkela Steel Plant in 2017-18 and 2020-21 respectively and Durgapur Steel Plant in 2017-18 and 2020-21 and in rest of the period there was shortfall in achievement.",
-   "hi_reference": "बोकारो एवं राउरकेला स्टील प्लांट द्वारा क्रमशः 2017-18 एवं 2020-21 में एवं दुर्गापुर स्टील प्लांट द्वारा 2017-18 एवं 2020-21 में ब्लास्ट फर्नेस उत्पादकता प्राप्त की जा सकी एवं शेष अवधि में उपलब्धि में कमी रही।",
-   "bhashini_draft": null,
-   "locked_tokens": [
-    "2017-18",
-    "2020-21"
-   ]
-  },
-  {
-   "segment_id": "s07",
-   "part": "body",
-   "paragraph": 2,
-   "en": "The excess time taken in planned and unplanned shutdowns affects the available hours for blast furnace operations.",
-   "hi_reference": "नियोजित एवं अनियोजित शटडाउन में लगने वाला अतिरिक्त समय ब्लास्ट फर्नेस परिचालन के लिए उपलब्ध घंटों को प्रभावित करता है।",
-   "bhashini_draft": null,
-   "locked_tokens": []
-  },
-  {
-   "segment_id": "s08",
-   "part": "body",
-   "paragraph": 2,
-   "en": "High unplanned shutdowns were mainly attributable to the shortage of raw materials, poor off take of hot metal by Steel Melting shops, technical (electrical/mechanical/operational/instrumentation failures) and other miscellaneous issues.",
-   "hi_reference": "उच्च अनियोजित शटडाउन मुख्य रूप से कच्चे माल की कमी, स्टील मेल्टिंग दुकानों द्वारा तप्त धातु की खराब निकासी, तकनीकी (विद्युत/यांत्रिक/परिचालन/यंत्र संबंधी विफलताएं) एवं अन्य विविध मुद्दों के कारण थे।",
-   "bhashini_draft": null,
-   "locked_tokens": []
-  },
-  {
-   "segment_id": "s09",
-   "part": "body",
-   "paragraph": 2,
-   "en": "Non-achievement of techno-economic parameters like hot blast temperature, oxygen enrichment, blast pressure and blast volume also adversely impacted the performance of the blast furnaces.",
-   "hi_reference": "हॉट ब्लास्ट तापमान, ऑक्सीजन संवर्धन, विस्फोट दबाव एवं विस्फोट मात्रा जैसे तकनीकी-आर्थिक मापदंडों की गैर-उपलब्धि ने भी विस्फोट भट्ठियों के प्रदर्शन पर प्रतिकूल प्रभाव डाला।",
-   "bhashini_draft": null,
-   "locked_tokens": []
-  },
-  {
-   "segment_id": "s10",
-   "part": "body",
-   "paragraph": 2,
-   "en": "Such shutdown of blast furnaces beyond planned periods or operations with techno-economic parameters below the desired levels resulted in loss of available furnace hours and consequent loss of production.",
-   "hi_reference": "नियोजित अवधि से अधिक समय तक ब्लास्ट फर्नेस को बंद रखने या वांछित स्तर से नीचे तकनीकी-आर्थिक मापदंडों के साथ संचालन करने के परिणामस्वरूप उपलब्ध भट्ठी घंटों की हानि हुई एवं परिणामस्वरूप उत्पादन में हानि हुई।",
-   "bhashini_draft": null,
-   "locked_tokens": []
-  },
-  {
-   "segment_id": "s11",
-   "part": "body",
-   "paragraph": 3,
-   "en": "To enhance the performance of blast furnaces, SAIL may strengthen maintenance practices to minimize unplanned shutdowns and strictly adhere to schedules for planned shutdowns.",
-   "hi_reference": "ब्लास्ट फर्नेस के निष्पादन को बढ़ाने के लिए, सेल अनियोजित शटडाउन को कम करने के लिए रखरखाव प्रथाओं को मजबूत करे एवं नियोजित शटडाउन के लिए समय-सारिणी का सख्ती से पालन करे।",
-   "bhashini_draft": null,
-   "locked_tokens": []
-  },
-  {
-   "segment_id": "s12",
-   "part": "body",
-   "paragraph": 3,
-   "en": "Continuous monitoring and optimization of key techno-economic parameters such as hot blast temperature, oxygen enrichment, blast pressure and volume may also contribute towards the achievement of the hot metal production/productivity envisaged in the Annual Business Perspective.",
-   "hi_reference": "प्रमुख तकनीकी-आर्थिक मापदंडों जैसे कि हॉट ब्लास्ट तापमान, ऑक्सीजन संवर्धन, ब्लास्ट दबाव एवं आयतन की निरंतर निगरानी एवं अनुकूलन भी वार्षिक व्यावसायिक परिप्रेक्ष्य में परिकल्पित तप्त धातु उत्पादन/उत्पादकता की उपलब्धि में योगदान दे सकता है।",
-   "bhashini_draft": null,
-   "locked_tokens": []
-  }
- ],
- "glossary_terms": [
-  {
-   "english_term": "production",
-   "hindi_term": "उत्पादन",
-   "accepted_variants": [
-    "निर्माण"
-   ],
-   "avoid_forms": [
-    "प्रोडक्शन"
-   ]
-  },
-  {
-   "english_term": "productivity",
-   "hindi_term": "उत्पादकता",
-   "accepted_variants": [],
-   "avoid_forms": [
-    "प्रोडक्टिविटी"
-   ]
-  },
-  {
-   "english_term": "capacity",
-   "hindi_term": "हैसियत",
-   "accepted_variants": [
-    "क्षमता",
-    "धारिता",
-    "सामर्थ्य"
-   ],
-   "avoid_forms": [
-    "कैपेसिटी"
-   ]
-  },
-  {
-   "english_term": "modernization",
-   "hindi_term": "आधुनिकीकरण",
-   "accepted_variants": [],
-   "avoid_forms": [
-    "मॉडर्नाइजेशन"
-   ]
-  },
-  {
-   "english_term": "expansion",
-   "hindi_term": "विस्तार",
-   "accepted_variants": [],
-   "avoid_forms": [
-    "एक्सपेंशन"
-   ]
-  },
-  {
-   "english_term": "period",
-   "hindi_term": "अवधि",
-   "accepted_variants": [
-    "काल",
-    "घंटा",
-    "समय"
-   ],
-   "avoid_forms": [
-    "पीरियड"
-   ]
-  },
-  {
-   "english_term": "target",
-   "hindi_term": "लक्ष्य",
-   "accepted_variants": [
-    "लक्ष्य बनाना"
-   ],
-   "avoid_forms": [
-    "टारगेट"
-   ]
-  },
-  {
-   "english_term": "achievement",
-   "hindi_term": "उपलब्धि",
-   "accepted_variants": [],
-   "avoid_forms": [
-    "अचीवमेंट"
-   ]
-  },
-  {
-   "english_term": "maintenance",
-   "hindi_term": "रखरखाव",
-   "accepted_variants": [
-    "अनुरक्षण",
-    "भरण-पोषण",
-    "रख-रखाव"
-   ],
-   "avoid_forms": [
-    "मेंटेनेंस"
-   ]
-  },
-  {
-   "english_term": "monitoring",
-   "hindi_term": "निगरानी",
-   "accepted_variants": [
-    "अनुश्रवण"
-   ],
-   "avoid_forms": [
-    "मॉनिटरिंग"
-   ]
-  },
-  {
-   "english_term": "miscellaneous",
-   "hindi_term": "विविध",
-   "accepted_variants": [
-    "फुटकर"
-   ],
-   "avoid_forms": [
-    "मिसलेनियस"
-   ]
-  },
-  {
-   "english_term": "strictly",
-   "hindi_term": "कड़ाई से",
-   "accepted_variants": [
-    "सख्ती से"
-   ],
-   "avoid_forms": [
-    "स्ट्रिक्टली"
-   ]
-  }
- ]
+  "glossary_terms": [
+    {
+      "english_term": "production",
+      "hindi_term": "उत्पादन",
+      "accepted_variants": [
+        "निर्माण"
+      ],
+      "avoid_forms": [
+        "प्रोडक्शन"
+      ]
+    },
+    {
+      "english_term": "productivity",
+      "hindi_term": "उत्पादकता",
+      "accepted_variants": [],
+      "avoid_forms": [
+        "प्रोडक्टिविटी"
+      ]
+    },
+    {
+      "english_term": "capacity",
+      "hindi_term": "हैसियत",
+      "accepted_variants": [
+        "क्षमता",
+        "धारिता",
+        "सामर्थ्य"
+      ],
+      "avoid_forms": [
+        "कैपेसिटी"
+      ]
+    },
+    {
+      "english_term": "modernization",
+      "hindi_term": "आधुनिकीकरण",
+      "accepted_variants": [],
+      "avoid_forms": [
+        "मॉडर्नाइजेशन"
+      ]
+    },
+    {
+      "english_term": "expansion",
+      "hindi_term": "विस्तार",
+      "accepted_variants": [],
+      "avoid_forms": [
+        "एक्सपेंशन"
+      ]
+    },
+    {
+      "english_term": "period",
+      "hindi_term": "अवधि",
+      "accepted_variants": [
+        "काल",
+        "घंटा",
+        "समय"
+      ],
+      "avoid_forms": [
+        "पीरियड"
+      ]
+    },
+    {
+      "english_term": "target",
+      "hindi_term": "लक्ष्य",
+      "accepted_variants": [
+        "लक्ष्य बनाना"
+      ],
+      "avoid_forms": [
+        "टारगेट"
+      ]
+    },
+    {
+      "english_term": "maintenance",
+      "hindi_term": "रखरखाव",
+      "accepted_variants": [
+        "अनुरक्षण",
+        "भरण-पोषण",
+        "रख-रखाव"
+      ],
+      "avoid_forms": [
+        "मेंटेनेंस"
+      ]
+    },
+    {
+      "english_term": "miscellaneous",
+      "hindi_term": "विविध",
+      "accepted_variants": [
+        "फुटकर"
+      ],
+      "avoid_forms": [
+        "मिसलेनियस"
+      ]
+    },
+    {
+      "english_term": "strictly",
+      "hindi_term": "कड़ाई से",
+      "accepted_variants": [
+        "सख्ती से"
+      ],
+      "avoid_forms": [
+        "स्ट्रिक्टली"
+      ]
+    }
+  ]
 }

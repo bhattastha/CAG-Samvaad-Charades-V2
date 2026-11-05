@@ -2,8 +2,8 @@
   "game": {
     "name": "संवाद शराड्स",
     "nameEn": "Samvaad Charades",
-    "guide": "सहायक",
-    "guideEn": "Sahayak"
+    "guide": "सहायिका",
+    "guideEn": "Sahayika"
   },
   "registration": {
     "credits": 2
@@ -39,7 +39,8 @@
       "titleMeaning": "The Skilled Translator",
       "levelLabel": "Level 2",
       "playable": true,
-      "pages": 10
+      "pages": 10,
+      "scrollMode": true
     },
     {
       "key": "secondary",
@@ -55,7 +56,8 @@
       "titleMeaning": "The Translation Scholar",
       "levelLabel": "Level 3",
       "playable": true,
-      "pages": 20
+      "pages": 20,
+      "scrollMode": true
     },
     {
       "key": "pro",
@@ -66,6 +68,7 @@
       "creditCap": 25,
       "bhashiniDraft": true,
       "voiceTyping": false,
+      "scrollMode": true,
       "completionCountedBy": "paragraph",
       "titleEn": "Anuvad Visheshagya",
       "titleMeaning": "The Translation Expert",
@@ -84,7 +87,7 @@
       "voiceTyping": false,
       "completionCountedBy": "paragraph",
       "titleEn": "Anuvad Varchaspati",
-      "titleMeaning": "The PhD-level master translator",
+      "titleMeaning": "The Master of Translation",
       "levelLabel": "Level 5",
       "playable": false,
       "pages": 300,
@@ -96,16 +99,9 @@
   "bestOfChancesCounts": true,
   "titlePassMark": 33,
   "scoreOutOf": 100,
-  "scoringWeights": {
-    "translation": 30,
-    "completion": 20,
-    "sentenceConstruction": 20,
-    "glossary": 20,
-    "time": 10
-  },
   "timeMarks": {
     "fullMarksIfFinishedWithinShareOfLimit": 0.5,
-    "marksAtTimeLimit": 0.6
+    "marksAtTimeLimit": 0
   },
   "creditFormula": "round credits = best score / 100 x round credit cap",
   "creditDecimals": 1,
@@ -145,7 +141,8 @@
     "chrfBeta": 2,
     "chrfFloor": 0.2,
     "chrfCeil": 0.85,
-    "minWordsPerSentence": 2
+    "minWordsPerSentence": 2,
+    "draftGainGate": 0.1
   },
   "auth": {
     "mode": "email-otp",
@@ -188,7 +185,7 @@
     "translation": "ai4bharat/indictrans-v2-all-gpu--t4",
     "asrHindi": "ai4bharat/conformer-hi-gpu--t4",
     "ttsEnglish": "bhashini/bodhan/indic-tts",
-    "ttsGender": "male",
+    "ttsGender": "female",
     "transliteration": "ai4bharat/indicxlit--cpu-fsv2"
   },
   "brand": {
@@ -216,9 +213,14 @@
     "trialQualifyingScore": 33,
     "unlockRule": "all-open",
     "trialWords": {
-      "min": 300,
-      "max": 400,
+      "min": 200,
+      "max": 200,
       "sourceSection": "Conclusion"
     }
+  },
+  "scoringWeights": {
+    "translationQuality": 55,
+    "glossary": 25,
+    "timelinessCompletion": 20
   }
 }

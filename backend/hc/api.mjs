@@ -11605,20 +11605,20 @@ var require_stream_readable = __commonJS({
       }
       return ret2;
     }
-    function fromListPartial(n, list, hasStrings) {
+    function fromListPartial(n, list2, hasStrings) {
       var ret2;
-      if (n < list.head.data.length) {
-        ret2 = list.head.data.slice(0, n);
-        list.head.data = list.head.data.slice(n);
-      } else if (n === list.head.data.length) {
-        ret2 = list.shift();
+      if (n < list2.head.data.length) {
+        ret2 = list2.head.data.slice(0, n);
+        list2.head.data = list2.head.data.slice(n);
+      } else if (n === list2.head.data.length) {
+        ret2 = list2.shift();
       } else {
-        ret2 = hasStrings ? copyFromBufferString(n, list) : copyFromBuffer(n, list);
+        ret2 = hasStrings ? copyFromBufferString(n, list2) : copyFromBuffer(n, list2);
       }
       return ret2;
     }
-    function copyFromBufferString(n, list) {
-      var p = list.head;
+    function copyFromBufferString(n, list2) {
+      var p = list2.head;
       var c = 1;
       var ret2 = p.data;
       n -= ret2.length;
@@ -11631,22 +11631,22 @@ var require_stream_readable = __commonJS({
         if (n === 0) {
           if (nb === str2.length) {
             ++c;
-            if (p.next) list.head = p.next;
-            else list.head = list.tail = null;
+            if (p.next) list2.head = p.next;
+            else list2.head = list2.tail = null;
           } else {
-            list.head = p;
+            list2.head = p;
             p.data = str2.slice(nb);
           }
           break;
         }
         ++c;
       }
-      list.length -= c;
+      list2.length -= c;
       return ret2;
     }
-    function copyFromBuffer(n, list) {
+    function copyFromBuffer(n, list2) {
       var ret2 = Buffer2.allocUnsafe(n);
-      var p = list.head;
+      var p = list2.head;
       var c = 1;
       p.data.copy(ret2);
       n -= p.data.length;
@@ -11658,17 +11658,17 @@ var require_stream_readable = __commonJS({
         if (n === 0) {
           if (nb === buf.length) {
             ++c;
-            if (p.next) list.head = p.next;
-            else list.head = list.tail = null;
+            if (p.next) list2.head = p.next;
+            else list2.head = list2.tail = null;
           } else {
-            list.head = p;
+            list2.head = p;
             p.data = buf.slice(nb);
           }
           break;
         }
         ++c;
       }
-      list.length -= c;
+      list2.length -= c;
       return ret2;
     }
     function endReadable(stream) {
@@ -17135,7 +17135,7 @@ var require_abort_controller = __commonJS({
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     var eventTargetShim = require_event_target_shim();
-    var AbortSignal = class extends eventTargetShim.EventTarget {
+    var AbortSignal2 = class extends eventTargetShim.EventTarget {
       /**
        * AbortSignal cannot be constructed directly.
        */
@@ -17154,9 +17154,9 @@ var require_abort_controller = __commonJS({
         return aborted;
       }
     };
-    eventTargetShim.defineEventAttribute(AbortSignal.prototype, "abort");
+    eventTargetShim.defineEventAttribute(AbortSignal2.prototype, "abort");
     function createAbortSignal() {
-      const signal = Object.create(AbortSignal.prototype);
+      const signal = Object.create(AbortSignal2.prototype);
       eventTargetShim.EventTarget.call(signal);
       abortedFlags.set(signal, false);
       return signal;
@@ -17169,11 +17169,11 @@ var require_abort_controller = __commonJS({
       signal.dispatchEvent({ type: "abort" });
     }
     var abortedFlags = /* @__PURE__ */ new WeakMap();
-    Object.defineProperties(AbortSignal.prototype, {
+    Object.defineProperties(AbortSignal2.prototype, {
       aborted: { enumerable: true }
     });
     if (typeof Symbol === "function" && typeof Symbol.toStringTag === "symbol") {
-      Object.defineProperty(AbortSignal.prototype, Symbol.toStringTag, {
+      Object.defineProperty(AbortSignal2.prototype, Symbol.toStringTag, {
         configurable: true,
         value: "AbortSignal"
       });
@@ -17217,11 +17217,11 @@ var require_abort_controller = __commonJS({
       });
     }
     exports2.AbortController = AbortController2;
-    exports2.AbortSignal = AbortSignal;
+    exports2.AbortSignal = AbortSignal2;
     exports2.default = AbortController2;
     module2.exports = AbortController2;
     module2.exports.AbortController = module2.exports["default"] = AbortController2;
-    module2.exports.AbortSignal = AbortSignal;
+    module2.exports.AbortSignal = AbortSignal2;
   }
 });
 
@@ -17235,7 +17235,7 @@ var require_util2 = __commonJS({
       codes: { ERR_INVALID_ARG_TYPE }
     } = require_errors2();
     var { kResistStopPropagation, AggregateError: AggregateError2, SymbolDispose } = require_primordials();
-    var AbortSignal = globalThis.AbortSignal || require_abort_controller().AbortSignal;
+    var AbortSignal2 = globalThis.AbortSignal || require_abort_controller().AbortSignal;
     var AbortController2 = globalThis.AbortController || require_abort_controller().AbortController;
     var AsyncFunction = Object.getPrototypeOf(async function() {
     }).constructor;
@@ -17336,7 +17336,7 @@ var require_util2 = __commonJS({
           }
         };
       },
-      AbortSignalAny: AbortSignal.any || function AbortSignalAny(signals) {
+      AbortSignalAny: AbortSignal2.any || function AbortSignalAny(signals) {
         if (signals.length === 1) {
           return signals[0];
         }
@@ -47356,8 +47356,8 @@ var require_dist = __commonJS({
         return ajv;
       }
       const [formats, exportName] = opts.mode === "fast" ? [formats_1.fastFormats, fastName] : [formats_1.fullFormats, fullName];
-      const list = opts.formats || formats_1.formatNames;
-      addFormats(ajv, list, formats, exportName);
+      const list2 = opts.formats || formats_1.formatNames;
+      addFormats(ajv, list2, formats, exportName);
       if (opts.keywords)
         (0, limit_1.default)(ajv);
       return ajv;
@@ -47369,11 +47369,11 @@ var require_dist = __commonJS({
         throw new Error(`Unknown format "${name2}"`);
       return f;
     };
-    function addFormats(ajv, list, fs4, exportName) {
+    function addFormats(ajv, list2, fs4, exportName) {
       var _a;
       var _b;
       (_a = (_b = ajv.opts.code).formats) !== null && _a !== void 0 ? _a : _b.formats = (0, codegen_1._)`require("ajv-formats/dist/formats").${exportName}`;
-      for (const f of list)
+      for (const f of list2)
         ajv.addFormat(f, fs4[f]);
     }
     module2.exports = exports2 = formatsPlugin;
@@ -51919,7 +51919,7 @@ var require_sort = __commonJS({
   "../../node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/sort.js"(exports2, module2) {
     "use strict";
     var compareBuild = require_compare_build();
-    var sort = (list, loose) => list.sort((a, b) => compareBuild(a, b, loose));
+    var sort = (list2, loose) => list2.sort((a, b) => compareBuild(a, b, loose));
     module2.exports = sort;
   }
 });
@@ -51929,7 +51929,7 @@ var require_rsort = __commonJS({
   "../../node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/rsort.js"(exports2, module2) {
     "use strict";
     var compareBuild = require_compare_build();
-    var rsort = (list, loose) => list.sort((a, b) => compareBuild(b, a, loose));
+    var rsort = (list2, loose) => list2.sort((a, b) => compareBuild(b, a, loose));
     module2.exports = rsort;
   }
 });
@@ -64670,13 +64670,13 @@ var require_buffer_util = __commonJS({
     "use strict";
     var { EMPTY_BUFFER } = require_constants3();
     var FastBuffer = Buffer[Symbol.species];
-    function concat2(list, totalLength2) {
-      if (list.length === 0) return EMPTY_BUFFER;
-      if (list.length === 1) return list[0];
+    function concat2(list2, totalLength2) {
+      if (list2.length === 0) return EMPTY_BUFFER;
+      if (list2.length === 1) return list2[0];
       const target = Buffer.allocUnsafe(totalLength2);
       let offset = 0;
-      for (let i = 0; i < list.length; i++) {
-        const buf = list[i];
+      for (let i = 0; i < list2.length; i++) {
+        const buf = list2[i];
         target.set(buf, offset);
         offset += buf.length;
       }
@@ -66462,14 +66462,14 @@ var require_sender = __commonJS({
        * @param {Function} [cb] Callback
        * @private
        */
-      sendFrame(list, cb) {
-        if (list.length === 2) {
+      sendFrame(list2, cb) {
+        if (list2.length === 2) {
           this._socket.cork();
-          this._socket.write(list[0]);
-          this._socket.write(list[1], cb);
+          this._socket.write(list2[0]);
+          this._socket.write(list2[1], cb);
           this._socket.uncork();
         } else {
-          this._socket.write(list[0], cb);
+          this._socket.write(list2[0], cb);
         }
       }
     };
@@ -72721,6 +72721,8 @@ var init_config = __esm({
       playable: external_exports.boolean().default(true),
       /** report pages per bundle for this level (0 = Trial passage measured in words) */
       pages: external_exports.number().int().nonnegative().default(0),
+      /** true = the whole bundle is one continuous scrolling report instead of page-by-page */
+      scrollMode: external_exports.boolean().default(false),
       phase: external_exports.string().optional()
     });
     GameConfigSchema = external_exports.object({
@@ -72738,12 +72740,11 @@ var init_config = __esm({
       bestOfChancesCounts: external_exports.boolean(),
       titlePassMark: external_exports.number().min(0).max(100),
       scoreOutOf: external_exports.number().positive(),
+      /** v2: Translation Quality (incl. sentence construction) 55, Glossary Usage 25, Timeliness & Completion 20 */
       scoringWeights: external_exports.object({
-        translation: external_exports.number(),
-        completion: external_exports.number(),
-        sentenceConstruction: external_exports.number(),
+        translationQuality: external_exports.number(),
         glossary: external_exports.number(),
-        time: external_exports.number()
+        timelinessCompletion: external_exports.number()
       }),
       timeMarks: external_exports.object({
         fullMarksIfFinishedWithinShareOfLimit: external_exports.number().min(0).max(1),
@@ -72775,7 +72776,9 @@ var init_config = __esm({
         chrfBeta: external_exports.number().positive(),
         chrfFloor: external_exports.number(),
         chrfCeil: external_exports.number(),
-        minWordsPerSentence: external_exports.number().int()
+        minWordsPerSentence: external_exports.number().int(),
+        /** draft rounds: Timeliness & Completion counts only when the quality gain is at least this share */
+        draftGainGate: external_exports.number().min(0).max(1).default(0.1)
       }),
       auth: external_exports.object({ mode: external_exports.string(), otpLength: external_exports.number().int(), otpTtlMinutes: external_exports.number() }),
       ui: external_exports.object({
@@ -72817,7 +72820,7 @@ var init_config = __esm({
       if (keys[0] !== "trial") ctx.addIssue({ code: external_exports.ZodIssueCode.custom, message: "the first round must be trial (mandatory entry level)" });
       if (new Set(keys).size !== keys.length) ctx.addIssue({ code: external_exports.ZodIssueCode.custom, message: `duplicate round keys: ${keys.join(",")}` });
       const w = c.scoringWeights;
-      const ws = w.translation + w.completion + w.sentenceConstruction + w.glossary + w.time;
+      const ws = w.translationQuality + w.glossary + w.timelinessCompletion;
       if (Math.abs(ws - c.scoreOutOf) > 1e-9) ctx.addIssue({ code: external_exports.ZodIssueCode.custom, message: `scoring weights sum to ${ws}, expected ${c.scoreOutOf}` });
     });
   }
@@ -73002,7 +73005,31 @@ function chrF(hyp, ref, order = 6, beta = 2) {
 function calibrateChrF(c, floor2, ceil) {
   return clamp01((c - floor2) / (ceil - floor2));
 }
-function timeMeasure(usedSeconds, limitSeconds, share = 0.5, atLimit = 0.6) {
+function stems(s) {
+  return words(s).filter((w) => !HI_STOP.has(w)).map((w) => (w.length > 3 ? w.replace(HI_SUFFIX, "") : w).toLowerCase());
+}
+function stemF(hyp, ref, beta = 2) {
+  const h = stems(hyp), r = stems(ref);
+  if (!h.length || !r.length) return h.length === r.length ? 1 : 0;
+  const rc = /* @__PURE__ */ new Map();
+  r.forEach((w) => rc.set(w, (rc.get(w) ?? 0) + 1));
+  let m = 0;
+  for (const w of h) {
+    const c = rc.get(w) ?? 0;
+    if (c > 0) {
+      m++;
+      rc.set(w, c - 1);
+    }
+  }
+  const P = m / h.length, R = m / r.length;
+  if (!P || !R) return 0;
+  return (1 + beta * beta) * P * R / (beta * beta * P + R);
+}
+function similarity(hyp, ref, order = 6, beta = 2) {
+  if (!normalise(hyp)) return 0;
+  return 0.6 * chrF(hyp, ref, order, beta) + 0.4 * stemF(hyp, ref, beta);
+}
+function timeMeasure(usedSeconds, limitSeconds, share = 0.5, atLimit = 0) {
   const f = clamp01(limitSeconds > 0 ? usedSeconds / limitSeconds : 1);
   if (f <= share) return 1;
   return 1 - (f - share) / (1 - share) * (1 - atLimit);
@@ -73043,9 +73070,10 @@ function grammarIssues(round, page, answers, minWords) {
       const text = normalise(fieldText(answers, p, f.key));
       if (!text) continue;
       const refLatin = new Set(words(f.hiReference).filter((w) => LATIN_WORD.test(w)).map((w) => w.toLowerCase()));
+      const lockedWords = new Set(f.locked.flatMap((l2) => words(l2)));
       const ws = words(text);
       for (const w of ws) {
-        if (LATIN_WORD.test(w) && !refLatin.has(w.toLowerCase()) && !f.locked.includes(w))
+        if (LATIN_WORD.test(w) && !refLatin.has(w.toLowerCase()) && !lockedWords.has(w))
           out.push({ code: "latin_word", partId: p.id, fieldKey: f.key, text: w, penalty: 0.05 });
         if (DEPENDENT_SIGN.test(w)) out.push({ code: "vowel_sign_start", partId: p.id, fieldKey: f.key, text: w, penalty: 0.03 });
       }
@@ -73068,41 +73096,102 @@ function grammarIssues(round, page, answers, minWords) {
   }
   return out;
 }
-function scoreAttempt({ config: config2, round, page, answers, usedSeconds }) {
-  const sc = config2.scoring;
-  const limitSeconds = round.timeLimitMinutes * 60;
-  const allText2 = page.parts.map((p) => partPlayerText(answers, p)).join(" ");
-  const empty2 = normalise(allText2).length === 0;
-  let wSum = 0, tSum = 0;
+function docQuality(page, answers, grammar, sc) {
+  let wSum = 0, sSum = 0, nWords = 0;
   for (const p of page.parts) {
     if (!p.editable) continue;
     const ref = partRefText(p);
-    const w2 = normalise(ref).length;
-    if (!w2) continue;
-    const c = calibrateChrF(chrF(partPlayerText(answers, p), ref, sc.chrfOrder, sc.chrfBeta), sc.chrfFloor, sc.chrfCeil);
-    tSum += c * w2;
-    wSum += w2;
+    const w = normalise(ref).length;
+    if (!w) continue;
+    const hyp = partPlayerText(answers, p);
+    nWords += words(hyp).length;
+    sSum += calibrateChrF(similarity(hyp, ref, sc.chrfOrder, sc.chrfBeta), sc.chrfFloor, sc.chrfCeil) * w;
+    wSum += w;
   }
-  const translation = wSum ? tSum / wSum : 0;
-  const comp = completion(round, page, answers, sc.minWordsPerSentence);
+  const sim = wSum ? sSum / wSum : 0;
+  const fluency = nWords ? clamp01(1 - grammar.length / (nWords / 100) * 0.1) : 0;
+  return { sim, fluency, quality: sim * (0.9 + 0.1 * fluency) };
+}
+function weakSpotsOf(round, page, answers, sc, weight, n = 3) {
+  const units = [];
+  for (const p of page.parts) {
+    if (!p.editable) continue;
+    const ref = partRefText(p), hyp = partPlayerText(answers, p);
+    if (normalise(ref).length < 20) continue;
+    const draft = round.bhashiniDraft ? editableFields(p).map((f) => f.draft ?? "").join(" ") : null;
+    const enS = p.enSentences ?? [], refS = splitSentences(ref);
+    if (round.completionCountedBy === "sentence" && enS.length > 1 && enS.length === refS.length) {
+      const hypS = splitSentences(hyp);
+      enS.forEach((en, i) => units.push({ partId: p.id, sentence: i, en, ref: refS[i], hyp: hypS[i] ?? "", draft: null }));
+    } else units.push({ partId: p.id, sentence: null, en: p.fields.map((f) => f.en).join(" "), ref, hyp, draft });
+  }
+  const total = units.reduce((t, u) => t + normalise(u.ref).length, 0) || 1;
+  return units.map((u) => {
+    const cal = (h) => calibrateChrF(similarity(h, u.ref, sc.chrfOrder, sc.chrfBeta), sc.chrfFloor, sc.chrfCeil);
+    const sim = cal(u.hyp);
+    const d = u.draft === null ? null : cal(u.draft);
+    const got = d === null ? sim : d >= 1 ? 1 : clamp01((sim - d) / (1 - d));
+    return { partId: u.partId, sentence: u.sentence, en: u.en.length > 160 ? u.en.slice(0, 157) + "\u2026" : u.en, similarityPct: Math.round(sim * 100), lostMarks: Math.round(normalise(u.ref).length / total * (1 - got) * weight * 10) / 10 };
+  }).filter((u) => u.lostMarks >= 0.5).sort((a, b) => b.lostMarks - a.lostMarks).slice(0, n);
+}
+function scoreAttempt({ config: config2, round, page, answers, usedSeconds }) {
+  const sc = config2.scoring;
+  const w = config2.scoringWeights;
+  const limitSeconds = round.timeLimitMinutes * 60;
+  const allText2 = page.parts.map((p) => partPlayerText(answers, p)).join(" ");
+  const empty2 = normalise(allText2).length === 0;
   const grammar = grammarIssues(round, page, answers, sc.minWordsPerSentence);
-  const sentence = empty2 ? 0 : clamp01(1 - grammar.reduce((s, g) => s + g.penalty, 0));
+  const refAnswers = Object.fromEntries(page.parts.filter((p) => p.editable).map((p) => [p.id, { fields: Object.fromEntries(editableFields(p).map((f) => [f.key, f.hiReference])), done: false }]));
+  const refKeys = new Set(grammarIssues(round, page, refAnswers, sc.minWordsPerSentence).map((g) => `${g.code}|${g.partId}|${g.text}`));
+  const own = (gs) => gs.filter((g) => !refKeys.has(`${g.code}|${g.partId}|${g.text}`));
+  const mine = docQuality(page, answers, own(grammar), sc);
+  const hasDraft = round.bhashiniDraft && page.parts.some((p) => p.fields.some((f) => f.draft));
+  let quality = mine.quality, draftSim = null, gain = null;
+  if (hasDraft) {
+    const da = draftAnswers(page);
+    draftSim = docQuality(page, da, own(grammarIssues(round, page, da, sc.minWordsPerSentence)), sc).quality;
+    gain = draftSim >= 1 ? 0 : clamp01((mine.quality - draftSim) / (1 - draftSim));
+    quality = gain;
+  }
+  const comp = completion(round, page, answers, sc.minWordsPerSentence);
   const termChecks = page.terms.map((t) => checkTerm(allText2, t));
   const glossaryCorrect = termChecks.filter((t) => t.correct).length;
   const glossary2 = page.terms.length ? glossaryCorrect / page.terms.length : 1;
   const tm = config2.timeMarks;
   const time = timeMeasure(usedSeconds, limitSeconds, tm.fullMarksIfFinishedWithinShareOfLimit, tm.marksAtTimeLimit);
-  const measures = { translation, completion: comp.done / (comp.total || 1), sentence, glossary: glossary2, time };
-  const w = config2.scoringWeights;
-  const score = empty2 ? 0 : Math.round(measures.translation * w.translation + measures.completion * w.completion + measures.sentence * w.sentenceConstruction + measures.glossary * w.glossary + measures.time * w.time);
+  const completionShare = comp.done / (comp.total || 1);
+  const gated = gain !== null && gain < sc.draftGainGate;
+  const timeliness = empty2 || gated ? 0 : completionShare * time;
+  const measures = {
+    model: 2,
+    quality: empty2 ? 0 : quality,
+    glossary: empty2 ? 0 : glossary2,
+    timeliness,
+    similarity: mine.sim,
+    draftSimilarity: draftSim,
+    fluency: mine.fluency,
+    completion: completionShare,
+    time
+  };
+  const qualityMarks = round1(measures.quality * w.translationQuality);
+  const glossaryMarks = round1(measures.glossary * w.glossary);
+  const timelinessMarks = round1(measures.timeliness * w.timelinessCompletion);
+  const score = empty2 ? 0 : round1(measures.quality * w.translationQuality + measures.glossary * w.glossary + measures.timeliness * w.timelinessCompletion);
   const firstBadTerm = termChecks.find((t) => !t.correct);
-  const tip = firstBadTerm ? { kind: "term", en: firstBadTerm.term.en, hi: firstBadTerm.term.hi, wrong: firstBadTerm.avoidFound } : grammar[0] ? { kind: "grammar", code: grammar[0].code, text: grammar[0].text } : { kind: "praise" };
+  const ownGrammar = own(grammar);
+  const tip = firstBadTerm ? { kind: "term", en: firstBadTerm.term.en, hi: firstBadTerm.term.hi, wrong: firstBadTerm.avoidFound } : ownGrammar[0] ? { kind: "grammar", code: ownGrammar[0].code, text: ownGrammar[0].text } : { kind: "praise" };
   return {
+    weakSpots: empty2 ? [] : weakSpotsOf(round, page, answers, sc, w.translationQuality),
     score: Math.max(0, Math.min(config2.scoreOutOf, score)),
     measures,
     counts: {
-      translation10: Math.round(translation * 10),
-      sentence10: Math.round(sentence * 10),
+      qualityMarks,
+      glossaryMarks,
+      timelinessMarks,
+      similarityPct: Math.round(mine.sim * 100),
+      draftSimilarityPct: draftSim === null ? null : Math.round(draftSim * 100),
+      gainPct: gain === null ? null : Math.round(gain * 100),
+      timelinessGated: gated,
       completionDone: comp.done,
       completionTotal: comp.total,
       completionUnit: round.completionCountedBy,
@@ -73149,18 +73238,23 @@ function buildFlags(page, answers, termChecks, grammar) {
     return true;
   });
 }
-var clamp01, fieldText, editableFields, partPlayerText, partRefText, SENTENCE_PARTS;
+var clamp01, HI_SUFFIX, HI_STOP, fieldText, editableFields, partPlayerText, partRefText, SENTENCE_PARTS, round1, draftAnswers, splitSentences;
 var init_scoring = __esm({
   "../../packages/shared/src/scoring.ts"() {
     "use strict";
     init_glossary();
     init_text();
     clamp01 = (x) => Math.max(0, Math.min(1, x));
+    HI_SUFFIX = /(ियों|ाओं|ाएं|ाएँ|ियाँ|ियां|ओं|ों|ें|एं|ता|ती|ते|ना|नी|ने|ा|ी|े|ि|ु|ू|ं|ँ)$/u;
+    HI_STOP = /* @__PURE__ */ new Set(["\u0915\u093E", "\u0915\u0940", "\u0915\u0947", "\u0915\u094B", "\u092E\u0947\u0902", "\u0938\u0947", "\u092A\u0930", "\u0928\u0947", "\u0939\u0948", "\u0939\u0948\u0902", "\u0925\u093E", "\u0925\u0940", "\u0925\u0947", "\u0914\u0930", "\u0924\u0925\u093E", "\u090F\u0935\u0902", "\u092D\u0940", "\u092F\u0939", "\u0935\u0939", "\u0907\u0938", "\u0909\u0938", "\u090F\u0915", "\u0926\u094D\u0935\u093E\u0930\u093E", "\u0932\u093F\u090F", "\u0917\u092F\u093E", "\u0917\u0908", "\u0917\u090F", "\u0915\u093F\u092F\u093E", "\u0939\u094B", "\u092F\u093E"]);
     fieldText = (answers, part, key2) => answers[part.id]?.fields?.[key2] ?? "";
     editableFields = (p) => p.fields.filter((f) => !f.numeric);
     partPlayerText = (answers, p) => editableFields(p).map((f) => fieldText(answers, p, f.key)).join(" ");
     partRefText = (p) => editableFields(p).map((f) => f.hiReference).join(" ");
     SENTENCE_PARTS = /* @__PURE__ */ new Set(["passage", "body", "headnote", "footnote", "annexure_ref"]);
+    round1 = (x) => Math.round(x * 10) / 10;
+    draftAnswers = (page) => Object.fromEntries(page.parts.filter((p) => p.editable).map((p) => [p.id, { fields: Object.fromEntries(p.fields.filter((f) => !f.numeric).map((f) => [f.key, f.draft ?? ""])), done: false }]));
+    splitSentences = (s) => s.split(/(?<=[।?!])\s+/u).map((x) => x.trim()).filter(Boolean);
   }
 });
 
@@ -73246,20 +73340,15 @@ function choosePage(pages, usedByPlayer, seed) {
 function reportCardLines(i) {
   const p = `${i.roundKey}.report_card.`;
   const best = Math.max(i.score, i.priorBest ?? -1);
-  const announce = [];
+  const announce = [p + "opening"];
   const titleEarned = best >= i.passMark;
   if (titleEarned) {
-    const isNewBest = i.priorBest === null || i.score > i.priorBest;
-    if (i.chanceNo === 1) announce.push(p + "title_earned_first_chance");
-    else if (isNewBest && (i.priorBest === null || i.priorBest < i.passMark)) announce.push(p + "first_pass_on_retry");
-    else if (isNewBest) announce.push(p + "new_best");
-    else announce.push(p + "not_new_best");
-    announce.push(p + "title_name", p + "credits_line");
-  } else {
-    if (i.chancesLeft > 0 && best >= i.passMark - 5) announce.push(p + "so_close");
-    else if (i.chancesLeft > 0) announce.push(p + "below_pass_chances_left");
-    else announce.push(p + "below_pass_no_chances");
-  }
+    if (i.priorBest === null || i.priorBest < i.passMark) announce.push(p + "title_earned_first_chance");
+    if (i.score >= 75) announce.push(p + "high_score");
+  } else if (i.chancesLeft > 0 && best >= 25) announce.push(p + "so_close");
+  else if (i.chancesLeft > 0) announce.push(p + "below_pass_chances_left");
+  else announce.push(p + "below_pass_no_chances");
+  if (i.chanceNo > 1 && i.priorBest !== null) announce.push(p + (i.score > i.priorBest ? "new_best" : "not_new_best"));
   const after = [];
   if (i.roundKey === "trial") after.push(p + "typing_only_next");
   if (i.leftCount > 0) after.push(p + "left_count_note");
@@ -73282,10 +73371,10 @@ var init_rules = __esm({
 });
 
 // ../../packages/shared/src/xlit.ts
-function match(list, s, i) {
-  for (const e2 of list) if (s.startsWith(e2[0], i)) return e2;
+function match(list2, s, i) {
+  for (const e2 of list2) if (s.startsWith(e2[0], i)) return e2;
   const lower = s.toLowerCase();
-  for (const e2 of list) if (e2[0] === e2[0].toLowerCase() && lower.startsWith(e2[0], i)) return e2;
+  for (const e2 of list2) if (e2[0] === e2[0].toLowerCase() && lower.startsWith(e2[0], i)) return e2;
   return null;
 }
 function romanToDevanagari(word) {
@@ -73564,6 +73653,10 @@ var init_env = __esm({
       COOKIE_SECURE: (e.COOKIE_SECURE ?? (e.NODE_ENV === "production" ? "1" : "0")) === "1",
       SMTP_URL: e.SMTP_URL ?? "",
       EMERGENT_EMAIL_KEY: e.EMERGENT_EMAIL_KEY ?? "",
+      EMAIL_RELAY_URL: e.EMAIL_RELAY_URL ?? "",
+      EMAIL_RELAY_API_KEY: e.EMAIL_RELAY_API_KEY ?? "",
+      EMAIL_REPLY_TO: e.EMAIL_REPLY_TO ?? "",
+      OTP_ALLOWLIST: e.OTP_ALLOWLIST ?? "",
       EMAIL_FROM_NAME: e.EMAIL_FROM_NAME ?? "",
       OTP_FROM: e.OTP_FROM ?? "Samvaad Charades <no-reply@cag.gov.in>",
       ADMIN_EMAILS: (e.ADMIN_EMAILS ?? "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean),
@@ -77639,7 +77732,7 @@ function buildHeaderValue(structured) {
   return value2 + (paramsArray.length ? "; " + paramsArray.join("; ") : "");
 }
 function buildHeaderParam(key2, data, maxLength) {
-  const list = [];
+  const list2 = [];
   let encodedStr = typeof data === "string" ? data : (data || "").toString();
   let chr;
   let line2;
@@ -77656,13 +77749,13 @@ function buildHeaderParam(key2, data, maxLength) {
       ];
     }
     encodedStr = encodedStr.replace(new RegExp(".{" + maxLength + "}", "g"), (str2) => {
-      list.push({
+      list2.push({
         line: str2
       });
       return "";
     });
     if (encodedStr) {
-      list.push({
+      list2.push({
         line: encodedStr
       });
     }
@@ -77692,7 +77785,7 @@ function buildHeaderParam(key2, data, maxLength) {
         chr = chr === " " ? chr : safeEncodeURIComponent(chr);
         if (chr !== encodedStr[i]) {
           if ((safeEncodeURIComponent(line2) + chr).length >= maxLength) {
-            list.push({
+            list2.push({
               line: line2,
               encoded
             });
@@ -77707,7 +77800,7 @@ function buildHeaderParam(key2, data, maxLength) {
         }
       }
       if ((line2 + chr).length >= maxLength) {
-        list.push({
+        list2.push({
           line: line2,
           encoded
         });
@@ -77723,13 +77816,13 @@ function buildHeaderParam(key2, data, maxLength) {
       }
     }
     if (line2) {
-      list.push({
+      list2.push({
         line: line2,
         encoded
       });
     }
   }
-  return list.map((item, i2) => ({
+  return list2.map((item, i2) => ({
     // encoded lines: {name}*{part}*
     // unencoded lines: {name}*{part}
     // if any line needs to be encoded then the first line (part==0) is always encoded
@@ -78391,10 +78484,10 @@ function _handleAddress(tokens, from, to) {
   }
   return address;
 }
-function _mergeNameFragments(list) {
+function _mergeNameFragments(list2) {
   const merged = [];
-  for (let i = list.length - 1; i >= 0; i--) {
-    const current = list[i];
+  for (let i = list2.length - 1; i >= 0; i--) {
+    const current = list2[i];
     const next = merged.length ? merged[merged.length - 1] : null;
     if (next && current.address === "" && current.name && !current.group && next.address && next.name) {
       next.name = current.name + ", " + next.name;
@@ -78444,8 +78537,8 @@ function addressparser(str2, options) {
   const parsedAddresses = _parseAddressList(str2);
   if (options?.flatten) {
     const flatAddresses = [];
-    const walkAddressList = (list) => {
-      list.forEach((entry) => {
+    const walkAddressList = (list2) => {
+      list2.forEach((entry) => {
         if (entry.group) {
           return walkAddressList(entry.group);
         }
@@ -78575,10 +78668,10 @@ var init_addressparser = __esm({
           this.checkChar(str2.charAt(i), i);
         }
         this._closeText(len);
-        const list = this.list;
-        const slots = list.slots;
+        const list2 = this.list;
+        const slots = list2.slots;
         let kept = 0;
-        for (let i = 0, count = list.length; i < count; i++) {
+        for (let i = 0, count = list2.length; i < count; i++) {
           const kind = slots[i * 3];
           let start = slots[i * 3 + 1];
           let end = slots[i * 3 + 2];
@@ -78587,7 +78680,7 @@ var init_addressparser = __esm({
             if (!value2) {
               continue;
             }
-            list.cleaned.set(kept, value2);
+            list2.cleaned.set(kept, value2);
           } else if (!(kind & TOKEN_OPERATOR)) {
             while (start < end && _isSpaceCode(str2.charCodeAt(start))) {
               start++;
@@ -78604,8 +78697,8 @@ var init_addressparser = __esm({
           slots[kept * 3 + 2] = end;
           kept++;
         }
-        list.length = kept;
-        return list;
+        list2.length = kept;
+        return list2;
       }
       /**
        * Ends the text run being collected, if there is one
@@ -79585,17 +79678,17 @@ var init_mime_node = __esm({
        * @return SMTP envelope in the form of {from: 'from@example.com', to: ['to@example.com']}
        */
       setEnvelope(envelope) {
-        let list;
+        let list2;
         this._envelope = {
           from: false,
           to: []
         };
         if (envelope.from) {
-          list = [];
-          this._convertAddresses(this._parseEnvelopeAddresses(envelope.from), list);
-          list = list.filter((address) => address && address.address);
-          if (list.length && list[0]) {
-            this._envelope.from = list[0].address;
+          list2 = [];
+          this._convertAddresses(this._parseEnvelopeAddresses(envelope.from), list2);
+          list2 = list2.filter((address) => address && address.address);
+          if (list2.length && list2[0]) {
+            this._envelope.from = list2[0].address;
           }
         }
         const seenRecipients = /* @__PURE__ */ new Set();
@@ -79646,11 +79739,11 @@ var init_mime_node = __esm({
         const seenRecipients = /* @__PURE__ */ new Set();
         const recipients = [];
         this._headers.forEach((header) => {
-          const list = [];
+          const list2 = [];
           if (header.key === "From" || !envelope.from && ["Reply-To", "Sender"].includes(header.key)) {
-            this._convertAddresses(this._parseAddresses(header.value), list);
-            if (list.length && list[0]) {
-              envelope.from = list[0].address;
+            this._convertAddresses(this._parseAddresses(header.value), list2);
+            if (list2.length && list2[0]) {
+              envelope.from = list2[0].address;
             }
           } else if (["To", "Cc", "Bcc"].includes(header.key)) {
             this._convertAddresses(this._parseAddresses(header.value), recipients, seenRecipients);
@@ -79804,10 +79897,10 @@ var init_mime_node = __esm({
         const flattened = [];
         const seen = /* @__PURE__ */ new WeakSet();
         const stack = [];
-        const enter = (list) => {
-          if (!seen.has(list)) {
-            seen.add(list);
-            stack.push({ list, pos: 0 });
+        const enter = (list2) => {
+          if (!seen.has(list2)) {
+            seen.add(list2);
+            stack.push({ list: list2, pos: 0 });
           }
         };
         enter(Array.isArray(addresses) ? addresses : [addresses]);
@@ -82192,8 +82285,8 @@ import tls2 from "node:tls";
 import os2 from "node:os";
 import crypto7 from "node:crypto";
 import { PassThrough as PassThrough4 } from "node:stream";
-function shuffle(list) {
-  const result = list.slice();
+function shuffle(list2) {
+  const result = list2.slice();
   for (let i = result.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [result[i], result[j]] = [result[j], result[i]];
@@ -90311,21 +90404,21 @@ var require_split2 = __commonJS({
     var kLast = /* @__PURE__ */ Symbol("last");
     var kDecoder = /* @__PURE__ */ Symbol("decoder");
     function transform(chunk, enc, cb) {
-      let list;
+      let list2;
       if (this.overflow) {
         const buf = this[kDecoder].write(chunk);
-        list = buf.split(this.matcher);
-        if (list.length === 1) return cb();
-        list.shift();
+        list2 = buf.split(this.matcher);
+        if (list2.length === 1) return cb();
+        list2.shift();
         this.overflow = false;
       } else {
         this[kLast] += this[kDecoder].write(chunk);
-        list = this[kLast].split(this.matcher);
+        list2 = this[kLast].split(this.matcher);
       }
-      this[kLast] = list.pop();
-      for (let i = 0; i < list.length; i++) {
+      this[kLast] = list2.pop();
+      for (let i = 0; i < list2.length; i++) {
         try {
-          push(this, this.mapper(list[i]));
+          push(this, this.mapper(list2[i]));
         } catch (error2) {
           return cb(error2);
         }
@@ -91299,9 +91392,9 @@ var require_pg_pool = __commonJS({
     var EventEmitter7 = __require("events").EventEmitter;
     var NOOP = function() {
     };
-    var removeWhere = (list, predicate) => {
-      const i = list.findIndex(predicate);
-      return i === -1 ? void 0 : list.splice(i, 1)[0];
+    var removeWhere = (list2, predicate) => {
+      const i = list2.findIndex(predicate);
+      return i === -1 ? void 0 : list2.splice(i, 1)[0];
     };
     var IdleItem = class {
       constructor(client, idleListener, timeoutId) {
@@ -92324,7 +92417,9 @@ function wrap2(raw, txImpl, close) {
 async function openDb(url2 = env2.DATABASE_URL) {
   if (url2.startsWith("postgres")) {
     const { default: pg2 } = await Promise.resolve().then(() => (init_esm(), esm_exports));
-    const pool = new pg2.Pool({ connectionString: url2, max: 10 });
+    const pool = new pg2.Pool({ connectionString: url2, max: 20, keepAlive: true, idleTimeoutMillis: 6e4, connectionTimeoutMillis: 15e3 });
+    pool.on("error", () => {
+    });
     const tx2 = async (fn) => {
       const c = await pool.connect();
       try {
@@ -92421,7 +92516,7 @@ function parseCsv(text) {
   const [head, ...body] = rows.filter((r) => r.some((x) => x.trim()));
   return body.map((r) => Object.fromEntries(head.map((h, i) => [h.trim(), (r[i] ?? "").trim()])));
 }
-function similarity(a, b) {
+function similarity2(a, b) {
   if (!a || !b) return 0;
   const d = Array.from({ length: a.length + 1 }, (_2, i) => [i, ...Array(b.length).fill(0)]);
   for (let j = 1; j <= b.length; j++) d[0][j] = j;
@@ -92433,7 +92528,7 @@ function splitVariants(en, others, threshold = 0.7) {
   const accepted = [], avoid = [];
   const e2 = skeletonEn(en);
   for (const o of others.map((x) => x.trim()).filter(Boolean)) {
-    if (/[A-Za-z]/.test(o) || similarity(skeletonHi(o), e2) >= threshold) avoid.push(o);
+    if (/[A-Za-z]/.test(o) || similarity2(skeletonHi(o), e2) >= threshold) avoid.push(o);
     else accepted.push(o);
   }
   return { accepted, avoid };
@@ -92471,7 +92566,7 @@ async function importGlossaryCsv(db2, csv, mode = "merge") {
       const chunk = rows.slice(i, i + 500);
       const vals = [];
       const ph = chunk.map((r, j) => {
-        const flags = similarity(skeletonHi(r.hi), skeletonEn(r.en)) >= 0.7 ? ["primary_looks_transliterated"] : [];
+        const flags = similarity2(skeletonHi(r.hi), skeletonEn(r.en)) >= 0.7 ? ["primary_looks_transliterated"] : [];
         vals.push(`g-${r.k}`, r.en, r.k, r.hi, r.accepted, [], flags, r.sector);
         const b = j * 8;
         return `($${b + 1},$${b + 2},$${b + 3},$${b + 4},$${b + 5},$${b + 6},$${b + 7},$${b + 8})`;
@@ -111663,8 +111758,8 @@ var require_data_validations_xform = __commonJS({
               delete this._dataValidation.formulae;
               delete this._dataValidation.operator;
             }
-            const list = this._address.split(/\s+/g) || [];
-            list.forEach((addr) => {
+            const list2 = this._address.split(/\s+/g) || [];
+            list2.forEach((addr) => {
               if (addr.includes(":")) {
                 const range = new Range(addr);
                 range.forEachAddress((address) => {
@@ -122001,7 +122096,7 @@ var require_minimatch = __commonJS({
     var reSpecials = charSet("().*{}+?[]^$\\!");
     var addPatternStartSet = charSet("[.(");
     var slashSplit = /\/+/;
-    minimatch.filter = (pattern, options = {}) => (p, i, list) => minimatch(p, pattern, options);
+    minimatch.filter = (pattern, options = {}) => (p, i, list2) => minimatch(p, pattern, options);
     var ext = (a, b = {}) => {
       const t = {};
       Object.keys(a).forEach((k) => t[k] = a[k]);
@@ -122024,7 +122119,7 @@ var require_minimatch = __commonJS({
       m.defaults = (options) => orig.defaults(ext(def, options));
       m.makeRe = (pattern, options) => orig.makeRe(pattern, ext(def, options));
       m.braceExpand = (pattern, options) => orig.braceExpand(pattern, ext(def, options));
-      m.match = (list, pattern, options) => orig.match(list, pattern, ext(def, options));
+      m.match = (list2, pattern, options) => orig.match(list2, pattern, ext(def, options));
       return m;
     };
     minimatch.braceExpand = (pattern, options) => braceExpand(pattern, options);
@@ -122046,13 +122141,13 @@ var require_minimatch = __commonJS({
     };
     var SUBPARSE = /* @__PURE__ */ Symbol("subparse");
     minimatch.makeRe = (pattern, options) => new Minimatch(pattern, options || {}).makeRe();
-    minimatch.match = (list, pattern, options = {}) => {
+    minimatch.match = (list2, pattern, options = {}) => {
       const mm = new Minimatch(pattern, options);
-      list = list.filter((f) => mm.match(f));
-      if (mm.options.nonull && !list.length) {
-        list.push(pattern);
+      list2 = list2.filter((f) => mm.match(f));
+      if (mm.options.nonull && !list2.length) {
+        list2.push(pattern);
       }
-      return list;
+      return list2;
     };
     var globUnescape = (s) => s.replace(/\\(.)/g, "$1");
     var charUnescape = (s) => s.replace(/\\([^-\]])/g, "$1");
@@ -127236,7 +127331,7 @@ var require_minimatch2 = __commonJS({
     minimatch.filter = filter;
     function filter(pattern, options) {
       options = options || {};
-      return function(p, i, list) {
+      return function(p, i, list2) {
         return minimatch(p, pattern, options);
       };
     }
@@ -127277,8 +127372,8 @@ var require_minimatch2 = __commonJS({
       m.braceExpand = function braceExpand2(pattern, options) {
         return orig.braceExpand(pattern, ext(def, options));
       };
-      m.match = function(list, pattern, options) {
-        return orig.match(list, pattern, ext(def, options));
+      m.match = function(list2, pattern, options) {
+        return orig.match(list2, pattern, ext(def, options));
       };
       return m;
     };
@@ -127654,16 +127749,16 @@ var require_minimatch2 = __commonJS({
       }
       return this.regexp;
     }
-    minimatch.match = function(list, pattern, options) {
+    minimatch.match = function(list2, pattern, options) {
       options = options || {};
       var mm = new Minimatch(pattern, options);
-      list = list.filter(function(f) {
+      list2 = list2.filter(function(f) {
         return mm.match(f);
       });
-      if (mm.options.nonull && !list.length) {
-        list.push(pattern);
+      if (mm.options.nonull && !list2.length) {
+        list2.push(pattern);
       }
-      return list;
+      return list2;
     };
     Minimatch.prototype.match = function match2(f, partial) {
       if (typeof partial === "undefined") partial = this.partial;
@@ -129276,7 +129371,7 @@ var require_archiver_utils = __commonJS({
         callback = base2;
         base2 = dirpath;
       }
-      fs4.readdir(dirpath, function(err, list) {
+      fs4.readdir(dirpath, function(err, list2) {
         var i = 0;
         var file;
         var filepath;
@@ -129284,7 +129379,7 @@ var require_archiver_utils = __commonJS({
           return callback(err);
         }
         (function next() {
-          file = list[i++];
+          file = list2[i++];
           if (!file) {
             return callback(null, results);
           }
@@ -131475,7 +131570,7 @@ var require_archiver_utils2 = __commonJS({
         callback = base2;
         base2 = dirpath;
       }
-      fs4.readdir(dirpath, function(err, list) {
+      fs4.readdir(dirpath, function(err, list2) {
         var i = 0;
         var file;
         var filepath;
@@ -131483,7 +131578,7 @@ var require_archiver_utils2 = __commonJS({
           return callback(err);
         }
         (function next() {
-          file = list[i++];
+          file = list2[i++];
           if (!file) {
             return callback(null, results);
           }
@@ -134196,7 +134291,7 @@ var require_for_each = __commonJS({
     function isArray(x) {
       return toStr.call(x) === "[object Array]";
     }
-    module2.exports = function forEach(list, iterator, thisArg) {
+    module2.exports = function forEach(list2, iterator, thisArg) {
       if (!isCallable(iterator)) {
         throw new TypeError("iterator must be a function");
       }
@@ -134204,12 +134299,12 @@ var require_for_each = __commonJS({
       if (arguments.length >= 3) {
         receiver = thisArg;
       }
-      if (isArray(list)) {
-        forEachArray(list, iterator, receiver);
-      } else if (typeof list === "string") {
-        forEachString(list, iterator, receiver);
+      if (isArray(list2)) {
+        forEachArray(list2, iterator, receiver);
+      } else if (typeof list2 === "string") {
+        forEachString(list2, iterator, receiver);
       } else {
-        forEachObject(list, iterator, receiver);
+        forEachObject(list2, iterator, receiver);
       }
     };
   }
@@ -152621,13 +152716,13 @@ var require_buffer_util2 = __commonJS({
     "use strict";
     var { EMPTY_BUFFER } = require_constants6();
     var FastBuffer = Buffer[Symbol.species];
-    function concat2(list, totalLength2) {
-      if (list.length === 0) return EMPTY_BUFFER;
-      if (list.length === 1) return list[0];
+    function concat2(list2, totalLength2) {
+      if (list2.length === 0) return EMPTY_BUFFER;
+      if (list2.length === 1) return list2[0];
       const target = Buffer.allocUnsafe(totalLength2);
       let offset = 0;
-      for (let i = 0; i < list.length; i++) {
-        const buf = list[i];
+      for (let i = 0; i < list2.length; i++) {
+        const buf = list2[i];
         target.set(buf, offset);
         offset += buf.length;
       }
@@ -154413,14 +154508,14 @@ var require_sender2 = __commonJS({
        * @param {Function} [cb] Callback
        * @private
        */
-      sendFrame(list, cb) {
-        if (list.length === 2) {
+      sendFrame(list2, cb) {
+        if (list2.length === 2) {
           this._socket.cork();
-          this._socket.write(list[0]);
-          this._socket.write(list[1], cb);
+          this._socket.write(list2[0]);
+          this._socket.write(list2[1], cb);
           this._socket.uncork();
         } else {
-          this._socket.write(list[0], cb);
+          this._socket.write(list2[0], cb);
         }
       }
     };
@@ -162801,7 +162896,7 @@ function applySettings(base2, rows) {
   if (typeof st?.trialQualifyingScore === "number") next.levels.trialQualifyingScore = st.trialQualifyingScore;
   if (typeof st?.titlePassMark === "number") next.titlePassMark = st.titlePassMark;
   if (typeof st?.maxChancesPerRound === "number") next.maxChancesPerRound = st.maxChancesPerRound;
-  if (st?.scoringWeights) next.scoringWeights = st.scoringWeights;
+  if (st?.scoringWeights && "translationQuality" in st.scoringWeights) next.scoringWeights = st.scoringWeights;
   if (st?.unlockRule) next.levels.unlockRule = st.unlockRule;
   if (st?.scoring) next.scoring = { ...next.scoring, ...st.scoring };
   if (typeof st?.avoidThreshold === "number") next.glossary.transliterationAvoidThreshold = st.avoidThreshold;
@@ -162830,16 +162925,31 @@ var OTP_PER_HOUR = 5;
 var MAX_TRIES = 5;
 var hash = (email, code) => createHash("sha256").update(`${email}:${code}:${env2.JWT_SECRET}`).digest("hex");
 var normEmail = (e2) => e2.trim().toLowerCase();
-var allowedDomains = (process.env.ALLOWED_EMAIL_DOMAINS ?? "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
-var emailAllowed = (e2) => !allowedDomains.length || allowedDomains.some((d) => e2.endsWith("@" + d));
+var list = (v) => v.split(/[,;\s]+/).map((s) => s.trim().toLowerCase()).filter(Boolean);
+var allowedDomains = list(process.env.ALLOWED_EMAIL_DOMAINS ?? "cag.gov.in");
+var allowlist = () => /* @__PURE__ */ new Set([...list(env2.OTP_ALLOWLIST), ...env2.ADMIN_EMAILS]);
+var emailAllowed = (e2) => allowlist().has(e2) || allowedDomains.some((d) => e2.endsWith("@" + d));
 var EMAIL_PROXY = "https://integrations.emergentagent.com/api/v1/email/send";
 var esc = (s) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
-var hasMailer = () => !!(env2.SMTP_URL || env2.EMERGENT_EMAIL_KEY);
+var hasMailer = () => !!(env2.EMAIL_RELAY_URL && env2.EMAIL_RELAY_API_KEY || env2.SMTP_URL || env2.EMERGENT_EMAIL_KEY);
+function otpHtml(code) {
+  const brand = config().brand.name;
+  const body = str("email.otpBody").replace("{brand}", brand).replace("{code}", code).replace("{minutes}", String(config().auth.otpTtlMinutes));
+  return `<table role="presentation" width="100%"><tr><td style="padding:24px;font-family:Arial,sans-serif;color:#0B2342"><p style="font-size:16px">${esc(body)}</p><p style="font-size:12px;color:#888">Sent by ${esc(brand)}. If you did not request this code, ignore this email.</p></td></tr></table>`;
+}
 async function sendOtp(email, code) {
-  if (env2.EMERGENT_EMAIL_KEY) {
+  if (env2.EMAIL_RELAY_URL && env2.EMAIL_RELAY_API_KEY) {
     const brand = config().brand.name;
-    const body = str("email.otpBody").replace("{brand}", brand).replace("{code}", code).replace("{minutes}", String(config().auth.otpTtlMinutes));
-    const html = `<table role="presentation" width="100%"><tr><td style="padding:24px;font-family:Arial,sans-serif;color:#0B2342"><p style="font-size:16px">${esc(body)}</p><p style="font-size:12px;color:#888">Sent by ${esc(brand)}. If you did not request this code, ignore this email.</p></td></tr></table>`;
+    const res = await fetch(env2.EMAIL_RELAY_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${env2.EMAIL_RELAY_API_KEY}` },
+      body: JSON.stringify({ to: [email], subject: str("email.otpSubject").replace("{brand}", brand), body: otpHtml(code), body_type: "html", ...env2.EMAIL_REPLY_TO ? { reply_to: env2.EMAIL_REPLY_TO } : {} }),
+      signal: AbortSignal.timeout(2e4)
+    });
+    if (!res.ok) throw new Error(`OTP relay failed: ${res.status} ${(await res.text()).slice(0, 200)}`);
+  } else if (env2.EMERGENT_EMAIL_KEY) {
+    const brand = config().brand.name;
+    const html = otpHtml(code);
     const res = await fetch(EMAIL_PROXY, {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-Email-Key": env2.EMERGENT_EMAIL_KEY },
@@ -162857,7 +162967,7 @@ async function sendOtp(email, code) {
   } else if (env2.isDev) {
     console.log(`[otp] ${email} \u2192 ${code} (development)`);
   } else {
-    throw new Error("No OTP sender configured (set SMTP_URL or EMERGENT_EMAIL_KEY)");
+    throw new Error("No OTP sender configured (set EMAIL_RELAY_URL + EMAIL_RELAY_API_KEY, SMTP_URL or EMERGENT_EMAIL_KEY)");
   }
 }
 async function requestOtp(db2, email) {
@@ -163152,15 +163262,22 @@ async function answer(ctx, quick, question) {
   const ok = (s, source = "rule") => ({ ...s ?? sayRound(r, "chat.unknown_question"), source, blocked: false });
   switch (kind) {
     case "refuse": {
+      const s = sayRound(r, "chat.translate_refused");
       const x = strings.sahayikaExtra?.refuseTranslate;
-      return { id: "refuse", spoken: true, en: x.en, hi: x.hi, source: "guard", blocked: true };
+      return { id: "refuse", spoken: true, en: s?.en ?? x.en, hi: s?.hi ?? x.hi, source: "guard", blocked: true };
     }
     case "hint":
       return ok(hint(ctx));
     case "score":
       return ok(sayRound(r, "chat.ask_score"));
-    case "time":
-      return ok(sayRound(r, "chat.ask_time", { time_left: formatClock(ctx.timeLeftSeconds ?? 0) }));
+    case "time": {
+      const left = ctx.timeLeftSeconds ?? 0;
+      const c = ctx.page ? completion(ctx.round, ctx.page, ctx.answers, ctx.config.scoring.minWordsPerSentence) : { done: 0, total: 1 };
+      const usedShare = 1 - left / (ctx.round.timeLimitMinutes * 60);
+      const behind = c.done / (c.total || 1) < usedShare - 0.1;
+      const vars = { time_left: Math.max(0, Math.ceil(left / 60)), done: c.done, total: c.total };
+      return ok((behind ? sayRound(r, "chat.ask_time_behind", vars) : null) ?? sayRound(r, "chat.ask_time", vars) ?? sayRound(r, "chat.ask_time", { time_left: formatClock(left) }));
+    }
     case "credits":
       return ok(sayRound(r, "chat.ask_credits", { total_credits: ctx.totalCredits }));
     case "glossary":
@@ -163169,6 +163286,10 @@ async function answer(ctx, quick, question) {
   const term = findTerm(question, ctx);
   if (term) {
     return ok(sayRound(r, "chat.ask_term", { en_term: term.en, hi_term: term.hi, wrong_word: term.avoid[0] ?? "\u2014" }));
+  }
+  if (has(q, "hindi for", "hindi of", "in hindi", "meaning of", "\u0915\u093E \u0939\u093F\u0902\u0926\u0940", "\u092E\u0924\u0932\u092C")) {
+    const nf = sayRound(r, "chat.term_not_found");
+    if (nf) return ok(nf);
   }
   const f = faqMatch(question, [r, "before_game", "end"]);
   if (f) return { id: "faq", spoken: true, en: f.en, hi: f.hi, source: "faq", blocked: false };
@@ -163427,7 +163548,7 @@ async function submit(db2, a, auto = false) {
   const limit = round.timeLimitMinutes * 60;
   const usedSeconds = auto ? limit : Math.min(limit, (end.getTime() - new Date(a.started_at).getTime()) / 1e3);
   const res = scoreAttempt({ config: config(), round, page, answers: a.answers, usedSeconds });
-  const result = { counts: res.counts, flags: res.flags, grammar: res.grammar.map((g) => ({ code: g.code, partId: g.partId, fieldKey: g.fieldKey, text: g.text })), termChecks: res.termChecks.map((t) => ({ en: t.term.en, hi: t.term.hi, correct: t.correct, present: t.present, avoidFound: t.avoidFound })) };
+  const result = { counts: res.counts, weakSpots: res.weakSpots, flags: res.flags, grammar: res.grammar.map((g) => ({ code: g.code, partId: g.partId, fieldKey: g.fieldKey, text: g.text })), termChecks: res.termChecks.map((t) => ({ en: t.term.en, hi: t.term.hi, correct: t.correct, present: t.present, avoidFound: t.avoidFound })) };
   const row = await db2.one(
     `UPDATE attempts SET status='submitted', submitted_at=$2, auto_submitted=$3, measures=$4, score=$5, tip=$6, result=$7
      WHERE id=$1 AND status='active' RETURNING *`,
@@ -163480,11 +163601,16 @@ async function report(db2, a) {
     best_score: sel.best,
     chance: a.chance_no,
     chances_left: r.chancesLeft,
-    marks_short: Math.max(0, config().titlePassMark - sel.best),
+    marks_short: Math.max(0, Math.round((config().titlePassMark - sel.best) * 10) / 10),
     credits: r.credits,
     total_credits: summary.totalCredits,
-    leaves: a.left_page_count
+    leaves: a.left_page_count,
+    old_best: priorBest ?? 0
   };
+  const m = a.measures ?? {};
+  const stat = { translation: m.quality ?? m.translation, completion: m.completion, sentence: m.fluency ?? m.sentence, time: m.time };
+  const weakest = Object.keys(stat).filter((k) => typeof stat[k] === "number").sort((x, y) => stat[x] - stat[y])[0];
+  if (weakest && stat[weakest] < 0.9) sel.after.unshift(`${a.round_key}.report_card.tip_weak_${weakest}`);
   const round = roundOf(config(), a.round_key);
   const idx = config().rounds.findIndex((x) => x.key === a.round_key);
   const trialGated = config().levels.unlockRule !== "all-open" && !summary.trialPassed;
@@ -163502,6 +163628,7 @@ async function report(db2, a) {
     score: a.score,
     autoSubmitted: a.auto_submitted,
     counts: a.result.counts,
+    weakSpots: a.result.weakSpots ?? [],
     measures: a.measures,
     best: r.best,
     chances: r.chances,
@@ -163517,8 +163644,13 @@ async function report(db2, a) {
     leftCount: a.left_page_count,
     announce: sel.announce.map((id) => say(id, vars)).filter(Boolean),
     titleNeeded: sel.titleEarned ? null : say(`${a.round_key}.report_card.title_needed_note`, vars),
-    tip: tipLine(a.round_key, a.tip),
-    after: sel.after.map((id) => say(id, vars)).filter(Boolean),
+    // report card: praise or motivation (no glossary hints here), then how to score better and what to do next
+    tip: say(`${a.round_key}.report_card.${(a.score ?? 0) >= 75 ? "motivate_high" : (a.score ?? 0) >= config().titlePassMark ? "motivate_mid" : sel.titleEarned ? "motivate_held" : "motivate_low"}`, vars) ?? tipLine(a.round_key, { kind: "praise" }),
+    after: [
+      ...sel.after.map((id) => say(id, vars)),
+      a.tip?.kind === "grammar" ? tipLine(a.round_key, a.tip) : null,
+      next && sel.titleEarned ? say(`${a.round_key}.report_card.go_next`, vars) : r.chancesLeft > 0 ? say(`${a.round_key}.report_card.improve_retry`, vars) : null
+    ].filter(Boolean),
     nextRound: next ? { key: next.key, name: next.name, unlocked: true } : null,
     trialPassed: summary.trialPassed,
     trialGated,
@@ -163533,6 +163665,7 @@ async function review(db2, a) {
     page: playerPage(p, false),
     answers: a.answers,
     flags: a.result.flags,
+    weakSpots: a.result.weakSpots ?? [],
     termChecks: a.result.termChecks.map((t) => ({ en: t.en, hi: t.hi, correct: t.correct }))
   };
 }
@@ -163581,9 +163714,9 @@ function rateOk(player, perSecond = 20) {
 }
 var WORD2 = /^[A-Za-z]{1,30}$/;
 function cleanSuggestions(target, cap) {
-  const list = Array.isArray(target) ? target : typeof target === "string" ? [target] : [];
+  const list2 = Array.isArray(target) ? target : typeof target === "string" ? [target] : [];
   const out = [];
-  for (const s of list) {
+  for (const s of list2) {
     const t = String(s).trim().normalize("NFC");
     if (t && hasDevanagari(t) && !out.includes(t)) out.push(t);
     if (out.length >= cap) break;
@@ -163776,7 +163909,7 @@ async function overview(db2, range) {
     const bests = [...bestBy.values()];
     const hist = Array.from({ length: 10 }, (_2, i) => ({ from: i * 10, to: i === 9 ? 100 : i * 10 + 9, n: 0 }));
     for (const b of bests) hist[Math.min(9, Math.floor(b / 10))].n++;
-    const m = (k) => r1((avg(sub.map((a) => Number(a.measures?.[k] ?? NaN)).filter((x) => !Number.isNaN(x))) ?? NaN) * 100);
+    const m = (k) => r1((avg(sub.map((a) => Number(a.measures?.[k] ?? (k === "quality" ? a.measures?.translation : void 0) ?? NaN)).filter((x) => !Number.isNaN(x))) ?? NaN) * 100);
     return {
       key: r.key,
       name: r.nameEn ?? r.name,
@@ -163791,7 +163924,7 @@ async function overview(db2, range) {
       avgScore: r1(avg(sub.map((a) => a.score))),
       passRate: pct(bests.filter((b) => b >= cfg.titlePassMark).length, bests.length),
       histogram: hist,
-      measures: { translation: m("translation"), completion: m("completion"), sentence: m("sentence"), glossary: m("glossary"), time: m("time") },
+      measures: { quality: m("quality"), glossary: m("glossary"), timeliness: m("timeliness"), completion: m("completion"), time: m("time") },
       avgMinutes: r1(avg(sub.filter((a) => a.submitted_at).map((a) => (+new Date(a.submitted_at) - +new Date(a.started_at)) / 6e4)))
     };
   });
@@ -164019,7 +164152,7 @@ async function playerDetail(db2, id) {
     [id]
   );
   if (!p) return null;
-  const list = (await listPlayers(db2)).find((x) => x.id === id);
+  const list2 = (await listPlayers(db2)).find((x) => x.id === id);
   const attempts = await db2.query(
     `SELECT a.id, a.round_key, a.chance_no, a.page_id, pg.label AS page_label, a.started_at, a.deadline_at, a.submitted_at, a.status, a.auto_submitted,
             a.score, a.measures, a.left_page_count, a.paste_blocked_count, a.chat_count, a.session_id,
@@ -164030,7 +164163,7 @@ async function playerDetail(db2, id) {
   const chat = await db2.one("SELECT count(*)::int AS n, count(*) FILTER (WHERE blocked)::int AS blocked FROM chat_logs WHERE player_id=$1", [id]);
   const name2 = (k) => config().rounds.find((r) => r.key === k)?.nameEn ?? k;
   return {
-    ...list,
+    ...list2,
     officeAddress: p.office_address,
     registrationCredits: Number(p.registration_credits),
     chat: chat ?? { n: 0, blocked: 0 },
@@ -164469,7 +164602,7 @@ async function adminRoutes(app2, db2) {
       trialQualifyingScore: external_exports.number().min(0).max(100).optional(),
       titlePassMark: external_exports.number().min(0).max(100).optional(),
       maxChancesPerRound: external_exports.number().int().min(1).max(10).optional(),
-      scoringWeights: external_exports.object({ translation: external_exports.number().min(0), completion: external_exports.number().min(0), sentenceConstruction: external_exports.number().min(0), glossary: external_exports.number().min(0), time: external_exports.number().min(0) }).optional(),
+      scoringWeights: external_exports.object({ translationQuality: external_exports.number().min(0), glossary: external_exports.number().min(0), timelinessCompletion: external_exports.number().min(0) }).optional(),
       unlockRule: external_exports.enum(["all-open", "trial-pass-unlocks-all"]).optional(),
       scoring: external_exports.object({ chrfFloor: external_exports.number().min(0).max(1).optional(), chrfCeil: external_exports.number().min(0).max(1).optional(), minWordsPerSentence: external_exports.number().int().min(1).max(20).optional() }).refine((x) => x.chrfFloor === void 0 || x.chrfCeil === void 0 || x.chrfFloor < x.chrfCeil, { message: "chrF floor must be below the ceiling" }).optional(),
       avoidThreshold: external_exports.number().min(0).max(1).optional()
@@ -164769,6 +164902,7 @@ async function playerRoutes(app2, db2) {
   app2.post("/auth/otp/verify", async (req, reply) => {
     const { email, code } = parse2(external_exports.object({ email: Email, code: external_exports.string().regex(/^\d{4,8}$/) }), req.body);
     const e2 = normEmail(email);
+    if (!emailAllowed(e2)) return reply.code(403).send({ error: "email_domain" });
     if (!await verifyOtp(db2, e2, code)) return reply.code(400).send({ error: "otp_invalid" });
     const p = await db2.one("SELECT id FROM players WHERE email=$1", [e2]);
     const role = await adminRole(db2, e2);
@@ -164963,8 +165097,9 @@ async function playerRoutes(app2, db2) {
     const chance = r.active ? r.chancesUsed : r.chancesUsed + 1;
     const vars = { name: firstName(player.name), chance, best_score: r.best ?? 0 };
     const lines = [];
-    if (key2 === "primary") lines.push(say("primary.pre_round.typing_only_notice", vars));
-    lines.push(say(`${key2}.pre_round.${r.best === null ? "first_chance" : "retry"}`, vars));
+    const moment = r.best === null || chance <= 1 ? "first_chance" : chance === 2 ? "retry" : r.titleEarned ? "retry_last_won" : "retry_last";
+    lines.push(say(`${key2}.pre_round.${moment}`, vars) ?? say(`${key2}.pre_round.retry`, vars));
+    if (moment === "first_chance") lines.push(say(`${key2}.pre_round.encourage`, vars));
     const tips = allLines().filter((l2) => l2.id.startsWith(`${key2}.pre_round.tip.`));
     if (tips.length) lines.push(say(tips[(chance - 1) % tips.length].id, vars));
     const round = roundOf(config(), key2);
@@ -164981,6 +165116,46 @@ import { createHash as createHash2 } from "node:crypto";
 import { existsSync as existsSync3, readFileSync as readFileSync4, readdirSync as readdirSync3 } from "node:fs";
 import { resolve as resolve8 } from "node:path";
 init_env();
+
+// src/certificate/badge.ts
+var METAL = {
+  trial: { hi: "#F3C08A", base: "#CD7F32", lo: "#7A4A1E", rim: "#5C3714", face: "#E8A866", ribbon: "#1E3A5F", numeral: "I", metal: "Bronze" },
+  primary: { hi: "#FFFFFF", base: "#C0C0C0", lo: "#7D7D7D", rim: "#5E5E5E", face: "#E6E6E6", ribbon: "#1E3A5F", numeral: "II", metal: "Silver" },
+  secondary: { hi: "#FFF1A8", base: "#D4A017", lo: "#8A6500", rim: "#6B4E00", face: "#F5CF4A", ribbon: "#1E3A5F", numeral: "III", metal: "Gold" },
+  pro: { hi: "#FFFFFF", base: "#E5E4E2", lo: "#A9B4BE", rim: "#6F7C88", face: "#F4F6F8", ribbon: "#1E3A5F", numeral: "IV", metal: "Platinum" },
+  varchaspati: { hi: "#B794F6", base: "#6D28D9", lo: "#3B0F7A", rim: "#D4A017", face: "#F5CF4A", ribbon: "#D4A017", numeral: "V", metal: "Royal", royal: true }
+};
+var badgeMetal = (k) => METAL[k]?.metal ?? "";
+var SHIELD = "M32 4l22 7.5v15c0 15-9.3 27.2-22 32.8C19.3 53.7 10 41.5 10 26.5V11.5z";
+var FACE = "M32 9.4l17 5.8v11.4c0 11.8-7.2 21.4-17 26C22.2 48 15 38.4 15 26.6V15.2z";
+function badgeSvg(k, sizeMm = 34) {
+  const m = METAL[k] ?? METAL.trial;
+  const n = m.numeral;
+  const fs4 = n.length >= 3 ? 15 : n.length === 2 ? 18 : 21;
+  const g = m.royal ? ` transform="translate(4.5 8.5) scale(.86)"` : "";
+  const rim = m.royal ? ["#FFE58A", "#D4A017", "#7A5A0E"] : [m.hi, m.base, m.lo];
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="${sizeMm}mm" height="${sizeMm}mm" style="overflow:visible;filter:drop-shadow(0 1.2mm 2.6mm rgba(0,0,0,.25))">
+<defs>
+<linearGradient id="cr" x1=".1" y1="0" x2=".9" y2="1"><stop offset="0" stop-color="${rim[0]}"/><stop offset=".45" stop-color="${rim[1]}"/><stop offset="1" stop-color="${rim[2]}"/></linearGradient>
+<linearGradient id="cf" x1=".15" y1="0" x2=".85" y2="1"><stop offset="0" stop-color="${m.hi}"/><stop offset=".55" stop-color="${m.base}"/><stop offset="1" stop-color="${m.lo}"/></linearGradient>
+<linearGradient id="cn" x1="0" y1="0" x2=".4" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset=".35" stop-color="${m.face}"/><stop offset="1" stop-color="${m.royal ? "#B8860B" : m.base}"/></linearGradient>
+<linearGradient id="cs" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".45" stop-color="#fff" stop-opacity=".85"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<clipPath id="cc"><path d="${SHIELD}"/></clipPath>
+</defs>
+<g${g}><path d="M20 46l-5 17 6-3.2 4 4.2 4.5-14z" fill="${m.ribbon}"/><path d="M44 46l5 17-6-3.2-4 4.2-4.5-14z" fill="${m.ribbon}"/><path d="M20 46l-5 17 6-3.2z" fill="#000" opacity=".22"/></g>
+${m.royal ? `<path d="M22.5 9.2l1.6-6.4 4.3 3.6L32 .8l3.6 5.6 4.3-3.6 1.6 6.4z" fill="url(#cr)" stroke="#7A5A0E" stroke-width=".6"/><rect x="22.5" y="8.4" width="19" height="2.4" rx=".8" fill="#B8860B"/>` : ""}
+<g${g}>
+<path d="${SHIELD}" fill="url(#cr)" stroke="${m.rim}" stroke-width="1.1" stroke-linejoin="round"/>
+<path d="M11.6 12.6L32 5.6l20.4 7" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="1" stroke-linecap="round"/>
+<path d="${FACE}" fill="url(#cf)"/><path d="${FACE}" fill="none" stroke="${m.rim}" stroke-opacity=".55" stroke-width=".6"/>
+<g font-family="'Noto Serif',Georgia,serif" font-weight="800" font-size="${fs4}" text-anchor="middle">
+<text x="33" y="37.9" fill="${m.royal ? "#3B0F7A" : m.rim}" opacity=".9">${n}</text><text x="31.4" y="36.2" fill="#fff" opacity=".75">${n}</text>
+<text x="32" y="36.9" fill="url(#cn)" stroke="${m.rim}" stroke-width=".9" paint-order="stroke">${n}</text></g>
+<g clip-path="url(#cc)"><path d="M8 26C16 12 30 6 46 6l-2 5C30 12 20 18 13 30z" fill="url(#cs)" opacity=".75"/><path d="${SHIELD}" fill="#000" opacity=".12" transform="translate(5 6)"/></g>
+</g></svg>`;
+}
+
+// src/certificate/render.ts
 var dataUrl = (p, type) => `data:${type};base64,${readFileSync4(p).toString("base64")}`;
 function fontFaces() {
   const dir = resolve8(ROOT, "assets/fonts");
@@ -165017,13 +165192,17 @@ h1 .a{color:#22293B}h1 .b{color:#E8590C}
 .brand{letter-spacing:.3em;font-size:9pt;color:#6B7280;font-family:"Noto Sans"}
 .lead{margin-top:6mm;font-size:15pt;color:#374151}
 .name{font-size:30pt;font-weight:700;color:#C2410C;margin:2mm 0 0;border-bottom:2px solid #FDBA74;padding:0 10mm 1mm}
-.office{font-size:12pt;color:#374151;margin-top:2mm}
+.office{font-size:12pt;color:#374151;margin-top:2mm;max-width:180mm}
+.name{max-width:180mm;overflow-wrap:anywhere}
 .body{font-size:13pt;margin-top:5mm;max-width:210mm;line-height:1.7}
 .titles{display:flex;gap:4mm;justify-content:center;flex-wrap:wrap;margin-top:4mm}
 .pill{background:#E8590C;color:#fff;border-radius:99px;padding:2mm 7mm;font-size:15pt;font-weight:700}
 .credits{margin-top:5mm;font-size:14pt}.credits b{font-size:22pt;color:#1D4ED8}
 .foot{margin-top:auto;width:100%;display:flex;justify-content:space-between;align-items:flex-end;font-size:10pt;color:#4B5563}
 .sign{border-top:1px solid #9CA3AF;padding-top:1mm;min-width:60mm}
+.badge{position:absolute;right:20mm;top:44mm;width:44mm;text-align:center}
+.badge-t{font-family:"Noto Sans",sans-serif;font-weight:700;font-size:11pt;color:#1E3A5F;margin-top:1mm}
+.badge-m{font-family:"Noto Sans",sans-serif;font-size:8.5pt;letter-spacing:.2em;text-transform:uppercase;color:#6B7280}
 </style></head><body><div class="frame">
 <div class="top"><img src="${brand("cag-logo.png")}" alt=""><img src="${brand("bhashini-logo.png")}" alt=""></div>
 ${(() => {
@@ -165037,6 +165216,11 @@ ${(() => {
 <div class="name">${esc2(p.name)}</div>
 <div class="office">${esc2(p.office)}</div>
 <div class="body">${esc2(titles.length ? c.bodyTitles : c.bodyNoTitles)}</div>
+${titles.length ? (() => {
+    const top = titles[titles.length - 1];
+    const rc = config().rounds.find((r) => r.key === top.key);
+    return `<div class="badge">${badgeSvg(top.key)}<div class="badge-t">${esc2(rc?.titleEn || top.title)}</div><div class="badge-m">${esc2(badgeMetal(top.key))}</div></div>`;
+  })() : ""}
 ${titles.length ? `<div class="titles">${titles.map((t) => {
     const rc = config().rounds.find((r) => r.key === t.key);
     return `<span class="pill">${esc2(en ? rc?.titleEn || t.title : t.title)}</span>`;
