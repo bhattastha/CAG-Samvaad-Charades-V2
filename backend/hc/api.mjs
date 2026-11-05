@@ -72776,9 +72776,7 @@ var init_config = __esm({
         chrfBeta: external_exports.number().positive(),
         chrfFloor: external_exports.number(),
         chrfCeil: external_exports.number(),
-        minWordsPerSentence: external_exports.number().int(),
-        /** draft rounds: Timeliness & Completion counts only when the quality gain is at least this share */
-        draftGainGate: external_exports.number().min(0).max(1).default(0.1)
+        minWordsPerSentence: external_exports.number().int()
       }),
       auth: external_exports.object({ mode: external_exports.string(), otpLength: external_exports.number().int(), otpTtlMinutes: external_exports.number() }),
       ui: external_exports.object({
@@ -73112,29 +73110,28 @@ function docQuality(page, answers, grammar, sc) {
   const fluency = nWords ? clamp01(1 - grammar.length / (nWords / 100) * 0.1) : 0;
   return { sim, fluency, quality: sim * (0.9 + 0.1 * fluency) };
 }
-function weakSpotsOf(round, page, answers, sc, weight, n = 3) {
+function weakSpotsOf(round, page, answers, sc, weight, ai, n = 3) {
   const units = [];
   for (const p of page.parts) {
     if (!p.editable) continue;
     const ref = partRefText(p), hyp = partPlayerText(answers, p);
     if (normalise(ref).length < 20) continue;
-    const draft = round.bhashiniDraft ? editableFields(p).map((f) => f.draft ?? "").join(" ") : null;
     const enS = p.enSentences ?? [], refS = splitSentences(ref);
-    if (round.completionCountedBy === "sentence" && enS.length > 1 && enS.length === refS.length) {
-      const hypS = splitSentences(hyp);
-      enS.forEach((en, i) => units.push({ partId: p.id, sentence: i, en, ref: refS[i], hyp: hypS[i] ?? "", draft: null }));
-    } else units.push({ partId: p.id, sentence: null, en: p.fields.map((f) => f.en).join(" "), ref, hyp, draft });
+    const hypS = splitSentences(hyp);
+    if (round.completionCountedBy === "sentence" && enS.length > 1 && enS.length === refS.length && hypS.length === refS.length) {
+      enS.forEach((en, i) => units.push({ partId: p.id, sentence: i, en, ref: refS[i], hyp: hypS[i] ?? "" }));
+    } else units.push({ partId: p.id, sentence: null, en: p.fields.map((f) => f.en).join(" "), ref, hyp });
   }
   const total = units.reduce((t, u) => t + normalise(u.ref).length, 0) || 1;
   return units.map((u) => {
     const cal = (h) => calibrateChrF(similarity(h, u.ref, sc.chrfOrder, sc.chrfBeta), sc.chrfFloor, sc.chrfCeil);
     const sim = cal(u.hyp);
-    const d = u.draft === null ? null : cal(u.draft);
-    const got = d === null ? sim : d >= 1 ? 1 : clamp01((sim - d) / (1 - d));
+    const aiPart = ai?.parts[u.partId];
+    const got = typeof aiPart === "number" ? 0.5 * sim + 0.5 * aiPart : sim;
     return { partId: u.partId, sentence: u.sentence, en: u.en.length > 160 ? u.en.slice(0, 157) + "\u2026" : u.en, similarityPct: Math.round(sim * 100), lostMarks: Math.round(normalise(u.ref).length / total * (1 - got) * weight * 10) / 10 };
   }).filter((u) => u.lostMarks >= 0.5).sort((a, b) => b.lostMarks - a.lostMarks).slice(0, n);
 }
-function scoreAttempt({ config: config2, round, page, answers, usedSeconds }) {
+function scoreAttempt({ config: config2, round, page, answers, usedSeconds, ai = null, autoSubmitted = false }) {
   const sc = config2.scoring;
   const w = config2.scoringWeights;
   const limitSeconds = round.timeLimitMinutes * 60;
@@ -73145,28 +73142,29 @@ function scoreAttempt({ config: config2, round, page, answers, usedSeconds }) {
   const refKeys = new Set(grammarIssues(round, page, refAnswers, sc.minWordsPerSentence).map((g) => `${g.code}|${g.partId}|${g.text}`));
   const own = (gs) => gs.filter((g) => !refKeys.has(`${g.code}|${g.partId}|${g.text}`));
   const mine = docQuality(page, answers, own(grammar), sc);
+  const quality = ai ? 0.5 * mine.quality + 0.5 * clamp01(ai.overall) : mine.quality;
   const hasDraft = round.bhashiniDraft && page.parts.some((p) => p.fields.some((f) => f.draft));
-  let quality = mine.quality, draftSim = null, gain = null;
+  let draftSim = null, gain = null;
   if (hasDraft) {
     const da = draftAnswers(page);
     draftSim = docQuality(page, da, own(grammarIssues(round, page, da, sc.minWordsPerSentence)), sc).quality;
     gain = draftSim >= 1 ? 0 : clamp01((mine.quality - draftSim) / (1 - draftSim));
-    quality = gain;
   }
   const comp = completion(round, page, answers, sc.minWordsPerSentence);
   const termChecks = page.terms.map((t) => checkTerm(allText2, t));
   const glossaryCorrect = termChecks.filter((t) => t.correct).length;
   const glossary2 = page.terms.length ? glossaryCorrect / page.terms.length : 1;
   const tm = config2.timeMarks;
-  const time = timeMeasure(usedSeconds, limitSeconds, tm.fullMarksIfFinishedWithinShareOfLimit, tm.marksAtTimeLimit);
+  const time = autoSubmitted ? tm.marksAtTimeLimit : timeMeasure(usedSeconds, limitSeconds, tm.fullMarksIfFinishedWithinShareOfLimit, tm.marksAtTimeLimit);
   const completionShare = comp.done / (comp.total || 1);
-  const gated = gain !== null && gain < sc.draftGainGate;
-  const timeliness = empty2 || gated ? 0 : completionShare * time;
+  const timeliness = empty2 ? 0 : completionShare * time;
   const measures = {
     model: 2,
     quality: empty2 ? 0 : quality,
     glossary: empty2 ? 0 : glossary2,
     timeliness,
+    match: mine.quality,
+    ai: ai ? clamp01(ai.overall) : null,
     similarity: mine.sim,
     draftSimilarity: draftSim,
     fluency: mine.fluency,
@@ -73181,7 +73179,7 @@ function scoreAttempt({ config: config2, round, page, answers, usedSeconds }) {
   const ownGrammar = own(grammar);
   const tip = firstBadTerm ? { kind: "term", en: firstBadTerm.term.en, hi: firstBadTerm.term.hi, wrong: firstBadTerm.avoidFound } : ownGrammar[0] ? { kind: "grammar", code: ownGrammar[0].code, text: ownGrammar[0].text } : { kind: "praise" };
   return {
-    weakSpots: empty2 ? [] : weakSpotsOf(round, page, answers, sc, w.translationQuality),
+    weakSpots: empty2 ? [] : weakSpotsOf(round, page, answers, sc, w.translationQuality, ai),
     score: Math.max(0, Math.min(config2.scoreOutOf, score)),
     measures,
     counts: {
@@ -73191,7 +73189,8 @@ function scoreAttempt({ config: config2, round, page, answers, usedSeconds }) {
       similarityPct: Math.round(mine.sim * 100),
       draftSimilarityPct: draftSim === null ? null : Math.round(draftSim * 100),
       gainPct: gain === null ? null : Math.round(gain * 100),
-      timelinessGated: gated,
+      matchPct: Math.round(mine.quality * 100),
+      aiPct: ai ? Math.round(clamp01(ai.overall) * 100) : null,
       completionDone: comp.done,
       completionTotal: comp.total,
       completionUnit: round.completionCountedBy,
@@ -73667,6 +73666,8 @@ var init_env = __esm({
       DHRUVA_LLM_KEY: e.DHRUVA_LLM_KEY || e.DHRUVA_API_KEY || "",
       DHRUVA_TTS_SERVICE_ID: e.DHRUVA_TTS_SERVICE_ID ?? "",
       ANUVAAD_XLIT_AUTH: e.ANUVAAD_XLIT_AUTH ?? "",
+      EMERGENT_LLM_KEY: e.EMERGENT_LLM_KEY ?? "",
+      INTEGRATION_PROXY_URL: e.INTEGRATION_PROXY_URL || "https://integrations.emergentagent.com",
       SEED_ALLOW_UNVERIFIED: e.SEED_ALLOW_UNVERIFIED === "1",
       CHROME_PATH: e.CHROME_PATH ?? "",
       WEB_DIST: e.WEB_DIST ?? resolve(ROOT, "apps/web/dist")
@@ -163048,6 +163049,83 @@ init_env();
 init_src();
 import { randomUUID } from "node:crypto";
 init_env();
+
+// src/judge.ts
+init_src();
+init_env();
+var MODELS = [
+  { id: "claude-opus-5-5", timeoutMs: 35e3 },
+  { id: "claude-sonnet-5-5", timeoutMs: 2e4 }
+];
+var MAX_ITEMS = 40;
+var MAX_REF_CHARS = 16e3;
+var clip = (s, n) => s.length > n ? s.slice(0, n) + "\u2026" : s;
+var SYSTEM = `You are a senior Hindi translator and reviewer at the Comptroller and Auditor General of India (Rajbhasha cell).
+For each item you get the English source, CAG's officially published Hindi (the benchmark) and a candidate Hindi translation written by an officer.
+Score the candidate 0-100 for how well it matches the benchmark in meaning and accuracy (facts, numbers, names, audit sense), CAG's official terminology, Hindi grammar and sentence construction, and natural official-Hindi fluency.
+Valid rewording, reordering or synonyms that keep the same meaning and register must NOT be penalised. Missing, wrong or untranslated content must be.
+100 = as good as the benchmark; 70 = meaning fully kept with minor wording or grammar issues; 40 = partly correct; 0 = empty, unrelated or untranslated.
+Reply with JSON only: {"scores":[{"id":"<item id>","score":<0-100>}]}`;
+function itemsOf(page, answers) {
+  const all = [];
+  for (const p of page.parts) {
+    if (!p.editable) continue;
+    const fs4 = p.fields.filter((f) => !f.numeric);
+    const ref = fs4.map((f) => f.hiReference).join(" ").trim();
+    if (normalise(ref).length < 20) continue;
+    const hyp = fs4.map((f) => answers[p.id]?.fields?.[f.key] ?? "").join(" ").trim();
+    all.push({ id: p.id, en: fs4.map((f) => f.en).join(" "), ref, hyp, weight: normalise(ref).length });
+  }
+  const picked = [];
+  let chars = 0;
+  for (const it of [...all].sort((a, b) => b.weight - a.weight)) {
+    if (picked.length >= MAX_ITEMS || chars >= MAX_REF_CHARS) break;
+    picked.push(it);
+    chars += it.ref.length;
+  }
+  return picked;
+}
+async function ask(model, timeoutMs, items) {
+  const user = items.map((it) => `### id: ${it.id}
+English: ${clip(it.en, 1200)}
+CAG Hindi (benchmark): ${clip(it.ref, 1500)}
+Candidate Hindi: ${clip(it.hyp, 1800) || "(empty)"}`).join("\n\n");
+  const res = await fetch(`${env2.INTEGRATION_PROXY_URL}/llm/chat/completions`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${env2.EMERGENT_LLM_KEY}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ model, max_tokens: 4e3, messages: [{ role: "system", content: SYSTEM }, { role: "user", content: user }] }),
+    signal: AbortSignal.timeout(timeoutMs)
+  });
+  if (!res.ok) throw new Error(`judge ${model} http ${res.status}`);
+  const text = (await res.json())?.choices?.[0]?.message?.content ?? "";
+  const start = text.indexOf("{"), end = text.lastIndexOf("}");
+  if (start < 0 || end < start) throw new Error(`judge ${model} gave no JSON: ${text.slice(0, 120)}`);
+  const json = JSON.parse(text.slice(start, end + 1));
+  const out = {};
+  for (const s of json.scores ?? []) if (typeof s?.score === "number") out[String(s.id)] = Math.max(0, Math.min(100, s.score)) / 100;
+  if (!Object.keys(out).length) throw new Error(`judge ${model} returned no scores`);
+  return out;
+}
+async function judge(page, answers) {
+  if (!env2.EMERGENT_LLM_KEY) return null;
+  const items = itemsOf(page, answers);
+  if (!items.length) return null;
+  const ask4 = items.filter((it) => normalise(it.hyp));
+  for (const m of MODELS) {
+    try {
+      const parts2 = ask4.length ? await ask(m.id, m.timeoutMs, ask4) : {};
+      for (const it of items) parts2[it.id] ??= 0;
+      const w = items.reduce((t, it) => t + it.weight, 0);
+      const overall = items.reduce((t, it) => t + parts2[it.id] * it.weight, 0) / w;
+      return { overall, parts: parts2, model: m.id };
+    } catch (e2) {
+      console.warn(`[judge] ${m.id} failed: ${e2.message}`);
+    }
+  }
+  return null;
+}
+
+// src/game.ts
 init_pages();
 
 // src/sahayika/engine.ts
@@ -163547,8 +163625,9 @@ async function submit(db2, a, auto = false) {
   const end = auto ? new Date(a.deadline_at) : new Date(Math.min(Date.now(), new Date(a.deadline_at).getTime()));
   const limit = round.timeLimitMinutes * 60;
   const usedSeconds = auto ? limit : Math.min(limit, (end.getTime() - new Date(a.started_at).getTime()) / 1e3);
-  const res = scoreAttempt({ config: config(), round, page, answers: a.answers, usedSeconds });
-  const result = { counts: res.counts, weakSpots: res.weakSpots, flags: res.flags, grammar: res.grammar.map((g) => ({ code: g.code, partId: g.partId, fieldKey: g.fieldKey, text: g.text })), termChecks: res.termChecks.map((t) => ({ en: t.term.en, hi: t.term.hi, correct: t.correct, present: t.present, avoidFound: t.avoidFound })) };
+  const ai = await judge(page, a.answers);
+  const res = scoreAttempt({ config: config(), round, page, answers: a.answers, usedSeconds, ai, autoSubmitted: auto });
+  const result = { aiModel: ai?.model ?? null, counts: res.counts, weakSpots: res.weakSpots, flags: res.flags, grammar: res.grammar.map((g) => ({ code: g.code, partId: g.partId, fieldKey: g.fieldKey, text: g.text })), termChecks: res.termChecks.map((t) => ({ en: t.term.en, hi: t.term.hi, correct: t.correct, present: t.present, avoidFound: t.avoidFound })) };
   const row = await db2.one(
     `UPDATE attempts SET status='submitted', submitted_at=$2, auto_submitted=$3, measures=$4, score=$5, tip=$6, result=$7
      WHERE id=$1 AND status='active' RETURNING *`,
