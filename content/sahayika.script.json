@@ -3814,6 +3814,46 @@
       "when": "report card / workbench (added Nov 2026)",
       "en": "Glossary tip: in this part, write “{en_term}” as “{hi_term}”, the approved CAG term from Shabd Udyan.",
       "hi": "शब्दावली सुझाव: इस हिस्से में “{en_term}” के लिए “{hi_term}” लिखिए, यह शब्द उद्यान का मानक CAG शब्द है।"
+    },
+    {
+      "id": "trial.report_card.motivate_held",
+      "section": "trial",
+      "part": "report_card",
+      "moment": "motivate_held",
+      "spoken": true,
+      "when": "report card, lower attempt after the title was already won (added Nov 2026)",
+      "en": "That one came in at {score}, {name}, but your title is safe and your best of {best_score} still counts. Shake it off and aim higher!",
+      "hi": "इस बार {score} आया, {name}, पर आपका टाइटल सुरक्षित है और आपका सबसे अच्छा स्कोर {best_score} ही गिना जाएगा। आगे और ऊँचा लक्ष्य रखिए!"
+    },
+    {
+      "id": "primary.report_card.motivate_held",
+      "section": "primary",
+      "part": "report_card",
+      "moment": "motivate_held",
+      "spoken": true,
+      "when": "report card, lower attempt after the title was already won (added Nov 2026)",
+      "en": "That one came in at {score}, {name}, but your title is safe and your best of {best_score} still counts. Shake it off and aim higher!",
+      "hi": "इस बार {score} आया, {name}, पर आपका टाइटल सुरक्षित है और आपका सबसे अच्छा स्कोर {best_score} ही गिना जाएगा। आगे और ऊँचा लक्ष्य रखिए!"
+    },
+    {
+      "id": "secondary.report_card.motivate_held",
+      "section": "secondary",
+      "part": "report_card",
+      "moment": "motivate_held",
+      "spoken": true,
+      "when": "report card, lower attempt after the title was already won (added Nov 2026)",
+      "en": "That one came in at {score}, {name}, but your title is safe and your best of {best_score} still counts. Shake it off and aim higher!",
+      "hi": "इस बार {score} आया, {name}, पर आपका टाइटल सुरक्षित है और आपका सबसे अच्छा स्कोर {best_score} ही गिना जाएगा। आगे और ऊँचा लक्ष्य रखिए!"
+    },
+    {
+      "id": "pro.report_card.motivate_held",
+      "section": "pro",
+      "part": "report_card",
+      "moment": "motivate_held",
+      "spoken": true,
+      "when": "report card, lower attempt after the title was already won (added Nov 2026)",
+      "en": "That one came in at {score}, {name}, but your title is safe and your best of {best_score} still counts. Shake it off and aim higher!",
+      "hi": "इस बार {score} आया, {name}, पर आपका टाइटल सुरक्षित है और आपका सबसे अच्छा स्कोर {best_score} ही गिना जाएगा। आगे और ऊँचा लक्ष्य रखिए!"
     }
   ],
   "knowledge": {

@@ -256,7 +256,7 @@ export async function report(db: Db, a: AttemptRow) {
   const name = firstName(player!.name);
   const vars = {
     name, score: a.score, best_score: sel.best, chance: a.chance_no, chances_left: r.chancesLeft,
-    marks_short: Math.max(0, config().titlePassMark - sel.best), credits: r.credits, total_credits: summary.totalCredits, leaves: a.left_page_count,
+    marks_short: Math.max(0, Math.round((config().titlePassMark - sel.best) * 10) / 10), credits: r.credits, total_credits: summary.totalCredits, leaves: a.left_page_count,
     old_best: priorBest ?? 0,
   };
   // one tip from the weakest stat (Sahayika script, report card part 5)
@@ -301,7 +301,7 @@ export async function report(db: Db, a: AttemptRow) {
     announce: sel.announce.map((id) => say(id, vars)).filter(Boolean),
     titleNeeded: sel.titleEarned ? null : say(`${a.round_key}.report_card.title_needed_note`, vars),
     // report card: praise or motivation (no glossary hints here), then how to score better and what to do next
-    tip: say(`${a.round_key}.report_card.${(a.score ?? 0) >= 75 ? "motivate_high" : sel.titleEarned ? "motivate_mid" : "motivate_low"}`, vars) ?? tipLine(a.round_key, { kind: "praise" } as ScoreResult["tip"]),
+    tip: say(`${a.round_key}.report_card.${(a.score ?? 0) >= 75 ? "motivate_high" : (a.score ?? 0) >= config().titlePassMark ? "motivate_mid" : sel.titleEarned ? "motivate_held" : "motivate_low"}`, vars) ?? tipLine(a.round_key, { kind: "praise" } as ScoreResult["tip"]),
     after: [
       ...sel.after.map((id) => say(id, vars)),
       a.tip?.kind === "grammar" ? tipLine(a.round_key, a.tip) : null,

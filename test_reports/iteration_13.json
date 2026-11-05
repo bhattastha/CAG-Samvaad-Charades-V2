@@ -1,0 +1,48 @@
+{
+  "summary": "Tested iteration-13 change requests on preview (API + UI). WORKING: (1) Primary/Secondary/Pro workbench is one continuous report: no 'Page x of N', status bar shows scroll-progress 'N% reviewed', dashed page-breaks (Primary 10, Secondary 20, Pro 30). Trial still has 'Page 1 of 1'. (2) Glossary hint in the workbench: clicking a part shows 'Glossary tip: in this part, write “X” as “Y”…'. The terms fit the text (e.g. Secondary p58_03 'In the light of'). The 40 s gap works: no new tip within 40 s, a new tip after 41 s, and no repeat for the same part. (3) The report card tip is now motivational (motivate_high/mid/low). No tip_term or glossary line appears on the report. 'After' lines show the weakest-stat tip plus go_next or improve_retry as expected. (4) Weak spots: the report and review both show weak-spots with items weak-spot-0..2. Trial items are labelled 'Sentence k:' (1-based). Draft rounds show review-weak-<partId> amber borders (3 parts on Primary). Old attempts return weakSpots [] with no errors. (5) Certificate: CR6 shows a Silver 'II' 'Anuvad Nipun' badge on the right. A new player with only the Trial title gets Bronze 'I'. With no title there is no badge. The page fits A4 landscape (1123x794, no overflow, no overlap). (6) Manager: the players list shows the highest badge next to the name. The player drawer shows level cards with badges (grey locked for Secondary/Pro, not won) and the header 'MEASURES (Q/G/TC)'. Overview uses Translation Quality / Glossary Usage / Timeliness & Completion. Settings shows weights 55/25/20 and Save works ('Saved and audited'). (7) Regression: Trial start→type (Roman→xlit)→reload keeps the text→submit→report works. The 12 h session cookie works. iter12 regression passes. BUGS: the held-title motivational line is wrong ('0 wins the title'), there is a float marks_short ('9.600000000000001 more marks'), and weak-spot marks in draft rounds don't match the gain-based Translation Quality.",
+  "backend_issues": {
+    "critical": [
+      {"endpoint": "GET /api/attempts/:id/report (tip)", "issue": "The motivate_mid line is chosen from sel.titleEarned, which uses the best score. When a title is already held, a lower re-attempt is told '<score> wins the title'. Reproduced: CR6 attempt fe904098 (score 23.4) gets 'Good job, QA! 23.4 wins the title…'. qa.cr13a Trial chance 3 (score 0) gets 'Good job, TEST_QA! 0 wins the title…'. The spec says title won (33–75) means this attempt's score is 33–75.", "priority": "HIGH"}
+    ],
+    "minor": [
+      {"endpoint": "GET /api/attempts/:id/report (tip vars)", "issue": "marks_short is not rounded: 'You need 9.600000000000001 more marks for the title' (qa.cr13a Primary 4de2ecd7, score 23.4, passMark 33). Round it to 1 decimal in game.ts vars (marks_short = Math.round((passMark - best)*10)/10)."},
+      {"endpoint": "weakSpotsOf (packages/shared/src/scoring.ts)", "issue": "In draft rounds, Translation Quality is scored as the gain over the BHASHINI draft, but weak-spot lostMarks are computed from absolute similarity to the reference. Example: an untouched Primary draft gets TQ 0/55, but the box lists only −0.6/−0.5/−0.5 marks. An untouched Pro draft (TQ 0) shows no box at all. The box is misleading for Primary/Secondary/Pro."},
+      {"endpoint": "weakSpotsOf", "issue": "Numeric table parts can become the top weak spot. Secondary p59_02 'Steel Plants Year 2017-18 … Desired Actual…' was flagged. Consider skipping table/numeric-heavy parts."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "Manager › Players drawer attempt table", "issue": "The table overflows the drawer horizontally; the Signals column is clipped at 1920px", "selector": "drawer table", "priority": "LOW"},
+      {"component": "Manager › Overview Engagement funnel", "issue": "Step percentages are relative to the previous step, so with all-open unlock they exceed 100% ('Played Primary 10 · 500%', 'Played Professional 8 · 133%')", "selector": "Engagement funnel card", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Workbench status bar", "issues": ["'N% reviewed' is completion-based (prog.done/total), not scroll-based. After scrolling to the bottom it still showed 5%. This is fine if intended, but the label suggests scroll progress."]},
+      {"screen": "Workbench glossary hint", "issues": ["The hinted-parts memory is a useRef, so it resets on reload and the same part can be hinted again.", "Glossary data can give contextually wrong hints: for 'Fe content in iron ore' it suggested 'Content' → 'अन्तर्वस्तु'."]},
+      {"screen": "Review (/review/:id)", "issues": ["The page title and subtitle both read 'Your translation'.", "The weak-spots side box is not sticky, so it scrolls out of view while the player reads the highlighted parts."]},
+      {"screen": "Certificate", "issues": ["The badge is absolutely positioned (right:20mm; top:44mm) beside a centred name/office block. A very long name or office line could run under the badge. Consider reserving the right column."]}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/test_iter13_cr.py", "/app/backend/tests/iter13_start.py", "/app/backend/tests/iter13_submit.py", "/app/test_reports/pytest/iter13.xml"],
+  "action_items": [
+    "game.ts report(): choose the motivational line from this attempt's score. Use score>=75 → motivate_high, score>=passMark → motivate_mid, else motivate_low (or a 'title is safe, best counts' variant when the title is held). Never say '<score> wins the title' when score < passMark.",
+    "Round marks_short (and any other derived numeric vars) to 1 decimal before filling Sahayika lines.",
+    "Make weakSpots lostMarks consistent with gain-based TQ in draft rounds (e.g. weight by the gain shortfall vs the draft), so an untouched draft does not show near-zero losses while TQ is 0/55.",
+    "Optional: skip numeric/table parts in weakSpots; fix the manager drawer table overflow; cap or relabel funnel percentages."
+  ],
+  "critical_code_review_comments": [
+    "apps/api/src/game.ts:304: the tip uses sel.titleEarned (best-based) for motivate_mid. This is the root cause of the held-title bug.",
+    "apps/api/src/game.ts vars.marks_short = Math.max(0, passMark - best) has no rounding, which causes float artefacts.",
+    "apps/api/src/game.ts:232: tipLine still supports the tip_term kind. It is no longer used for the report (correct), but it is dead code for the report path.",
+    "apps/web/src/screens/Round.tsx glossary-hint effect: the deps are only [focusedPart], and `answers`/`view` are read from a stale closure. This is OK for a first focus but the effect does not re-evaluate if the term is typed later. The hinted set is not persisted (sessionStorage is used for `said` but not for `hinted`).",
+    "The PUT /admin/config/settings body replaces the whole 'settings' override (no merge). The UI always sends full values, so this is fine, but partial API calls would wipe other overrides."
+  ],
+  "updated_files": ["/app/backend/tests/test_iter13_cr.py", "/app/backend/tests/iter13_start.py", "/app/backend/tests/iter13_submit.py"],
+  "success_rate": {"backend": "90% (9/10 iter13 tests; 1 failure = held-title motivational line bug)", "frontend": "90% (all requested flows render and work; 1 copy bug visible on the report card + minor design items)"},
+  "test_credentials": "Used /app/memory/test_credentials.md; OTP planted via /app/scripts/emergent/test-otp.sh. Manager bhattastha.dibd@gmail.com.",
+  "seed_data_creation": "New QA players: qa.cr13a@cag.gov.in ('TEST_QA Iter13': Trial 3/3 used, best 59.9, title won; Primary/Secondary/Pro 1 chance each used with untouched drafts, scores 23.4/24/22.7) and qa.cr13b@cag.gov.in ('TEST_QA Iter13b': Trial 1 used, score 0). Manager 'Save settings' was clicked once with the default values. The resulting config_overrides 'settings' row (which did not exist before) was deleted afterwards. One audit entry 'config.settings' remains. No existing data was changed or deleted.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Run `pytest /app/backend/tests/test_iter13_cr.py -p no:xdist -o addopts=''` (set ITER13_EMAIL to a fresh @cag.gov.in address for the Trial flow; qa.cr13a has no Trial chances left). The test test_held_title_low_score_tip is the regression check for the motivate_mid bug. To submit an API-started attempt that the browser has taken over, pass CID=<attempts.active_client_id> to iter13_submit.py. Workbench selectors: workbench-rows, segment-<partId>, scroll-progress(-pct), page-break-<pageNo>. The Trial editor is a .ProseMirror contenteditable; type Roman words + Space for xlit. Browser login: page.request.post('/api/auth/otp/verify') after planting the code (codes are single-use). test_iter9_session_persistence.py uses gmail accounts and now fails with 403 email_domain by design (obsolete).",
+  "rca of the issue": "Held-title line: reportCardLines().titleEarned = best >= passMark (it means 'title held'). game.ts reuses it to pick motivate_mid, whose text says '{score} wins the title'. Repro: sign in as qa.cr6, GET /api/attempts/fe904098-fc6e-45a2-9a74-fddac94860bf/report → tip.en 'Good job, QA! 23.4 wins the title…'. Fix: branch on a.score against passMark. Float: marks_short = 33 - 23.4 = 9.600000000000001 in JS; round it."
+}

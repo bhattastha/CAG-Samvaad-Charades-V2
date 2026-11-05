@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="10" time="50.791" timestamp="2026-11-05T07:59:50.313879+00:00" hostname="agent-env-111d2f61-cd27-4799-b785-32fe60e32bd8"><testcase classname="test_iter13_cr.TestTrialFlow" name="test_cert_no_title" time="7.250" /><testcase classname="test_iter13_cr.TestTrialFlow" name="test_trial_submit_report" time="9.059"><failure message="assert (True and 1 &lt;= 0)&#10; +  where True = isinstance([], list)&#10; +  and   0 = len([])">test_iter13_cr.py:55: in test_trial_submit_report
+    assert isinstance(rep["weakSpots"], list) and 1 &lt;= len(rep["weakSpots"]) &lt;= 3
+E   assert (True and 1 &lt;= 0)
+E    +  where True = isinstance([], list)
+E    +  and   0 = len([])</failure></testcase><testcase classname="test_iter13_cr.TestTrialFlow" name="test_review_weakspots" time="1.650" /><testcase classname="test_iter13_cr.TestTrialFlow" name="test_cert_after_title" time="1.841" /><testcase classname="test_iter13_cr.TestCr6" name="test_old_reports_no_errors" time="7.439" /><testcase classname="test_iter13_cr.TestCr6" name="test_held_title_low_score_tip" time="3.912"><failure message="AssertionError: Good job, QA! 23.4 wins the title. A little more polish and you can push it much higher.&#10;assert 'wins the title' not in 'Good job, Q...much higher.'&#10;  &#10;  'wins the title' is contained here:&#10;    Good job, QA! 23.4 wins the title. A little more polish and you can push it much higher.&#10;  ?                    ++++++++++++++">test_iter13_cr.py:116: in test_held_title_low_score_tip
+    assert "wins the title" not in low["tip"]["en"], low["tip"]["en"]
+E   AssertionError: Good job, QA! 23.4 wins the title. A little more polish and you can push it much higher.
+E   assert 'wins the title' not in 'Good job, Q...much higher.'
+E     
+E     'wins the title' is contained here:
+E       Good job, QA! 23.4 wins the title. A little more polish and you can push it much higher.
+E     ?                    ++++++++++++++</failure></testcase><testcase classname="test_iter13_cr.TestCr6" name="test_cert_primary_silver" time="4.660" /><testcase classname="test_iter13_cr.TestManager" name="test_players_and_detail" time="7.578" /><testcase classname="test_iter13_cr.TestManager" name="test_config_weights" time="4.673" /><testcase classname="test_iter13_cr.TestManager" name="test_overview" time="2.628" /></testsuite></testsuites>

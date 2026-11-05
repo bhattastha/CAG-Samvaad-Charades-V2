@@ -49,7 +49,8 @@ h1 .a{color:#22293B}h1 .b{color:#E8590C}
 .brand{letter-spacing:.3em;font-size:9pt;color:#6B7280;font-family:"Noto Sans"}
 .lead{margin-top:6mm;font-size:15pt;color:#374151}
 .name{font-size:30pt;font-weight:700;color:#C2410C;margin:2mm 0 0;border-bottom:2px solid #FDBA74;padding:0 10mm 1mm}
-.office{font-size:12pt;color:#374151;margin-top:2mm}
+.office{font-size:12pt;color:#374151;margin-top:2mm;max-width:180mm}
+.name{max-width:180mm;overflow-wrap:anywhere}
 .body{font-size:13pt;margin-top:5mm;max-width:210mm;line-height:1.7}
 .titles{display:flex;gap:4mm;justify-content:center;flex-wrap:wrap;margin-top:4mm}
 .pill{background:#E8590C;color:#fff;border-radius:99px;padding:2mm 7mm;font-size:15pt;font-weight:700}

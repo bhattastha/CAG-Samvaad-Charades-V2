@@ -32,7 +32,7 @@ export function Review() {
     <>
       <Header />
       <Page>
-        <PageTitle hi={t("reportCard.reviewHeading")} en="Your translation" right={<Link to={`/report/${id}`} className="btn-ghost"><Icon name="chevronLeft" size={18} /> {t("common.back")}</Link>} />
+        <PageTitle hi={t("reportCard.reviewHeading")} en="Your answer with flags and where marks were lost" right={<Link to={`/report/${id}`} className="btn-ghost"><Icon name="chevronLeft" size={18} /> {t("common.back")}</Link>} />
         <p className="text-muted mb-4 flex items-start gap-2"><Icon name="info" size={17} className="mt-0.5 text-navy-600" />{t("reportCard.reviewNote")}</p>
         <div className="flex flex-wrap gap-4 mb-4 text-sm rounded-ui border border-slate-200 bg-white px-4 py-2.5 items-center">
           <Icon name="eye" size={16} className="text-navy-600" />
@@ -51,7 +51,7 @@ export function Review() {
               </div>
             ))}
           </div>
-          <aside className="self-start space-y-4">
+          <aside className="self-start space-y-4 lg:sticky lg:top-24">
           <WeakSpots spots={data.weakSpots ?? []} />
           <div className="card p-5">
             <h2 className="font-bold text-navy flex items-center gap-2"><Icon name="book" size={18} className="text-navy-600" /> {t("reportCard.measureGlossary")}</h2>

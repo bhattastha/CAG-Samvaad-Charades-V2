@@ -135,7 +135,7 @@ function PlayerDrawer({ id, onClose }: { id: string; onClose(): void }) {
           </Card>
           <Card title="Attempt history" pad={false}>
             {p.history.length ? (
-              <div className="overflow-x-auto"><table className="w-full text-sm">
+              <div className="overflow-x-auto max-w-full"><table className="w-full min-w-max text-sm">
                 <thead className="bg-slate-50"><tr><th className={th}>Level · chance</th><th className={th}>Bundle</th><th className={th}>Started</th><th className={th}>Time</th><th className={th}>Score</th><th className={th} title="v2: Translation Quality / Glossary / Timeliness & Completion (older attempts: T/C/S/G/Ti)">Measures (Q/G/TC)</th><th className={th}>Signals</th></tr></thead>
                 <tbody>{p.history.map((a: any) => (
                   <tr key={a.id} className={tr}>

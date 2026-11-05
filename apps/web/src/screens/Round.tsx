@@ -177,13 +177,15 @@ export function Round() {
   const [lastField, setLastField] = useState<FieldKey | null>(null);
   const [focusedPart, setFocusedPart] = useState<string | null>(null);
   // workbench glossary hints: when the player opens a part, Sahayika names one approved term not yet used there (max one per part, 40 s apart)
-  const hinted = useRef<{ parts: Set<string>; at: number }>({ parts: new Set(), at: 0 });
+  const hintKey = `hc.hinted.${id}`;
+  const hinted = useRef<{ parts: Set<string>; at: number }>({ parts: new Set((() => { try { return JSON.parse(sessionStorage.getItem(hintKey) ?? "[]"); } catch { return []; } })()), at: 0 });
   useEffect(() => {
     if (!view || !focusedPart || hinted.current.parts.has(focusedPart) || Date.now() - hinted.current.at < 40_000) return;
     const text = Object.values(answers[focusedPart]?.fields ?? {}).join(" ");
     const term = Object.values(view.page.sourceTerms?.[focusedPart] ?? {}).flat().find((x) => x.hi && !text.includes(x.hi) && !x.variants.some((v) => text.includes(v)));
     if (!term) return;
     hinted.current.parts.add(focusedPart);
+    try { sessionStorage.setItem(hintKey, JSON.stringify([...hinted.current.parts])); } catch { /* ignore */ }
     hinted.current.at = Date.now();
     sayLine("in_round.glossary_hint", { en_term: term.en, hi_term: term.hi }, false);
   }, [focusedPart]);

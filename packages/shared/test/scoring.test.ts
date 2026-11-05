@@ -198,6 +198,7 @@ describe("draft rounds score the gain over the BHASHINI draft", () => {
     expect(r.measures.quality).toBe(0);
     expect(r.counts.timelinessGated).toBe(true);
     expect(r.counts.timelinessMarks).toBe(0);
+    expect(r.weakSpots[0]?.lostMarks ?? 0).toBeGreaterThan(40); // the whole gain is still missing
   });
   it("fixing the draft to CAG's Hindi gives the full gain", () => {
     const r = runP(ref);

@@ -57,3 +57,9 @@ User choices: Emergent managed email for OTP; publish seeded Report 38 sample pa
 - P0: user review then publish (also run scripts/emergent/package.sh); re-generate failed Sahayika audio lines (some TTS timeouts; live TTS covers them).
 - P1: manager console updates (user will specify); BHASHINI ASR recovery check; optional AI meaning-similarity scorer.
 - Note: preview and live share the Neon DB (Trial passage change is already live).
+## 5 Nov 2026 — iteration 13 (workbench scroll, Sahayika hints, score tips, certificate badge, console)
+- Primary/Secondary/Pro all continuous scroll (config scrollMode). In-round Sahayika glossary hint on opening a part (one per part, 40 s apart, remembered per attempt).
+- Report card: no glossary hints; tip = motivate_high (≥75) / motivate_mid (won this attempt) / motivate_held (lower re-attempt, title kept) / motivate_low; after = weakest-stat tip, grammar tip, go_next or improve_retry.
+- Score Breakdown Tips: weakSpots (top 3 sentences/parts by lost Translation Quality marks; draft rounds by missing gain) on report card + Review (amber highlight).
+- Certificate shows highest won 3D badge (certificate/badge.ts). Console: highest badge in Players list, badges on level cards, Q/G/TC measures, funnel % of first step.
+- Tests: shared 26/26, api 27/27, testing agent iteration_13 (follow-ups fixed).

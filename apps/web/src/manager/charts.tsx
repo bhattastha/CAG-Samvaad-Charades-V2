@@ -246,12 +246,12 @@ export function Funnel({ steps, label }: { steps: { step: string; n: number }[];
       <ol role="img" aria-label={label} className="space-y-1.5">
         {steps.map((s, i) => {
           const w = (s.n / top) * 100;
-          const conv = i > 0 && steps[i - 1].n ? Math.round((s.n / steps[i - 1].n) * 100) : null;
+          const conv = i > 0 && top ? Math.round((s.n / top) * 100) : null; // share of the first step (levels are all open, so steps are not nested)
           return (
             <li key={s.step} className="grid grid-cols-[10rem_1fr_6rem] items-center gap-2 text-xs">
               <span className="truncate text-slate-700">{s.step}</span>
               <svg viewBox="0 0 100 12" preserveAspectRatio="none" className="h-5 w-full" aria-hidden>
-                <rect x={(100 - w) / 2} y="0" width={w} height="12" fill={i === 0 ? "#0B2342" : PALETTE[0]} opacity={1 - i * 0.09} rx="1"><title>{`${s.step}: ${s.n}${conv !== null ? ` (${conv}% of previous step)` : ""}`}</title></rect>
+                <rect x={(100 - w) / 2} y="0" width={w} height="12" fill={i === 0 ? "#0B2342" : PALETTE[0]} opacity={1 - i * 0.09} rx="1"><title>{`${s.step}: ${s.n}${conv !== null ? ` (${conv}% of ${steps[0]!.step})` : ""}`}</title></rect>
               </svg>
               <span className="text-right tabular-nums"><b className="text-slate-900">{s.n}</b>{conv !== null && <span className="ml-1 text-slate-500">{conv}%</span>}</span>
             </li>
