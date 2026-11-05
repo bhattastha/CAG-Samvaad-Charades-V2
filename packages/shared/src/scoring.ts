@@ -248,13 +248,17 @@ export function scoreAttempt({ config, round, page, answers, usedSeconds }: Scor
   const empty = normalise(allText).length === 0;
 
   const grammar = grammarIssues(round, page, answers, sc.minWordsPerSentence);
-  const mine = docQuality(page, answers, grammar, sc);
+  // CAG's own Hindi is the benchmark: issues that also occur in the reference (e.g. a heading ending in ':') are not penalised
+  const refAnswers: Answers = Object.fromEntries(page.parts.filter((p) => p.editable).map((p) => [p.id, { fields: Object.fromEntries(editableFields(p).map((f) => [f.key, f.hiReference])), done: false }]));
+  const refKeys = new Set(grammarIssues(round, page, refAnswers, sc.minWordsPerSentence).map((g) => `${g.code}|${g.partId}|${g.text}`));
+  const own = (gs: GrammarIssue[]) => gs.filter((g) => !refKeys.has(`${g.code}|${g.partId}|${g.text}`));
+  const mine = docQuality(page, answers, own(grammar), sc);
   // Primary / Secondary / Professional: marks for the improvement over the BHASHINI draft
   const hasDraft = round.bhashiniDraft && page.parts.some((p) => p.fields.some((f) => f.draft));
   let quality = mine.quality, draftSim: number | null = null, gain: number | null = null;
   if (hasDraft) {
     const da = draftAnswers(page);
-    draftSim = docQuality(page, da, grammarIssues(round, page, da, sc.minWordsPerSentence), sc).quality;
+    draftSim = docQuality(page, da, own(grammarIssues(round, page, da, sc.minWordsPerSentence)), sc).quality;
     gain = draftSim >= 1 ? 0 : clamp01((mine.quality - draftSim) / (1 - draftSim));
     quality = gain;
   }

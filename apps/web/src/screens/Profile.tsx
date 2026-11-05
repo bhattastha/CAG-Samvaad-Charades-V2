@@ -127,7 +127,7 @@ export function Profile() {
                   <tbody>
                     {data.history.map((h) => (
                       <tr key={h.id} className="border-t border-slate-100 hover:bg-slate-50/70 cursor-pointer" onClick={() => nav(h.status === "active" ? `/round/${h.id}` : `/report/${h.id}`)}>
-                        <td className="px-5 py-2.5"><span className="inline-flex items-center gap-2"><Medal k={h.roundKey} size={22} /><span className="font-semibold text-navy">{roundCfg(h.roundKey)?.nameEn}</span></span></td>
+                        <td className="px-5 py-2.5"><span className="inline-flex items-center gap-2"><Medal k={h.roundKey} size={22} locked={h.status !== "active" && (h.score ?? 0) < cfg.titlePassMark} /><span className="font-semibold text-navy">{roundCfg(h.roundKey)?.nameEn}</span></span></td>
                         <td className="px-2 py-2.5 tnum">{h.chance} / {cfg.maxChancesPerRound}</td>
                         <td className="px-2 py-2.5 hidden sm:table-cell text-muted">{date(h.startedAt)}</td>
                         <td className="px-2 py-2.5 hidden sm:table-cell text-muted tnum">{h.minutes ? `${h.minutes} min` : "—"}{h.autoSubmitted ? ` · ${t("profile.auto")}` : ""}</td>

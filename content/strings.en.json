@@ -190,7 +190,7 @@
       },
       {
         "title": "How you score",
-        "body": "Your score out of 100 draws on five measures: translation quality, time, completion, glossary terms and sentence construction. Score 33 or more to win the level's title."
+        "body": "Your score out of 100 draws on three measures: Translation Quality (incl. sentence construction) 55, Glossary Usage 25, and Timeliness & Completion 20. Score 33 or more to win the level's title."
       },
       {
         "title": "Your toolkit",
@@ -208,7 +208,7 @@
       "From Level 2, BHASHINI supplies a machine draft. Find its errors and fix them.",
       "In the Trial (Level 1), you translate everything yourself.",
       "Unsure of a term? Open the Glossary.",
-      "Five measures count: translation, time, completion, glossary, sentence construction.",
+      "Three measures count: Translation Quality (incl. sentence construction) 55, Glossary Usage 25, Timeliness & Completion 20.",
       "Try the ways to write Hindi on the right."
     ],
     "creditsLabel": "Credits",
@@ -429,6 +429,7 @@
     "measuring": "Scoring",
     "tapToContinue": "Tap for your report card",
     "titleUnlocked": "Title unlocked",
+    "titleHeld": "Title held · best stands",
     "newBest": "New personal best"
   },
   "reportCard": {
@@ -436,7 +437,7 @@
     "headingEn": "Your mission debrief",
     "sahayikaAnnounces": "Sahayika reports",
     "thisTime": "this attempt",
-    "howYouDid": "Your five stats",
+    "howYouDid": "Your three measures",
     "measureTranslation": "Translation",
     "measureTime": "Time",
     "measureCompletion": "Completion",

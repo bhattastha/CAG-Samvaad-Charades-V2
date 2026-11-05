@@ -130,7 +130,9 @@ export function Report() {
 
   const next = r.nextRound ? cfg?.rounds.find((x) => x.key === r.nextRound!.key) : null;
   const titleLine = r.announce[0];
-  const restLines = r.announce.slice(2);
+  const restLines = r.announce.slice(1);
+  // a lower re-attempt after the title was already won: nothing new earned this time
+  const heldOnly = r.titleEarned && r.score < r.best;
   return (
     <>
       <Header />
@@ -143,9 +145,9 @@ export function Report() {
             {r.titleEarned ? (
               <motion.div initial={{ scale: 0.92, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 260, damping: 24, delay: 0.6 }}
                 className="flex items-center gap-4 rounded-card bg-white/[0.07] border border-gold/40 p-4">
-                <Medal k={r.roundKey} size={96} sweep />
+                <Medal k={r.roundKey} size={96} sweep={!heldOnly} />
                 <div>
-                  <div className="kicker text-gold-light">{t("complete.titleUnlocked")}</div>
+                  <div className="kicker text-gold-light" data-testid="report-title-kicker">{heldOnly ? t("complete.titleHeld") : t("complete.titleUnlocked")}</div>
                   <div className="text-3xl font-extrabold tracking-tight">{round?.titleEn ?? r.title}</div>
                   <div className="text-blue-100">{round?.titleMeaning}</div>
                 </div>
@@ -156,7 +158,7 @@ export function Report() {
             <div className="flex items-center justify-between gap-3">
               <motion.span initial={{ y: 8, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.9, duration: 0.3 }}
                 className="inline-flex items-center gap-2 rounded-ui text-navy-900 px-4 py-2 text-xl font-extrabold tnum shadow-gold" style={{ background: "linear-gradient(180deg, #E9D7A6, #C49B3D)" }}>
-                <Coin size={24} /> +<CountUp to={r.roundCredits} decimals={1} />
+                <Coin size={24} /> +<CountUp to={heldOnly ? 0 : r.roundCredits} decimals={1} />
               </motion.span>
               <span className="text-lg font-bold tnum">{t("reportCard.runningTotal", { n: r.totalCredits })}</span>
             </div>
@@ -186,7 +188,7 @@ export function Report() {
               <motion.div initial={{ scale: 0.94, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 280, damping: 24 }}
                 className="relative rounded-card bg-navy-50 border border-slate-200 border-t-4 border-t-primary px-6 py-3 text-center">
                 {r.chanceNo === r.bestChance && r.chanceNo > 1 && <span className="absolute -top-3 -right-3 rounded-md bg-gold text-navy-900 text-xs font-extrabold uppercase tracking-wider px-2 py-0.5 shadow-gold">{t("complete.newBest")}</span>}
-                <div className="text-6xl font-extrabold text-navy tnum leading-none tracking-tight"><CountUp to={r.score} onTick={() => sfx("tick")} /><span className="text-xl text-muted"> / 100</span></div>
+                <div className="text-6xl font-extrabold text-navy tnum leading-none tracking-tight"><CountUp to={r.score} decimals={Number.isInteger(r.score) ? 0 : 1} onTick={() => sfx("tick")} /><span className="text-xl text-muted"> / 100</span></div>
                 <div className="text-sm font-semibold text-primary-strong mt-1">{t("reportCard.thisTime")}</div>
               </motion.div>
             </div>
