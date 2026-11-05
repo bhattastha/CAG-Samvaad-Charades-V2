@@ -409,6 +409,15 @@ export function Round() {
         <div className="pointer-events-none fixed inset-0 z-[35] animate-pulse" style={{ boxShadow: "inset 0 0 120px 20px rgba(180,35,24,.35)" }} aria-hidden />
       )}
       <Burst fire={burst} count={36} spread={300} />
+      {submitting && (
+        <div data-testid="round-scoring-overlay" role="status" className="fixed inset-0 z-[60] grid place-items-center bg-black/55 backdrop-blur-sm">
+          <div className="card-dark px-8 py-6 flex flex-col items-center gap-3 text-center max-w-sm">
+            <Spinner />
+            <div className="font-semibold">{t("complete.scoring")}</div>
+            <div className="text-xs text-muted">{t("round.scoringWait")}</div>
+          </div>
+        </div>
+      )}
 
       {isTrial ? (
       <main className={`hc-canvas w-full flex-1 px-3 sm:px-5 py-3 grid ${collapsed ? "lg:grid-cols-1" : "lg:grid-cols-2"} gap-6 pb-12 lg:pb-0 lg:py-4 lg:grid-rows-[minmax(0,1fr)] lg:overflow-hidden ${trialH}`} data-canvas onMouseOver={overPair} onMouseLeave={() => setHoverPair(null)}>

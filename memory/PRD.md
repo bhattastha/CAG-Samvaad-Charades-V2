@@ -70,3 +70,10 @@ User choices: Emergent managed email for OTP; publish seeded Report 38 sample pa
 ## 5 Nov 2026 — database moved to Neon us-west-2 (Oregon)
 - scripts/copy-db.sh (OLD=… NEW=…): FK-ordered TRUNCATE + \copy of all public tables + sequence reset; all 16 tables row counts matched. DATABASE_URL (test+live) now = Oregon; NEW_DATABASE_URL holds the same. Old Singapore DB kept untouched as backup (URL saved in /root/.old_db_url, mode 600).
 - Load test 15 concurrent: 15/15 ok, p50 0.2–0.7 s (was 0.9–3.2 s); DB health latency 43 ms. Redeploy queued for live.
+## Nov 2026 — scoring v3 (absolute quality + AI judge, no draft-gain gate)
+- Translation Quality 55 = 0.5 × match with CAG's published Hindi (chrF+stem similarity × fluency) + 0.5 × Claude judge (apps/api/src/judge.ts: claude-opus-5-5 35 s → claude-sonnet-5-5 20 s fallback via EMERGENT_LLM_KEY + INTEGRATION_PROXY_URL; up to 40 largest parts / 16k ref chars; failure → match only). Draft-gain gate removed (draftGainGate gone).
+- Timeliness 20 = completion × time; time = 1 when submitted before the limit (timeMarks share 1), 0.5 when auto-submitted (marksAtTimeLimit 0.5).
+- counts.matchPct / aiPct; report card subtitle "NN% match with CAG's Hindi · AI review NN%"; Round scoring overlay while judging. Weak spots use absolute match (+AI per part); Trial per-sentence only when sentence counts align.
+- All 191 past attempts re-scored (apps/api/src/scripts/rescore.ts, skips already re-scored; --all, --dry). Tests: shared 28/28, testing agent iteration_14 pass.
+- NOTE: live deployment still runs the OLD scoring and shares the DB (its auto-submit job can score with old rules) → REDEPLOY needed.
+

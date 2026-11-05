@@ -1,0 +1,44 @@
+{
+  "summary": "Tested the iter-14 scoring change on preview, both API and UI. WORKING: (1) A Primary round submitted with the untouched BHASHINI draft (all parts ticked) now gets Translation Quality 36.7/55 (matchPct 77, aiPct 57, judge claude-opus-5-5) and Timeliness 20/20 (time=1, not gated), score 80.1. The same submission without ticks through the UI gets TQ 38.5/55 (match 77, AI 63) and Timeliness 0/20, because completion is 0/100 parts. (2) The blend is exact: measures.quality = 0.5*match + 0.5*ai, and qualityMarks = round(quality*55,1). This was checked on the Primary and Trial attempts. A Trial with the exact CAG Hindi gives match 100, AI 100, score 100. A Trial with about 11% of words dropped gives match 99, AI 35, TQ 37/55. (3) Credits = best/100 × cap: Primary 80.1 → 4.0 and Trial 76.2 → 2.3. (4) Report card: the TQ subtitle reads '77% match with CAG's Hindi · AI review 57%'. 'Needs a 10% quality gain' is gone. The Timeliness subtitle shows 'N/M parts · x / 60 min'. (5) Weak spots: the report shows weak-spots with 3 items, and the review shows weak-spots plus 3 review-weak-* borders. Review weakSpots equal report weakSpots. (6) The interstitial works: the MISSION COMPLETE stamp, then the SCORING bars (TQ 38.5/55, then the others), then the card. (7) Latency: API submits took 2–5 s. The UI submit took 17.6 s from 'Submit anyway?' to reaching the report. (8) The auto-submit rule is correct in current code: after rescore.ts, my auto-submitted Trial scored time 0.5, Timeliness 10/20, score 90. Shared vitest: 28/28 pass. ISSUE FOUND: an auto-submitted attempt was scored by an OLD build, not this preview.",
+  "backend_issues": {
+    "critical": [
+      {"endpoint": "autoSubmitDue job (shared Neon DB)", "issue": "Another running deployment with OLD scoring code auto-submits due attempts from the same DATABASE_URL. My Trial c2def1ae (qa.cr21) was auto-submitted with result.counts holding 'timelinessGated' and no matchPct/aiPct; that key does not exist anywhere in the current source. It also had measures.time=0 (old rule) and score 80 instead of 90. Whichever instance's 30 s job runs first scores the attempt, so real players' time-ran-out attempts keep getting old-rule scores until that deployment is updated. One other attempt in the last 3 days (trial, auto_submitted=t) was scored by the new code.", "priority": "HIGH"}
+    ],
+    "minor": [
+      {"endpoint": "weakSpotsOf (packages/shared/src/scoring.ts)", "issue": "Trial per-sentence weak spots pair the player's sentences with CAG's by splitting on । and matching by position. If the player drops or merges one danda, every later sentence is misaligned and shows '0% match with CAG's Hindi' with large lost marks (−9.5, −5, −4.8). Overall matchPct was 99% in the same attempt."},
+      {"endpoint": "similarity/match (chrfCeil 0.85)", "issue": "Match is very lenient: dropping every 9th word of the CAG Hindi still gives matchPct 99 (the AI judge gave 35). In practice the AI half carries most of the signal."},
+      {"endpoint": "judge timeouts (apps/api/src/judge.ts)", "issue": "Worst case is Opus 60 s + Sonnet 45 s = 105 s inside the submit request. This can exceed ingress or proxy timeouts. Round.tsx then catches the error and navigates to /report while the attempt is still being scored or active, so /report returns 409. Report.tsx then shows a spinner forever (there is no error or retry state)."},
+      {"endpoint": "Product: Primary with untouched draft", "issue": "Submitting BHASHINI's draft untouched now earns the title: 80.1 with all parts ticked, 62 without ticks. That gives 4 of 5 credits for no editing. This follows the user's chosen rule, but flag it to the user."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {"flow": "Submit (Primary)", "issue": "There is a 17.6 s wait between 'Submit anyway?' and the report while the judge runs. Only the button state changes; there is no explicit 'Scoring…' overlay during the wait.", "affected_selectors": ["button 'Submit Translation'"]}
+    ],
+    "design_issues": [
+      {"screen": "Report card measures", "issues": ["The TQ subtitle wraps to 2 lines at 1920px ('77% match with CAG's Hindi / · AI review 57%'). The '·' starts the second line. It is acceptable, but a non-breaking join would read better."]}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/test_iter14_quality_blend.py", "/app/backend/tests/iter14_extra.py", "/app/test_reports/pytest/iter14.xml"],
+  "action_items": [
+    "Stop or update the other deployment that shares DATABASE_URL (old code with 'timelinessGated'): its autoSubmitDue scores time-ran-out attempts with the old rules. After that, run rescore.ts to fix any attempts that lack counts.matchPct.",
+    "Align Trial weak spots robustly (e.g. match hyp sentences to ref by best similarity, or fall back to part-level when the sentence counts differ) so one missing danda does not show 0% for later sentences.",
+    "Cap the total judge time in submit (e.g. overall 30–40 s, then fall back to match-only). In Report.tsx, handle a 409/not_submitted report with a retry or poll instead of an endless spinner.",
+    "Optional: show a 'Scoring your Hindi…' overlay while submit awaits the judge. Raise the issue with the user that an untouched Primary draft earns the title (80/100)."
+  ],
+  "critical_code_review_comments": [
+    "game.ts submit(): the judge runs before the guarded UPDATE, so concurrent submits (UI + auto job) each call the LLM. The result is correct (status='active' guard) but costly. Consider claiming the attempt first (status='scoring').",
+    "judge.ts: the overall score is weighted only over the picked items (MAX_ITEMS 40 / 16k chars). On long Pro pages the unjudged parts do not count in the AI half, while the match half covers the full page.",
+    "scoring.ts: 'gain' and 'draftSimilarityPct' are still computed and stored but are unused for marks. They are fine as info.",
+    "The AI judge is non-deterministic: two untouched Primary submissions gave aiPct 57 and 63 (the pages may differ). Consider temperature 0 if the proxy supports it."
+  ],
+  "updated_files": ["/app/backend/tests/test_iter14_quality_blend.py", "/app/backend/tests/iter14_extra.py"],
+  "success_rate": {"backend": "90% (5/6 pytest pass; the 1 failure was my own threshold aiPct>=50 on a deliberately damaged text, not a bug; auto-submit scored by a stale external instance)", "frontend": "100% of requested UI checks pass"},
+  "test_credentials": "Used /app/memory/test_credentials.md: OTP was planted via test-otp.sh / iter11_helpers.plant, then POST /api/auth/otp/verify.",
+  "seed_data_creation": "New QA players qa.cr20@cag.gov.in ('TEST_QA Iter14'): Trial #1 76.2, Trial #2 100, Primary #1 80.1. qa.cr21@cag.gov.in ('TEST_QA Iter14'): Trial #1 was auto-submitted after I moved its own deadline_at into the past, then re-scored to 90; Primary #1 62 via the UI. I ran rescore.ts (non-dry) once. Its dry run confirmed it touched only 1 row, my c2def1ae attempt. No other data was changed.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Run `REACT_APP_BACKEND_URL=... pytest /app/backend/tests/test_iter14_quality_blend.py -p no:xdist -o addopts='' -s` with ITER14_EMAIL set to a fresh @cag.gov.in address. `python iter14_extra.py auto <email>` tests the auto-submit path: it moves that attempt's deadline and polls. Check result.counts for matchPct and the absence of timelinessGated to see which build scored it. Browser login: page.request.post(ABSOLUTE_URL + '/api/auth/otp/verify') after test-otp.sh. Each browser_automation call is a fresh context. Primary UI submit: the 'Start mission' button, then 'Submit Translation', then 'Submit anyway?'.",
+  "rca of the issue": "Stale auto-submit: attempts.result for c2def1ae contains counts.timelinessGated=false, and `grep -rn timelinessGated /app/apps /app/packages` finds nothing. The only local API process is PID 45573 (src/server.ts, current code). So another deployment (e.g. the published production app) running the pre-iter14 build polls the same Neon DB every 30 s and auto-submits due attempts first. Repro: start a Trial, autosave, set deadline_at to the past, wait about 30 s, then inspect result.counts. Mitigation: redeploy or stop that instance, then run rescore.ts (it skips attempts that already have matchPct)."
+}

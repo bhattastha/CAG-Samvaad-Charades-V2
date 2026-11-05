@@ -3,8 +3,8 @@ import { env } from "./env.js";
 
 // Claude judges the player's final Hindi against CAG's published Hindi; Opus first, Sonnet as the fallback
 const MODELS: { id: string; timeoutMs: number }[] = [
-  { id: "claude-opus-5-5", timeoutMs: 60_000 },
-  { id: "claude-sonnet-5-5", timeoutMs: 45_000 },
+  { id: "claude-opus-5-5", timeoutMs: 35_000 },
+  { id: "claude-sonnet-5-5", timeoutMs: 20_000 },
 ];
 const MAX_ITEMS = 40;
 const MAX_REF_CHARS = 16_000;

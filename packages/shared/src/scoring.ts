@@ -260,8 +260,9 @@ function weakSpotsOf(round: RoundConfig, page: PageData, answers: Answers, sc: G
     const ref = partRefText(p), hyp = partPlayerText(answers, p);
     if (normalise(ref).length < 20) continue; // numbers-only cells and tiny labels are not useful tips
     const enS = p.enSentences ?? [], refS = splitSentences(ref);
-    if (round.completionCountedBy === "sentence" && enS.length > 1 && enS.length === refS.length) {
-      const hypS = splitSentences(hyp);
+    const hypS = splitSentences(hyp);
+    // per-sentence only when the player's sentences line up with CAG's; otherwise one unit for the part
+    if (round.completionCountedBy === "sentence" && enS.length > 1 && enS.length === refS.length && hypS.length === refS.length) {
       enS.forEach((en, i) => units.push({ partId: p.id, sentence: i, en, ref: refS[i]!, hyp: hypS[i] ?? "" }));
     } else units.push({ partId: p.id, sentence: null, en: p.fields.map((f) => f.en).join(" "), ref, hyp });
   }
